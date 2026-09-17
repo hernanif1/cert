@@ -61,37 +61,37 @@ export default async function LessonPage({ params }: { params: Params }) {
         </span>
       </div>
 
-      <h1 className="mt-3 font-display text-4xl leading-[1.15] tracking-[-0.02em]">
+      <h1 className="mt-3 font-display text-4xl leading-[1.15] tracking-[-0.02em] max-w-reading">
         {ref.title}
       </h1>
 
-      <p className="mt-3 max-w-2xl border-l-2 border-border pl-4 text-sm leading-relaxed text-fg-muted">
+      <p className="mt-4 max-w-reading border-l-2 border-border pl-4 text-aux text-fg-muted">
         <span className="font-medium text-fg">Objective · </span>
         {ref.text}
       </p>
 
       {content ? (
         <>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed">
+          <p className="mt-6 max-w-reading text-lede text-fg">
             {content.summary}
           </p>
 
-          <div className="mt-8 max-w-3xl">
+          <div className="mt-8 max-w-reading text-reading">
             <BlockRenderer blocks={content.body} />
           </div>
 
-          <div className="max-w-3xl">
+          <div className="max-w-reading">
             <ExamTraps traps={content.traps} />
           </div>
 
           {content.keyTerms && content.keyTerms.length > 0 && (
-            <section className="max-w-3xl">
+            <section className="max-w-reading">
               <SectionHeading>Key terms</SectionHeading>
               <dl className="mt-3 divide-y divide-border border-y border-border">
                 {content.keyTerms.map((k) => (
-                  <div key={k.term} className="py-3">
-                    <dt className="text-sm font-medium">{k.term}</dt>
-                    <dd className="mt-1 text-sm leading-relaxed text-fg-muted">
+                  <div key={k.term} className="py-3.5">
+                    <dt className="text-aux font-semibold">{k.term}</dt>
+                    <dd className="mt-1 text-aux text-fg-muted">
                       {k.definition}
                     </dd>
                   </div>
@@ -100,14 +100,14 @@ export default async function LessonPage({ params }: { params: Params }) {
             </section>
           )}
 
-          <section className="max-w-3xl">
+          <section className="max-w-reading">
             <SectionHeading>Sources</SectionHeading>
-            <ul className="mt-3 space-y-1.5 text-sm">
+            <ul className="mt-3 space-y-2 text-aux">
               {content.sources.map((s) => (
                 <li key={s.url}>
                   <a
                     href={s.url}
-                    className="text-accent underline underline-offset-2"
+                    className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-colors hover:decoration-accent"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -119,13 +119,13 @@ export default async function LessonPage({ params }: { params: Params }) {
           </section>
         </>
       ) : (
-        <p className="mt-8 max-w-2xl rounded-card border border-dashed border-border p-5 text-sm leading-relaxed text-fg-muted">
+        <p className="mt-8 max-w-reading rounded-card border border-dashed border-border p-5 text-aux text-fg-muted">
           This lesson has not been written yet. The route, navigation and
           progress tracking all work — only the prose is pending.
         </p>
       )}
 
-      <div className="max-w-3xl">
+      <div className="max-w-reading">
         <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-border pt-6">
           <MarkComplete slug={ref.slug} />
           <Link

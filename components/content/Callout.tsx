@@ -33,17 +33,17 @@ export function Callout({
 }) {
   const s = STYLES[variant];
   return (
-    <aside className={cn("my-6 rounded-card border-l-2 px-5 py-4", s.box)}>
+    <aside className={cn("my-6 rounded-card border-l-[3px] px-5 py-4", s.box)}>
       <p
         className={cn(
-          "text-[11px] font-semibold uppercase tracking-wider",
+          "text-[11px] font-semibold uppercase tracking-[0.1em]",
           s.label,
         )}
       >
         {title ?? DEFAULT_TITLE[variant]}
       </p>
       <div
-        className="mt-2 text-sm leading-relaxed [&_code]:rounded [&_code]:bg-bg/60 [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em] [&_p]:my-2 [&_strong]:font-semibold"
+        className="mt-2.5 text-aux [&_:not(pre)>code]:rounded-[0.3rem] [&_:not(pre)>code]:bg-bg/60 [&_:not(pre)>code]:px-[0.35em] [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-[0.875em] [&_p]:my-2 [&_strong]:font-semibold"
         dangerouslySetInnerHTML={{ __html: md(source) }}
       />
     </aside>

@@ -12,24 +12,24 @@ export function ExamTraps({ traps }: { traps: ExamTrap[] }) {
   return (
     <section>
       <SectionHeading>Exam Traps</SectionHeading>
-      <ul className="mt-4 space-y-4">
+      <ul className="mt-4 space-y-3.5">
         {traps.map((t) => (
           <li
             key={t.id}
-            className="rounded-card border border-border bg-surface p-4"
+            className="rounded-card border border-border bg-surface p-4.5"
           >
-            <p className="flex gap-2 text-sm font-medium">
+            <p className="flex gap-2 text-aux font-medium">
               <span aria-hidden="true" className="text-danger">
                 ✗
               </span>
               <span dangerouslySetInnerHTML={{ __html: mdInline(t.trap) }} />
             </p>
             <p
-              className="mt-2 pl-6 text-sm leading-relaxed text-fg-muted"
+              className="mt-2 pl-6 text-aux text-fg-muted"
               dangerouslySetInnerHTML={{ __html: mdInline(t.why) }}
             />
             {t.instead && (
-              <p className="mt-2 flex gap-2 pl-6 text-sm leading-relaxed">
+              <p className="mt-2 flex gap-2 pl-6 text-aux">
                 <span aria-hidden="true" className="text-success">
                   ✓
                 </span>
