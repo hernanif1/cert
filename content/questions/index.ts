@@ -28,6 +28,14 @@ import { questions as q_d4_4_3 } from "@/content/questions/d4/4-3";
 import { questions as q_d4_4_4 } from "@/content/questions/d4/4-4";
 import { questions as q_d4_4_5 } from "@/content/questions/d4/4-5";
 import { questions as q_d4_4_6 } from "@/content/questions/d4/4-6";
+import { questions as q_d5_5_1 } from "@/content/questions/d5/5-1";
+import { questions as q_d5_5_2 } from "@/content/questions/d5/5-2";
+import { questions as q_d5_5_3 } from "@/content/questions/d5/5-3";
+import { questions as q_d6_6_1 } from "@/content/questions/d6/6-1";
+import { questions as q_d6_6_2 } from "@/content/questions/d6/6-2";
+import { questions as q_d6_6_3 } from "@/content/questions/d6/6-3";
+import { questions as q_d6_6_4 } from "@/content/questions/d6/6-4";
+import { questions as q_d6_6_5 } from "@/content/questions/d6/6-5";
 
 /**
  * The question bank: one central pool, referenced by id.
@@ -65,6 +73,14 @@ export const QUESTIONS: Question[] = [
   ...q_d4_4_4,
   ...q_d4_4_5,
   ...q_d4_4_6,
+  ...q_d5_5_1,
+  ...q_d5_5_2,
+  ...q_d5_5_3,
+  ...q_d6_6_1,
+  ...q_d6_6_2,
+  ...q_d6_6_3,
+  ...q_d6_6_4,
+  ...q_d6_6_5,
 ];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));

@@ -39,6 +39,7 @@ import { lesson as l_6_4_documenting_architectures } from "@/content/lessons/6-4
 import { lesson as l_6_5_lifecycle_phases } from "@/content/lessons/6-5-lifecycle-phases";
 import { lesson as l_7_1_team_tooling_claude_code } from "@/content/lessons/7-1-team-tooling-claude-code";
 import { lesson as l_7_2_ai_assisted_workflows } from "@/content/lessons/7-2-ai-assisted-workflows";
+import { lesson as l_7_3_debugging_operational_issues } from "@/content/lessons/7-3-debugging-operational-issues";
 
 /**
  * Authored lesson bodies, keyed by slug.
@@ -86,4 +87,5 @@ export const AUTHORED: Record<string, Lesson> = {
   [l_6_5_lifecycle_phases.slug]: l_6_5_lifecycle_phases,
   [l_7_1_team_tooling_claude_code.slug]: l_7_1_team_tooling_claude_code,
   [l_7_2_ai_assisted_workflows.slug]: l_7_2_ai_assisted_workflows,
+  [l_7_3_debugging_operational_issues.slug]: l_7_3_debugging_operational_issues,
 };
