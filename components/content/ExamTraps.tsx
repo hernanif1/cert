@@ -1,5 +1,6 @@
 import { mdInline } from "@/lib/markdown";
 import type { ExamTrap } from "@/content/schema";
+import { SectionHeading } from "@/components/content/SectionHeading";
 
 /**
  * Each trap states the tempting wrong answer, why it is wrong, and what is
@@ -9,8 +10,8 @@ import type { ExamTrap } from "@/content/schema";
 export function ExamTraps({ traps }: { traps: ExamTrap[] }) {
   if (traps.length === 0) return null;
   return (
-    <section className="mt-10">
-      <h2 className="font-display text-2xl">Exam Traps</h2>
+    <section>
+      <SectionHeading>Exam Traps</SectionHeading>
       <ul className="mt-4 space-y-4">
         {traps.map((t) => (
           <li

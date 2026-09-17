@@ -10,6 +10,7 @@ import {
 } from "@/components/question/QuestionCard";
 import { recordAnswer } from "@/lib/drill/record";
 import { describeInterval, type GradeResult } from "@/lib/drill/leitner";
+import { SubHeading } from "@/components/content/SectionHeading";
 
 /**
  * The lesson-page consumer of QuestionCard. Owns its selection in local state —
@@ -36,8 +37,8 @@ export function PracticeScenario({ question }: { question: Question }) {
   }
 
   return (
-    <section className="my-8">
-      <h3 className="font-display text-xl">Practice Scenario</h3>
+    <section className="mt-10">
+      <SubHeading className="mt-0">Practice Scenario</SubHeading>
       <div className="mt-3">
         <QuestionCard
           question={question}

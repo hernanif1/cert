@@ -4,6 +4,7 @@ import { Prose } from "@/components/content/Prose";
 import { Callout } from "@/components/content/Callout";
 import { PracticeScenario } from "@/components/lesson/PracticeScenario";
 import { getQuestion } from "@/content/questions";
+import { SectionHeading, SubHeading, headingId } from "@/components/content/SectionHeading";
 
 /**
  * Server-side switch over the LessonBlock discriminated union, with a `never`
@@ -27,7 +28,7 @@ function Block({ block }: { block: LessonBlock }) {
 
     case "heading":
       return (
-        <h3 className="mt-8 font-display text-xl">{block.text}</h3>
+        <SectionHeading id={headingId(block.text)}>{block.text}</SectionHeading>
       );
 
     case "list": {
@@ -108,7 +109,7 @@ function Block({ block }: { block: LessonBlock }) {
     case "example":
       return (
         <section className="my-6 rounded-card border border-border bg-surface p-5">
-          <h3 className="font-display text-lg">{block.title}</h3>
+          <SubHeading className="mt-0">{block.title}</SubHeading>
           <div
             className="mt-3 text-sm leading-relaxed [&_p]:my-2"
             dangerouslySetInnerHTML={{ __html: md(block.scenario) }}

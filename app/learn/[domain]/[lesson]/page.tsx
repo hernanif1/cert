@@ -6,6 +6,7 @@ import { getLesson } from "@/lib/curriculum";
 import { getLessonContent } from "@/content/lessons";
 import { BlockRenderer } from "@/components/content/BlockRenderer";
 import { ExamTraps } from "@/components/content/ExamTraps";
+import { SectionHeading } from "@/components/content/SectionHeading";
 import { Breadcrumbs } from "@/components/lesson/Breadcrumbs";
 import { LessonPager } from "@/components/lesson/LessonPager";
 import { MarkComplete } from "@/components/lesson/MarkComplete";
@@ -60,7 +61,9 @@ export default async function LessonPage({ params }: { params: Params }) {
         </span>
       </div>
 
-      <h1 className="mt-3 font-display text-4xl">{ref.title}</h1>
+      <h1 className="mt-3 font-display text-4xl leading-[1.15] tracking-[-0.02em]">
+        {ref.title}
+      </h1>
 
       <p className="mt-3 max-w-2xl border-l-2 border-border pl-4 text-sm leading-relaxed text-fg-muted">
         <span className="font-medium text-fg">Objective · </span>
@@ -82,8 +85,8 @@ export default async function LessonPage({ params }: { params: Params }) {
           </div>
 
           {content.keyTerms && content.keyTerms.length > 0 && (
-            <section className="mt-10 max-w-3xl">
-              <h2 className="font-display text-2xl">Key terms</h2>
+            <section className="max-w-3xl">
+              <SectionHeading>Key terms</SectionHeading>
               <dl className="mt-3 divide-y divide-border border-y border-border">
                 {content.keyTerms.map((k) => (
                   <div key={k.term} className="py-3">
@@ -97,8 +100,8 @@ export default async function LessonPage({ params }: { params: Params }) {
             </section>
           )}
 
-          <section className="mt-10 max-w-3xl">
-            <h2 className="font-display text-2xl">Sources</h2>
+          <section className="max-w-3xl">
+            <SectionHeading>Sources</SectionHeading>
             <ul className="mt-3 space-y-1.5 text-sm">
               {content.sources.map((s) => (
                 <li key={s.url}>
