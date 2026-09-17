@@ -2,6 +2,7 @@ import type { LessonBlock } from "@/content/schema";
 import { md, mdInline } from "@/lib/markdown";
 import { Prose } from "@/components/content/Prose";
 import { Callout } from "@/components/content/Callout";
+import { CodeBlock } from "@/components/content/CodeBlock";
 import { PracticeScenario } from "@/components/lesson/PracticeScenario";
 import { getQuestion } from "@/content/questions";
 import { SectionHeading, SubHeading, headingId } from "@/components/content/SectionHeading";
@@ -100,11 +101,7 @@ function Block({ block }: { block: LessonBlock }) {
       );
 
     case "code":
-      return (
-        <pre className="my-5 overflow-x-auto rounded-card border border-border bg-surface-2 p-4 text-[13px] leading-relaxed">
-          <code className="font-mono">{block.code}</code>
-        </pre>
-      );
+      return <CodeBlock code={block.code} lang={block.lang} />;
 
     case "example":
       return (

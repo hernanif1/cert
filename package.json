@@ -24,12 +24,15 @@
     "verify:site": "node scripts/verify-site.mjs"
   },
   "dependencies": {
+    "@shikijs/langs": "^4.4.3",
+    "@shikijs/themes": "^4.4.3",
     "clsx": "^2.1.1",
     "marked": "^18.0.13",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
+    "shiki": "^4.4.3",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {

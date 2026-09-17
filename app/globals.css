@@ -146,6 +146,26 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ───────────────────────────────────────────────────────────────────────────
+   Shiki dual-theme. `defaultColor:false` makes shiki emit --shiki-light and
+   --shiki-dark per token instead of a baked colour, so one build serves both
+   themes with no client JS. We keep our own surface; shiki only owns colour.
+   ─────────────────────────────────────────────────────────────────────────── */
+.shiki {
+  background-color: transparent;
+  tab-size: 2;
+}
+
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
