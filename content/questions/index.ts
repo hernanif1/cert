@@ -45,6 +45,8 @@ import { questions as q_d6_6_5 } from "@/content/questions/d6/6-5";
 import { questions as q_d7_7_1 } from "@/content/questions/d7/7-1";
 import { questions as q_d7_7_2 } from "@/content/questions/d7/7-2";
 import { questions as q_d7_7_3 } from "@/content/questions/d7/7-3";
+import { questions as r_d1_d3 } from "@/content/questions/reserved/d1-d3";
+import { questions as r_d4_d7 } from "@/content/questions/reserved/d4-d7";
 
 /**
  * The question bank: one central pool, referenced by id.
@@ -99,6 +101,8 @@ export const QUESTIONS: Question[] = [
   ...q_d7_7_1,
   ...q_d7_7_2,
   ...q_d7_7_3,
+  ...r_d1_d3,
+  ...r_d4_d7,
 ];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));
