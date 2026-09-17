@@ -33,35 +33,43 @@ await page.getByRole("button", { name: /start the exam/i }).click();
 await page.waitForTimeout(600);
 
 const stem = await page.locator("main").innerText();
-check("an item is presented", /question 1 of 3/i.test(stem), stem.split("\n").slice(0,3).join(" | "));
+check("an item is presented", /question 1 of \d+/i.test(stem), stem.split("\n").slice(0, 3).join(" | "));
 check("timer is running", /\d\d:\d\d/.test(stem));
+check(
+  "the form is assembled to the blueprint size",
+  /question 1 of 63/i.test(stem),
+  (stem.match(/question 1 of \d+/i) ?? ["?"])[0],
+);
 check("answers are not revealed during the exam", !/Correct|Not quite/.test(stem));
 
 // Answer via keyboard, flag, navigate.
 await page.keyboard.press("2");
 await page.waitForTimeout(250);
 check("keyboard 1-6 selects a choice",
-  (await page.locator("main").innerText()).includes("1/3 answered"));
+  /\b1\/\d+ answered/.test(await page.locator("main").innerText()));
 await page.keyboard.press("f");
 await page.waitForTimeout(200);
 check("F flags the item", (await page.getByRole("button", { name: /remove review flag/i }).count()) > 0);
 await page.keyboard.press("ArrowRight");
 await page.waitForTimeout(250);
-check("arrow keys navigate", /question 2 of 3/i.test(await page.locator("main").innerText()));
+check("arrow keys navigate", /question 2 of \d+/i.test(await page.locator("main").innerText()));
 
 // Refresh mid-exam: must offer the same attempt, not restart.
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(500);
 const afterReload = await page.locator("main").innerText();
-check("attempt survives a refresh", /answered/i.test(afterReload) && /question \d+ of 3/i.test(afterReload));
-check("answered count survives a refresh", /1\/3 answered/.test(afterReload), afterReload.match(/\d\/3 answered/)?.[0] ?? "");
+check(
+  "attempt survives a refresh",
+  /answered/i.test(afterReload) && /question \d+ of \d+/i.test(afterReload),
+);
+check("answered count survives a refresh", /\b1\/\d+ answered/.test(afterReload), afterReload.match(/\d+\/\d+ answered/)?.[0] ?? "");
 check("no page errors during the exam", errs.length === 0, errs[0] ?? "");
 
 // Submit.
 await page.getByRole("button", { name: /submit exam/i }).click();
 await page.waitForTimeout(300);
 check("submit panel summarises progress",
-  /1 answered/.test(await page.locator("main").innerText()));
+  /\b1 answered/.test(await page.locator("main").innerText()));
 await page.getByRole("button", { name: /^submit$/i }).click();
 await page.waitForURL(/results/, { timeout: 5000 });
 await page.waitForTimeout(600);
