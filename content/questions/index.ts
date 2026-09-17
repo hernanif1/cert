@@ -7,10 +7,27 @@ import type {
   QuestionId,
 } from "@/content/schema";
 
+import { questions as q_d1_1_1 } from "@/content/questions/d1/1-1";
+import { questions as q_d1_1_2 } from "@/content/questions/d1/1-2";
+import { questions as q_d1_1_3 } from "@/content/questions/d1/1-3";
+import { questions as q_d1_1_4 } from "@/content/questions/d1/1-4";
+import { questions as q_d1_1_5 } from "@/content/questions/d1/1-5";
+import { questions as q_d1_1_6 } from "@/content/questions/d1/1-6";
 import { questions as q_d2_2_5 } from "@/content/questions/d2/2-5";
 import { questions as q_d3_3_1 } from "@/content/questions/d3/3-1";
+import { questions as q_d3_3_2 } from "@/content/questions/d3/3-2";
+import { questions as q_d3_3_3 } from "@/content/questions/d3/3-3";
+import { questions as q_d3_3_4 } from "@/content/questions/d3/3-4";
 import { questions as q_d3_3_5 } from "@/content/questions/d3/3-5";
+import { questions as q_d3_3_6 } from "@/content/questions/d3/3-6";
+import { questions as q_d3_3_7 } from "@/content/questions/d3/3-7";
+import { questions as q_d3_3_8 } from "@/content/questions/d3/3-8";
+import { questions as q_d4_4_1 } from "@/content/questions/d4/4-1";
+import { questions as q_d4_4_2 } from "@/content/questions/d4/4-2";
+import { questions as q_d4_4_3 } from "@/content/questions/d4/4-3";
 import { questions as q_d4_4_4 } from "@/content/questions/d4/4-4";
+import { questions as q_d4_4_5 } from "@/content/questions/d4/4-5";
+import { questions as q_d4_4_6 } from "@/content/questions/d4/4-6";
 
 /**
  * The question bank: one central pool, referenced by id.
@@ -27,10 +44,27 @@ import { questions as q_d4_4_4 } from "@/content/questions/d4/4-4";
  * question gets `retired: true`, never deletion or renumbering.
  */
 export const QUESTIONS: Question[] = [
+  ...q_d1_1_1,
+  ...q_d1_1_2,
+  ...q_d1_1_3,
+  ...q_d1_1_4,
+  ...q_d1_1_5,
+  ...q_d1_1_6,
   ...q_d2_2_5,
   ...q_d3_3_1,
+  ...q_d3_3_2,
+  ...q_d3_3_3,
+  ...q_d3_3_4,
   ...q_d3_3_5,
+  ...q_d3_3_6,
+  ...q_d3_3_7,
+  ...q_d3_3_8,
+  ...q_d4_4_1,
+  ...q_d4_4_2,
+  ...q_d4_4_3,
   ...q_d4_4_4,
+  ...q_d4_4_5,
+  ...q_d4_4_6,
 ];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));

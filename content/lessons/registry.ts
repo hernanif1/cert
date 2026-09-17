@@ -2,7 +2,38 @@
 // Run `npm run registry` after adding or removing a lesson file.
 import type { Lesson } from "@/content/schema";
 
+import { lesson as l_1_1_business_problem_translation } from "@/content/lessons/1-1-business-problem-translation";
+import { lesson as l_1_2_end_to_end_architecture } from "@/content/lessons/1-2-end-to-end-architecture";
+import { lesson as l_1_3_architectural_patterns } from "@/content/lessons/1-3-architectural-patterns";
+import { lesson as l_1_4_multi_agent_orchestration } from "@/content/lessons/1-4-multi-agent-orchestration";
+import { lesson as l_1_5_task_decomposition } from "@/content/lessons/1-5-task-decomposition";
+import { lesson as l_1_6_business_value_alignment } from "@/content/lessons/1-6-business-value-alignment";
+import { lesson as l_2_1_model_selection } from "@/content/lessons/2-1-model-selection";
+import { lesson as l_2_2_system_prompts_guardrails } from "@/content/lessons/2-2-system-prompts-guardrails";
+import { lesson as l_2_3_prompt_engineering_techniques } from "@/content/lessons/2-3-prompt-engineering-techniques";
+import { lesson as l_2_4_context_window_token_management } from "@/content/lessons/2-4-context-window-token-management";
+import { lesson as l_2_5_prompt_reuse_caching_skills } from "@/content/lessons/2-5-prompt-reuse-caching-skills";
+import { lesson as l_3_1_tool_configuration_capability_bloat } from "@/content/lessons/3-1-tool-configuration-capability-bloat";
+import { lesson as l_3_2_authentication_authorization } from "@/content/lessons/3-2-authentication-authorization";
+import { lesson as l_3_3_accuracy_latency_tradeoffs } from "@/content/lessons/3-3-accuracy-latency-tradeoffs";
+import { lesson as l_3_4_observability_at_scale } from "@/content/lessons/3-4-observability-at-scale";
 import { lesson as l_3_5_rag_pipeline_design } from "@/content/lessons/3-5-rag-pipeline-design";
+import { lesson as l_3_6_retrieval_strategies } from "@/content/lessons/3-6-retrieval-strategies";
+import { lesson as l_3_7_connection_protocols } from "@/content/lessons/3-7-connection-protocols";
+import { lesson as l_3_8_progressive_discovery } from "@/content/lessons/3-8-progressive-discovery";
+import { lesson as l_4_1_evaluation_metrics } from "@/content/lessons/4-1-evaluation-metrics";
+import { lesson as l_4_2_eval_datasets_frameworks } from "@/content/lessons/4-2-eval-datasets-frameworks";
+import { lesson as l_4_3_ab_testing_iteration } from "@/content/lessons/4-3-ab-testing-iteration";
+import { lesson as l_4_4_diagnosing_system_issues } from "@/content/lessons/4-4-diagnosing-system-issues";
+import { lesson as l_4_5_token_latency_cost_optimization } from "@/content/lessons/4-5-token-latency-cost-optimization";
+import { lesson as l_4_6_logging_observability_monitoring } from "@/content/lessons/4-6-logging-observability-monitoring";
+import { lesson as l_5_1_guardrails_safety_controls } from "@/content/lessons/5-1-guardrails-safety-controls";
+import { lesson as l_5_2_risks_limitations_failure_modes } from "@/content/lessons/5-2-risks-limitations-failure-modes";
+import { lesson as l_5_3_human_in_the_loop } from "@/content/lessons/5-3-human-in-the-loop";
+import { lesson as l_5_4_regulatory_compliance } from "@/content/lessons/5-4-regulatory-compliance";
+import { lesson as l_6_1_structured_discovery } from "@/content/lessons/6-1-structured-discovery";
+import { lesson as l_6_2_communicating_decisions } from "@/content/lessons/6-2-communicating-decisions";
+import { lesson as l_6_3_feedback_loops_slas } from "@/content/lessons/6-3-feedback-loops-slas";
 
 /**
  * Authored lesson bodies, keyed by slug.
@@ -13,5 +44,36 @@ import { lesson as l_3_5_rag_pipeline_design } from "@/content/lessons/3-5-rag-p
  * client component pulling all 38 lesson bodies into its bundle.
  */
 export const AUTHORED: Record<string, Lesson> = {
+  [l_1_1_business_problem_translation.slug]: l_1_1_business_problem_translation,
+  [l_1_2_end_to_end_architecture.slug]: l_1_2_end_to_end_architecture,
+  [l_1_3_architectural_patterns.slug]: l_1_3_architectural_patterns,
+  [l_1_4_multi_agent_orchestration.slug]: l_1_4_multi_agent_orchestration,
+  [l_1_5_task_decomposition.slug]: l_1_5_task_decomposition,
+  [l_1_6_business_value_alignment.slug]: l_1_6_business_value_alignment,
+  [l_2_1_model_selection.slug]: l_2_1_model_selection,
+  [l_2_2_system_prompts_guardrails.slug]: l_2_2_system_prompts_guardrails,
+  [l_2_3_prompt_engineering_techniques.slug]: l_2_3_prompt_engineering_techniques,
+  [l_2_4_context_window_token_management.slug]: l_2_4_context_window_token_management,
+  [l_2_5_prompt_reuse_caching_skills.slug]: l_2_5_prompt_reuse_caching_skills,
+  [l_3_1_tool_configuration_capability_bloat.slug]: l_3_1_tool_configuration_capability_bloat,
+  [l_3_2_authentication_authorization.slug]: l_3_2_authentication_authorization,
+  [l_3_3_accuracy_latency_tradeoffs.slug]: l_3_3_accuracy_latency_tradeoffs,
+  [l_3_4_observability_at_scale.slug]: l_3_4_observability_at_scale,
   [l_3_5_rag_pipeline_design.slug]: l_3_5_rag_pipeline_design,
+  [l_3_6_retrieval_strategies.slug]: l_3_6_retrieval_strategies,
+  [l_3_7_connection_protocols.slug]: l_3_7_connection_protocols,
+  [l_3_8_progressive_discovery.slug]: l_3_8_progressive_discovery,
+  [l_4_1_evaluation_metrics.slug]: l_4_1_evaluation_metrics,
+  [l_4_2_eval_datasets_frameworks.slug]: l_4_2_eval_datasets_frameworks,
+  [l_4_3_ab_testing_iteration.slug]: l_4_3_ab_testing_iteration,
+  [l_4_4_diagnosing_system_issues.slug]: l_4_4_diagnosing_system_issues,
+  [l_4_5_token_latency_cost_optimization.slug]: l_4_5_token_latency_cost_optimization,
+  [l_4_6_logging_observability_monitoring.slug]: l_4_6_logging_observability_monitoring,
+  [l_5_1_guardrails_safety_controls.slug]: l_5_1_guardrails_safety_controls,
+  [l_5_2_risks_limitations_failure_modes.slug]: l_5_2_risks_limitations_failure_modes,
+  [l_5_3_human_in_the_loop.slug]: l_5_3_human_in_the_loop,
+  [l_5_4_regulatory_compliance.slug]: l_5_4_regulatory_compliance,
+  [l_6_1_structured_discovery.slug]: l_6_1_structured_discovery,
+  [l_6_2_communicating_decisions.slug]: l_6_2_communicating_decisions,
+  [l_6_3_feedback_loops_slas.slug]: l_6_3_feedback_loops_slas,
 };
