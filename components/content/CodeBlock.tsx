@@ -27,7 +27,10 @@ export function CodeBlock({ code, lang }: { code: string; lang: CodeLang }) {
         />
       ) : (
         <div className="overflow-x-auto p-4 text-code">
-          <pre className="font-mono">
+          {/* tabIndex matches shiki's own `<pre tabindex="0">`: it gives the
+              browser a focusable element inside the scroll container, so an
+              overflowing block stays keyboard-scrollable on this branch too. */}
+          <pre className="font-mono" tabIndex={0}>
             <code>{code}</code>
           </pre>
         </div>
