@@ -89,6 +89,11 @@ export const lesson = {
       md: "A document with no owner and no update trigger is on a timer. Attach both: a named owner, and the event that forces a revision — adding a tool or data source, changing a model, finding a new failure mode. Calendar-based review rounds find drift months after it happened and are the first thing canceled in a busy quarter.",
     },
 
+    {
+      kind: "callout",
+      variant: "exam-distractor",
+      md: "Documentation items reliably offer *generate the documentation from the code* and *write the full specification before implementation starts*. Both sound rigorous. The first yields an accurate description of what exists while discarding every reason it exists — precisely the part a future maintainer cannot reconstruct. The second fixes decisions before the evaluation evidence that should drive them has been gathered.",
+    },
     { kind: "practice", questionId: "D6-q401" },
   ],
 

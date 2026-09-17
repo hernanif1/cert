@@ -17,6 +17,11 @@ export const lesson = {
       md: "Three terms get used interchangeably and must not be. An **SLI** is the indicator — the quantity actually measured. An **SLO** is the internal objective, set tighter than what you promised so there is margin to notice and fix degradation. An **SLA** is the external commitment, with a consequence attached: credits, penalties, a right to terminate.\n\nA non-deterministic system can still carry a real SLA, provided the commitment is written on quantities that are stable under sampling. Individual outputs vary; rates over a fixed population do not.",
     },
 
+    {
+      kind: "callout",
+      variant: "key-concept",
+      md: "An **SLI** is what you measure, an **SLO** is the internal target, and an **SLA** is the external promise with a consequence attached. Set the SLO tighter than the SLA on purpose: that gap is the margin that lets you notice degradation and fix it before it becomes a credit note.",
+    },
     { kind: "heading", text: "What you can and cannot commit to" },
     {
       kind: "table",
