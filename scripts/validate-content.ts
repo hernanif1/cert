@@ -9,6 +9,9 @@
  *
  * Errors exit 1. Warnings print and exit 0.
  */
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
+
 import { DOMAINS } from "../content/domains";
 import { AUTHORED } from "../content/lessons/registry";
 import { QUESTIONS as BANK } from "../content/questions";
@@ -366,6 +369,70 @@ function checkAnswerBalance(): void {
   }
 }
 
+/**
+ * Near-duplicate stems, by trigram Jaccard similarity.
+ *
+ * Objectives are authored in independent batches, so the same scenario can be
+ * invented twice without anyone noticing. This warns rather than errors: some
+ * overlap between related objectives is legitimate, and only a human can say
+ * which pairs are actually redundant.
+ */
+function trigrams(text: string): Set<string> {
+  const norm = text.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  const grams = new Set<string>();
+  for (let i = 0; i + 3 <= norm.length; i++) grams.add(norm.slice(i, i + 3));
+  return grams;
+}
+
+function jaccard(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 || b.size === 0) return 0;
+  let shared = 0;
+  for (const g of a) if (b.has(g)) shared++;
+  return shared / (a.size + b.size - shared);
+}
+
+const DUPLICATE_THRESHOLD = 0.75;
+
+function checkDuplicateStems(): void {
+  const live = QUESTIONS.filter((q) => !q.retired);
+  if (live.length < 2) return;
+  const grams = live.map((q) => ({ q, g: trigrams(q.stem) }));
+
+  for (let i = 0; i < grams.length; i++) {
+    for (let j = i + 1; j < grams.length; j++) {
+      const score = jaccard(grams[i].g, grams[j].g);
+      if (score > DUPLICATE_THRESHOLD) {
+        warn(
+          "bank",
+          `${grams[i].q.id} and ${grams[j].q.id} have ${Math.round(score * 100)}% similar stems`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Every lesson file on disk must be reachable through the registry. An
+ * unreferenced file is content that was written and then never shipped, which
+ * is invisible without this check.
+ */
+function checkOrphanFiles(): void {
+  const dir = join(import.meta.dirname, "../content/lessons");
+  const onDisk = readdirSync(dir)
+    .filter((f) => f.endsWith(".ts") && f !== "index.ts" && f !== "registry.ts")
+    .map((f) => f.replace(/\.ts$/, ""));
+  const registered = new Set(LESSONS.map((l) => l.slug));
+
+  for (const slug of onDisk) {
+    if (!registered.has(slug)) {
+      err(
+        slug,
+        "lesson file exists but is not in the registry — run `npm run registry`",
+      );
+    }
+  }
+}
+
 /* ────────────────────────────── Report ─────────────────────────────── */
 
 function report(): void {
@@ -392,6 +459,8 @@ function main(): void {
   checkBlueprint();
   checkLessons();
   checkQuestions();
+  checkDuplicateStems();
+  checkOrphanFiles();
   report();
 
   for (const w of warnings) console.warn(`  warn  ${w}`);
