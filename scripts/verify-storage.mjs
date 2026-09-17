@@ -155,7 +155,7 @@ async function main() {
 
     // Force a write attempt, then confirm the blob was left alone.
     await page.goto(`${BASE}/learn/1-solution-design/1-3-architectural-patterns/`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: /mark complete/i }).click();
+    await page.getByRole("button", { name: /mark complete/i }).first().click();
     await page.waitForTimeout(600);
     const after = await page.evaluate((key) => localStorage.getItem(key), KEY);
     const stored = JSON.parse(after);
@@ -185,11 +185,17 @@ async function main() {
     const page = await ctx.newPage();
     const url = `${BASE}/learn/3-integration/3-5-rag-pipeline-design/`;
     await page.goto(url, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: /mark complete/i }).click();
+    await page.getByRole("button", { name: /mark complete/i }).first().click();
     await page.waitForTimeout(500);
     await page.reload({ waitUntil: "networkidle" });
-    const pressed = await page.getByRole("button", { name: /completed/i }).getAttribute("aria-pressed");
+    const pressed = await page.getByRole("button", { name: /completed/i }).first().getAttribute("aria-pressed");
     check("Mark Complete survives reload", pressed === "true", `aria-pressed=${pressed}`);
+    // The header and footer buttons are separate components over one store.
+    const bothPressed = await page
+      .getByRole("button", { name: /completed/i })
+      .evaluateAll((els) => els.every((el) => el.getAttribute("aria-pressed") === "true"));
+    const count = await page.getByRole("button", { name: /completed/i }).count();
+    check("header and footer toggles stay in sync", count === 2 && bothPressed, `${count} button(s)`);
     await ctx.close();
   }
 
@@ -200,7 +206,7 @@ async function main() {
     const b = await ctx.newPage();
     await a.goto(`${BASE}/learn/`, { waitUntil: "networkidle" });
     await b.goto(`${BASE}/learn/1-solution-design/1-4-multi-agent-orchestration/`, { waitUntil: "networkidle" });
-    await b.getByRole("button", { name: /mark complete/i }).click();
+    await b.getByRole("button", { name: /mark complete/i }).first().click();
     await b.waitForTimeout(500);
     await a.bringToFront();
     let synced = false;

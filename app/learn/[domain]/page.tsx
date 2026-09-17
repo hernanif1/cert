@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { DOMAINS } from "@/content/domains";
 import { EXAM } from "@/content/exam-facts";
 import { getDomain, domainNumberLabel, weightPercent } from "@/lib/curriculum";
+import { LessonCheck } from "@/components/progress/LessonCheck";
+import { DomainRing } from "@/components/progress/DomainRing";
 
 // output:'export' requires this — an unknown param must not be rendered on demand.
 export const dynamicParams = false;
@@ -44,7 +46,8 @@ export default async function DomainPage({
         ← Curriculum
       </Link>
 
-      <div className="mt-4 flex items-baseline gap-3">
+      <div className="mt-4 flex items-center gap-3">
+        <DomainRing domainId={d.id} size={48} />
         <span className="tnum font-display text-3xl text-fg-muted/60">
           {domainNumberLabel(d.id)}
         </span>
@@ -60,7 +63,15 @@ export default async function DomainPage({
         {EXAM.itemCount} items to a mock form
       </p>
 
-      <h2 className="mt-10 font-display text-lg">Task statements</h2>
+      <div className="mt-10 flex items-baseline justify-between gap-4">
+        <h2 className="font-display text-lg">Task statements</h2>
+        <Link
+          href="/learn/drill"
+          className="text-sm text-accent underline underline-offset-2"
+        >
+          Drill this domain →
+        </Link>
+      </div>
       <ul className="mt-3 divide-y divide-border border-y border-border">
         {d.objectives.map((o) => (
           <li key={o.slug}>
@@ -68,8 +79,11 @@ export default async function DomainPage({
               href={`/learn/${d.slug}/${o.slug}`}
               className="group flex gap-4 py-4 transition-colors hover:bg-surface-2"
             >
-              <span className="tnum w-10 shrink-0 pl-1 text-sm font-medium text-accent">
-                {o.id}
+              <span className="flex shrink-0 items-center gap-2 pl-1 pt-0.5">
+                <LessonCheck slug={o.slug} />
+                <span className="tnum w-7 text-sm font-medium text-accent">
+                  {o.id}
+                </span>
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-medium group-hover:text-accent">

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { DOMAINS } from "@/content/domains";
 import { EXAM } from "@/content/exam-facts";
 import { domainNumberLabel, TOTAL_LESSONS, weightPercent } from "@/lib/curriculum";
+import { DomainRing } from "@/components/progress/DomainRing";
 
 export const metadata: Metadata = {
   title: "Curriculum",
@@ -45,7 +46,8 @@ export default function LearnPage() {
               href={`/learn/${d.slug}`}
               className="group block rounded-card border border-border bg-surface p-5 transition-colors hover:border-accent"
             >
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-center gap-3">
+                <DomainRing domainId={d.id} />
                 <span className="tnum font-display text-2xl text-fg-muted/60">
                   {domainNumberLabel(d.id)}
                 </span>

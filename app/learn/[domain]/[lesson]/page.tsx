@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { DOMAINS } from "@/content/domains";
@@ -122,6 +123,21 @@ export default async function LessonPage({ params }: { params: Params }) {
       )}
 
       <div className="max-w-3xl">
+        <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-border pt-6">
+          <MarkComplete slug={ref.slug} />
+          <Link
+            href="/learn/drill"
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
+          >
+            Drill this domain
+          </Link>
+          <Link
+            href={`/learn/${ref.domainSlug}`}
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
+          >
+            All of {ref.domainTitle}
+          </Link>
+        </div>
         <LessonPager slug={ref.slug} domainId={ref.domainId} />
       </div>
     </main>

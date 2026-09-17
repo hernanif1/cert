@@ -19,7 +19,8 @@
     "verify:ui": "npm run verify:storage && npm run verify:exam-ui && npm run verify:drill-ui",
     "validate:strict": "tsx scripts/validate-content.ts --strict",
     "verify:queue": "tsx scripts/verify-queue.ts",
-    "verify:drill-ui": "node scripts/verify-drill-ui.mjs"
+    "verify:drill-ui": "node scripts/verify-drill-ui.mjs",
+    "registry": "tsx scripts/generate-registry.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
