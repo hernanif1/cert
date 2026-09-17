@@ -50,7 +50,6 @@ await page.waitForTimeout(250);
 check("arrow keys navigate", /question 2 of 3/i.test(await page.locator("main").innerText()));
 
 // Refresh mid-exam: must offer the same attempt, not restart.
-const beforeReload = await page.locator("main").innerText();
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(500);
 const afterReload = await page.locator("main").innerText();
