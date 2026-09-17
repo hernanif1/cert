@@ -9,7 +9,7 @@ export const lesson = {
     "Ensure compliance with regulations (e.g., GDPR, HIPAA, FedRAMP)",
   title: "Regulatory Compliance",
   summary:
-    "An architect does not rule on whether a use is lawful; an architect makes sure the system can satisfy the controls that lawfulness depends on. That means designing data boundaries, deletion paths, minimization, audit records and a human-intervention route before anyone asks for them.",
+    "An architect does not rule on whether a use is lawful; an architect makes sure the system can satisfy the controls lawfulness depends on. That means designing data boundaries, deletion paths, minimization and audit records before anyone asks for them.",
 
   body: [
     {
@@ -24,19 +24,25 @@ export const lesson = {
         [
           "GDPR",
           "Is this personal data processed lawfully, minimally and transparently?",
-          "Purpose-scoped stores, field-level minimization before the prompt, deletion that reaches logs and indexes, residency, a human-intervention route for significant automated decisions",
+          "Purpose-scoped stores, minimization before the prompt, deletion that reaches logs and indexes, residency, human intervention on significant automated decisions",
         ],
         [
           "HIPAA",
           "Is protected health information handled by permitted parties, for permitted purposes, at the minimum necessary?",
-          "A signed BAA with every vendor that touches PHI, de-identification or redaction before egress, encryption, audit records of who accessed what",
+          "A signed BAA with every vendor that touches PHI, redaction before egress, encryption, audit records of who accessed what",
         ],
         [
           "FedRAMP",
           "Is every cloud service inside this system's authorization boundary authorized at the right impact level?",
-          "A drawn authorization boundary, services chosen from authorized offerings, evidence and continuous monitoring for the agency's ATO",
+          "A drawn authorization boundary, services chosen from authorized offerings, continuous monitoring for the agency's ATO",
         ],
       ],
+    },
+
+    {
+      kind: "callout",
+      variant: "key-concept",
+      md: "**Design for the control; do not rule on the law.** Your deliverables are capabilities: a deletion path that reaches every store, a boundary diagram, a redaction step, an audit record, a person who can change an outcome. Whether a processing activity is lawful belongs to counsel. Whether complying is even *possible* belongs to you.",
     },
 
     { kind: "heading", text: "GDPR, concretely" },
@@ -46,7 +52,7 @@ export const lesson = {
         "**Lawful basis and purpose limitation.** Data collected to deliver a service cannot be quietly reused to fine-tune a model; that is a new purpose needing its own basis. Architecturally, training corpora and operational stores must be separable and labeled.",
         "**Data minimization.** Send the fields the task needs. Replacing a name and account number with a case id before the prompt is a small change that removes the record from a whole class of downstream obligations.",
         "**Subject rights.** Access, rectification, erasure and portability reach everywhere personal data landed: prompt logs, vector indexes, caches, evaluation datasets, backups. Design the deletion path when you design ingestion.",
-        "**Automated decisions.** Article 22 restricts decisions made solely by automated processing with legal or similarly significant effects; where permitted, the subject is entitled to meaningful human intervention, information about the logic, and a route to contest. That means a decision record, a reviewer with authority to change the outcome, and an appeal channel.",
+        "**Automated decisions.** Article 22 restricts decisions made solely by automated processing with legal or similarly significant effects; where permitted, the subject is entitled to human intervention, information about the logic, and a route to contest. That means a decision record, a reviewer with authority, and an appeal channel.",
         "**Transfers and residency.** Where inference runs is a design decision, not a procurement footnote.",
       ],
     },
@@ -65,18 +71,24 @@ export const lesson = {
     { kind: "heading", text: "FedRAMP, concretely" },
     {
       kind: "prose",
-      md: "FedRAMP authorizes *cloud service offerings*, not applications and not models. The architect's first artifact is the **authorization boundary**: every component that stores, processes or transmits federal data, including the ones teams forget — the logging pipeline, the vector store, the observability SaaS.\n\nEach component inside it must be authorized at or above the system's impact level (Low, Moderate or High, mapped to NIST SP 800-53 control baselines), the agency issues an ATO for the system as a whole, and continuous monitoring follows. \"Our model provider is authorized\" says nothing about the trace pipeline pointed at a vendor that is not.",
+      md: "FedRAMP authorizes *cloud service offerings*, not applications and not models. The architect's first artifact is the **authorization boundary**: every component that stores, processes or transmits federal data, including the ones teams forget — the logging pipeline, the vector store, the observability SaaS.\n\nEach component inside it must be authorized at or above the system's impact level (Low, Moderate or High, mapped to NIST SP 800-53 baselines), the agency issues the ATO for the system as a whole, and continuous monitoring follows.",
     },
 
     {
       kind: "example",
       title: "Practical example: a prior-authorization assistant at a health plan",
       scenario:
-        "A plan wants an assistant that reads prior-authorization requests, retrieves plan rules and recommends approve, deny or refer. Members are in the US and the EU. The team plans to log full prompts and completions to a third-party observability SaaS, and to fine-tune on a year of historical cases.",
+        "A plan wants an assistant that reads prior-authorization requests, retrieves plan rules and recommends approve, deny or refer. Members are in the US and the EU. The team plans to log full prompts to a third-party observability SaaS and to fine-tune on a year of historical cases.",
       walkthrough:
-        "1. **Classify the data first.** Requests contain PHI, so every component that sees a prompt is in scope. That puts the observability vendor in scope and requires a BAA with them, not only with the model provider.\n2. **Minimize before the prompt.** Member identifiers are not needed to apply plan rules; substitute a pseudonymous case id and keep the mapping in the system of record.\n3. **Split the logging.** Structured metadata — trace id, rule version, latency, outcome — can flow to the SaaS; prompt bodies stay in a covered store with short retention.\n4. **Question the fine-tune.** The cases were collected to adjudicate claims, so training on them is a distinct purpose needing its own basis, and for EU members it creates an erasure obligation a trained model cannot satisfy. Retrieval over the same corpus avoids both.\n5. **Design for Article 22 before launch.** A denial is a significant decision: the assistant recommends, a named human decides with the retrieved rule text in front of them, and the member gets an explanation and an appeal route.",
+        "1. **Classify the data first.** Requests contain PHI, so every component that sees a prompt is in scope — which requires a BAA with the observability vendor, not only with the model provider.\n2. **Minimize before the prompt.** Member identifiers are not needed to apply plan rules; substitute a case id and keep the mapping in the system of record.\n3. **Split the logging.** Structured metadata can flow to the SaaS; prompt bodies stay in a covered store with short retention.\n4. **Question the fine-tune.** The cases were collected to adjudicate claims, so training on them is a distinct purpose needing its own basis, and for EU members it creates an erasure obligation a trained model cannot satisfy. Retrieval over the same corpus avoids both.\n5. **Design for Article 22 before launch.** A denial is a significant decision: the assistant recommends, a named human decides with the retrieved rule text in front of them, and the member gets an explanation and an appeal route.",
       takeaway:
         "Not one of these steps is a legal opinion. Each is an architecture decision that either makes the lawyers' answer available or makes it impossible.",
+    },
+
+    {
+      kind: "callout",
+      variant: "exam-distractor",
+      md: "Compliance items reliably offer *encrypt everything* and *the vendor is certified*. Both are true statements that settle nothing: encryption is one safeguard among many, and an authorization or a BAA attaches to a named party, never to your system as a whole.",
     },
 
     { kind: "practice", questionId: "D5-q401" },
@@ -116,7 +128,7 @@ export const lesson = {
       trap: "Encrypting data in transit and at rest makes a system HIPAA compliant.",
       why: "Encryption is one technical safeguard among administrative, physical and technical requirements; without a signed BAA, minimum-necessary scoping, access control and audit records, the result is an encrypted non-compliant system.",
       instead:
-        "Treat encryption as table stakes and work the full control set, starting with which parties may touch PHI at all.",
+        "Treat encryption as table stakes and work the full control set, starting with which parties may touch PHI.",
     },
     {
       id: "t2",
@@ -130,7 +142,7 @@ export const lesson = {
       trap: "The model provider holds a FedRAMP authorization, so the system is FedRAMP compliant.",
       why: "FedRAMP authorizes individual cloud service offerings at an impact level, while a system's standing depends on every service inside its authorization boundary and on an agency ATO for the system as a whole.",
       instead:
-        "Draw the boundary, verify each component's authorization at or above the required impact level, and plan continuous monitoring.",
+        "Draw the boundary, verify each component's authorization at the required impact level, and plan continuous monitoring.",
     },
     {
       id: "t4",

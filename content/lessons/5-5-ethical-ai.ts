@@ -96,6 +96,12 @@ export const lesson = {
       md: "*We removed the protected attributes* and *the provider evaluated the model for bias* are the two most common answers, and they fail for the same reason: fairness is a property of a deployed system doing a particular task for a particular population, and only measuring that system's outcomes can establish it.",
     },
 
+    {
+      kind: "callout",
+      variant: "exam-distractor",
+      md: "Watch for *train on more diverse data* and *add a bias filter to the output*. Both describe work somebody else does to a model, while the item is asking what you will measure, on which population, against which criterion, and who signs the choice off.",
+    },
+
     { kind: "practice", questionId: "D5-q501" },
   ],
 

@@ -81,6 +81,12 @@ export const lesson = {
       md: "This is why **shortening the chain is a safety control**. Collapsing three probabilistic steps into one deterministic code path removes their failure rates entirely, and it is usually cheaper than raising per-step accuracy. It is also why per-step accuracy is a misleading number to report to a stakeholder: quote end-to-end completion.",
     },
 
+    {
+      kind: "callout",
+      variant: "exam-distractor",
+      md: "When a chained workflow underperforms, *use a more capable model* and *add retries* are both on the menu. Neither touches the arithmetic: retries help transient tool errors and do nothing for a step that silently returns a wrong answer, and a model at 98% per step still loses a third of twenty-step runs.",
+    },
+
     { kind: "heading", text: "Limitations that are properties, not bugs" },
     {
       kind: "list",

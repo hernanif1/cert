@@ -13,6 +13,10 @@ import { questions as q_d1_1_3 } from "@/content/questions/d1/1-3";
 import { questions as q_d1_1_4 } from "@/content/questions/d1/1-4";
 import { questions as q_d1_1_5 } from "@/content/questions/d1/1-5";
 import { questions as q_d1_1_6 } from "@/content/questions/d1/1-6";
+import { questions as q_d2_2_1 } from "@/content/questions/d2/2-1";
+import { questions as q_d2_2_2 } from "@/content/questions/d2/2-2";
+import { questions as q_d2_2_3 } from "@/content/questions/d2/2-3";
+import { questions as q_d2_2_4 } from "@/content/questions/d2/2-4";
 import { questions as q_d2_2_5 } from "@/content/questions/d2/2-5";
 import { questions as q_d3_3_1 } from "@/content/questions/d3/3-1";
 import { questions as q_d3_3_2 } from "@/content/questions/d3/3-2";
@@ -31,11 +35,16 @@ import { questions as q_d4_4_6 } from "@/content/questions/d4/4-6";
 import { questions as q_d5_5_1 } from "@/content/questions/d5/5-1";
 import { questions as q_d5_5_2 } from "@/content/questions/d5/5-2";
 import { questions as q_d5_5_3 } from "@/content/questions/d5/5-3";
+import { questions as q_d5_5_4 } from "@/content/questions/d5/5-4";
+import { questions as q_d5_5_5 } from "@/content/questions/d5/5-5";
 import { questions as q_d6_6_1 } from "@/content/questions/d6/6-1";
 import { questions as q_d6_6_2 } from "@/content/questions/d6/6-2";
 import { questions as q_d6_6_3 } from "@/content/questions/d6/6-3";
 import { questions as q_d6_6_4 } from "@/content/questions/d6/6-4";
 import { questions as q_d6_6_5 } from "@/content/questions/d6/6-5";
+import { questions as q_d7_7_1 } from "@/content/questions/d7/7-1";
+import { questions as q_d7_7_2 } from "@/content/questions/d7/7-2";
+import { questions as q_d7_7_3 } from "@/content/questions/d7/7-3";
 
 /**
  * The question bank: one central pool, referenced by id.
@@ -58,6 +67,10 @@ export const QUESTIONS: Question[] = [
   ...q_d1_1_4,
   ...q_d1_1_5,
   ...q_d1_1_6,
+  ...q_d2_2_1,
+  ...q_d2_2_2,
+  ...q_d2_2_3,
+  ...q_d2_2_4,
   ...q_d2_2_5,
   ...q_d3_3_1,
   ...q_d3_3_2,
@@ -76,11 +89,16 @@ export const QUESTIONS: Question[] = [
   ...q_d5_5_1,
   ...q_d5_5_2,
   ...q_d5_5_3,
+  ...q_d5_5_4,
+  ...q_d5_5_5,
   ...q_d6_6_1,
   ...q_d6_6_2,
   ...q_d6_6_3,
   ...q_d6_6_4,
   ...q_d6_6_5,
+  ...q_d7_7_1,
+  ...q_d7_7_2,
+  ...q_d7_7_3,
 ];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));
