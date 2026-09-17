@@ -9,12 +9,38 @@
  * Usage: node scripts/verify-storage.mjs [baseUrl]
  */
 import { chromium } from "playwright-core";
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 
 const BASE = process.argv[2] ?? "http://localhost:3001";
 const KEY = "ccarp:v1";
+
+/**
+ * One drill-pool question id per objective, read out of the real bank.
+ *
+ * The readiness lessons gate only credits a lesson once a question on its
+ * objective has been answered, so a test that wants a high composite has to
+ * answer something real. Deriving the ids keeps this from rotting the next
+ * time the bank is renumbered.
+ */
+function oneQuestionPerObjective() {
+  const out = execFileSync(
+    "npx",
+    ["tsx", "-e", `
+      import { QUESTIONS } from "./content/questions";
+      const first = new Map();
+      for (const q of QUESTIONS) {
+        if (q.pool !== "drill" || q.retired) continue;
+        if (!first.has(q.objective)) first.set(q.objective, q.id);
+      }
+      console.log(JSON.stringify([...first.values()]));
+    `],
+    { cwd: process.cwd(), encoding: "utf8", env: { ...process.env, PATH: process.env.PATH } },
+  );
+  return JSON.parse(out.trim().split("\n").pop());
+}
 
 /** Read the 38 lesson slugs out of the rendered curriculum, so this test
  *  cannot drift from content/domains.ts. */
@@ -260,11 +286,18 @@ async function main() {
     check("dashboard: no hydration warnings", hydrationNoise(msgs).length === 0,
       hydrationNoise(msgs)[0] ?? "");
 
-    // All 38 lessons plus three failing mocks: a composite high enough to be
-    // making a claim, contradicted by the number that actually decides.
-    await page.evaluate(([key, slugs]) => {
+    // All 38 lessons COMPLETED AND EXERCISED, plus three failing mocks: a
+    // composite high enough to be making a claim, contradicted by the number
+    // that actually decides. Without the answered cards the lessons gate zeroes
+    // that component and the composite never reaches the warning threshold.
+    const QUESTION_IDS = oneQuestionPerObjective();
+    await page.evaluate(([key, slugs, questionIds]) => {
       const lessons = {};
       for (const s of slugs) lessons[s] = { completedAt: 1, viewedAt: 1 };
+      const cards = {};
+      for (const id of questionIds) {
+        cards[id] = { b: 4, due: Date.now() + 6e8, r: 3, c: 3, l: 0, st: 3, last: Date.now() };
+      }
       const byDomain = {1:{correct:11,total:11},2:{correct:8,total:8},3:{correct:12,total:12},
         4:{correct:10,total:10},5:{correct:9,total:9},6:{correct:9,total:9},7:{correct:4,total:4}};
       const mock = (id) => ({ id, seed:1, startedAt:1, submittedAt: Date.now(),
@@ -272,13 +305,21 @@ async function main() {
         byDomain, questionIds:[], correctness:[] });
       localStorage.setItem(key, JSON.stringify({
         schemaVersion: 1, lessons,
+        drill: { cards, daily: { date: "", newIntroduced: 0, reviewsDone: 0 },
+                 settings: { newPerDay: 15, sessionSize: 20 },
+                 streak: { current: 0, longest: 0, lastStudyDate: "" } },
         examHistory: [mock("a"), mock("b"), mock("c")],
       }));
-    }, [KEY, ALL_SLUGS]);
+    }, [KEY, ALL_SLUGS, QUESTION_IDS]);
     await page.reload({ waitUntil: "networkidle" });
 
     const body = await page.locator("main").innerText();
     check("dashboard shows 38/38 lessons", body.includes("38/38"), "");
+    check(
+      "one question per objective was seeded",
+      QUESTION_IDS.length === 38,
+      `${QUESTION_IDS.length} ids`,
+    );
     check(
       "readiness warns about the failing mock",
       body.includes("690") && /that decides/i.test(body),
