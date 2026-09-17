@@ -4,6 +4,7 @@ import { ThemeScript } from "@/components/providers/ThemeScript";
 import { AppChrome } from "@/components/providers/AppChrome";
 import { TopBar } from "@/components/layout/TopBar";
 import { Footer } from "@/components/layout/Footer";
+import { StorageBanner } from "@/components/layout/StorageBanner";
 import { EXAM } from "@/content/exam-facts";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <AppChrome>
+          <StorageBanner />
           <TopBar />
           {children}
           <Footer />

@@ -7,6 +7,7 @@ import { BlockRenderer } from "@/components/content/BlockRenderer";
 import { ExamTraps } from "@/components/content/ExamTraps";
 import { Breadcrumbs } from "@/components/lesson/Breadcrumbs";
 import { LessonPager } from "@/components/lesson/LessonPager";
+import { MarkComplete } from "@/components/lesson/MarkComplete";
 
 export const dynamicParams = false;
 
@@ -52,6 +53,9 @@ export default async function LessonPage({ params }: { params: Params }) {
         </span>
         <span className="tnum rounded border border-accent/40 bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
           Task {ref.id}
+        </span>
+        <span className="ml-auto">
+          <MarkComplete slug={ref.slug} />
         </span>
       </div>
 

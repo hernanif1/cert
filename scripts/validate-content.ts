@@ -13,7 +13,6 @@ import { DOMAINS } from "../content/domains";
 import {
   correctIdsOf,
   type ChoiceId,
-  type DomainNumber,
   type Lesson,
   type Question,
 } from "../content/schema";

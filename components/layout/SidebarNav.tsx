@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DOMAINS } from "@/content/domains";
-import { domainNumberLabel, weightPercent } from "@/lib/curriculum";
+import { domainNumberLabel } from "@/lib/curriculum";
 import { cn } from "@/lib/cn";
+import {
+  DomainLessonCounter,
+  OverallLessonCounter,
+} from "@/components/progress/LessonCounter";
 
 /**
  * Client component because it needs usePathname for active state. It imports
@@ -57,7 +61,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     <nav className="text-sm" onClick={onNavigate}>
       <SectionLabel>Curriculum</SectionLabel>
       <NavLink href="/learn" active={path === "/learn"}>
-        Overview
+        <span className="flex items-baseline gap-2">
+          <span className="flex-1">Overview</span>
+          <OverallLessonCounter />
+        </span>
       </NavLink>
 
       <ul className="mt-0.5 space-y-0.5">
@@ -73,9 +80,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     {domainNumberLabel(d.id)}
                   </span>
                   <span className="min-w-0 flex-1">{d.title}</span>
-                  <span className="tnum text-[11px] text-fg-muted/70">
-                    {weightPercent(d.weight)}
-                  </span>
+                  <DomainLessonCounter domainId={d.id} />
                 </span>
               </NavLink>
             </li>
