@@ -84,12 +84,18 @@ for (const dir of readdirSync(QUESTION_DIR).filter((d) => /^d[1-7]$/.test(d)).so
   }
 }
 
-const reservedPath = join(QUESTION_DIR, "reserved.ts");
-if (existsSync(reservedPath)) {
-  questionImports.push(
-    `import { questions as q_reserved } from "@/content/questions/reserved";`,
-  );
-  questionSpreads.push(`  ...q_reserved,`);
+// Mock Form A lives in its own directory so it can be authored in parallel
+// without two writers contending for one file.
+const reservedDir = join(QUESTION_DIR, "reserved");
+if (existsSync(reservedDir)) {
+  for (const file of readdirSync(reservedDir).filter((f) => f.endsWith(".ts")).sort()) {
+    const base = file.replace(/\.ts$/, "");
+    const id = identifier("r_", base);
+    questionImports.push(
+      `import { questions as ${id} } from "@/content/questions/reserved/${base}";`,
+    );
+    questionSpreads.push(`  ...${id},`);
+  }
 }
 
 writeFileSync(

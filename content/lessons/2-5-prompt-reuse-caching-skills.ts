@@ -90,7 +90,7 @@ varies per request — never above this line
       md: "When an item mentions caching, watch for options that claim it reduces tokens sent, extends the context window, or applies to repeated content anywhere in the prompt. All three are wrong for the same reason: caching matches a prefix and changes processing, not payload.",
     },
 
-    { kind: "practice", questionId: "D2-q502" },
+    { kind: "practice", questionId: "D2-q505" },
   ],
 
   keyTerms: [
@@ -154,7 +154,7 @@ varies per request — never above this line
     },
   ],
 
-  practiceQuestionIds: ["D2-q502", "D2-q501"],
+  practiceQuestionIds: ["D2-q505", "D2-q501"],
 
   sources: [
     {

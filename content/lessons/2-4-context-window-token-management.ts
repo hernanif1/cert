@@ -94,7 +94,7 @@ export const lesson = {
       md: "*Move to a model with a larger context window* is offered whenever a scenario mentions truncation, cost drift or a long session. It is the right answer only when a single irreducible input genuinely does not fit. When the scenario shows growth over time or degraded answer quality, the keyed option manages what goes in.",
     },
 
-    { kind: "practice", questionId: "D2-q401" },
+    { kind: "practice", questionId: "D2-q405" },
   ],
 
   keyTerms: [
@@ -151,7 +151,7 @@ export const lesson = {
     },
   ],
 
-  practiceQuestionIds: ["D2-q401"],
+  practiceQuestionIds: ["D2-q405", "D2-q401"],
 
   sources: [
     {
