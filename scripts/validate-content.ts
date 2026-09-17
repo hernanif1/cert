@@ -190,6 +190,34 @@ function checkLessons(): void {
     if (l.practiceQuestionIds.length < 1 || l.practiceQuestionIds.length > 2) {
       err(where, `${l.practiceQuestionIds.length} practice questions, expected 1-2`);
     }
+
+    /**
+     * Structural consistency across 38 independently-authored lessons is the
+     * entire reason this content is typed rather than MDX. Every lesson owes
+     * the reader the same anatomy: the thing to memorize, the tempting wrong
+     * answer, a worked case, and something to try.
+     */
+    const callouts = l.body
+      .filter((b) => b.kind === "callout")
+      .map((b) => b.variant);
+    if (!callouts.includes("key-concept")) {
+      shortfall(where, "no key-concept callout");
+    }
+    if (!callouts.includes("exam-distractor")) {
+      shortfall(where, "no exam-distractor callout");
+    }
+    if (!l.body.some((b) => b.kind === "example")) {
+      shortfall(where, "no worked example block");
+    }
+    const practiceBlocks = l.body.filter((b) => b.kind === "practice");
+    if (practiceBlocks.length !== 1) {
+      shortfall(where, `${practiceBlocks.length} practice blocks in body, expected 1`);
+    } else if (practiceBlocks[0].questionId !== l.practiceQuestionIds[0]) {
+      err(
+        where,
+        `practice block renders ${practiceBlocks[0].questionId} but practiceQuestionIds[0] is ${l.practiceQuestionIds[0]}`,
+      );
+    }
   }
 
   const missing = [...OBJECTIVE_SLUG.values()].filter((s) => !bySlug.has(s));
@@ -278,7 +306,10 @@ function checkQuestions(): void {
     for (const qid of l.practiceQuestionIds) {
       const q = byId.get(qid);
       if (!q) {
-        err(l.slug, `practice question ${qid} does not exist`);
+        // Transient while a domain's questions are still being authored; the
+        // lesson page renders nothing rather than crashing. --strict catches
+        // it for release, which is when a dangling reference actually matters.
+        shortfall(l.slug, `practice question ${qid} does not exist yet`);
         continue;
       }
       if (q.pool !== "drill") err(l.slug, `practice question ${qid} is not in the drill pool`);
