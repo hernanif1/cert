@@ -22,6 +22,7 @@ import {
   isAnswerCorrect,
 } from "@/components/question/QuestionCard";
 import { cn } from "@/lib/cn";
+import { ShortcutOverlay } from "@/components/drill/ShortcutOverlay";
 
 const MODES: { id: DrillMode; label: string; hint: string }[] = [
   { id: "due", label: "Due", hint: "Cards scheduled for today" },
@@ -50,6 +51,7 @@ export function DrillRunner() {
   const [revealed, setRevealed] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [log, setLog] = useState<SessionLog[]>([]);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const stats = useMemo(
     () => (hydrated ? queueStats(state, filters) : null),
@@ -103,8 +105,11 @@ export function DrillRunner() {
       } else if (key === "s") {
         setSuspended(question.id, true);
         next();
+      } else if (e.key === "?") {
+        setShowShortcuts((v) => !v);
       } else if (key === "escape") {
-        setIndex(queue?.length ?? 0);
+        if (showShortcuts) setShowShortcuts(false);
+        else setIndex(queue?.length ?? 0);
       } else if (/^[1-6]$/.test(e.key)) {
         if (revealed) return;
         const choice = question.choices[Number(e.key) - 1];
@@ -119,7 +124,7 @@ export function DrillRunner() {
       } else return;
       e.preventDefault();
     },
-    [question, revealed, check, next, state.drill.cards, queue],
+    [question, revealed, check, next, state.drill.cards, queue, showShortcuts],
   );
 
   useEffect(() => {
@@ -319,12 +324,24 @@ export function DrillRunner() {
         {isCram && <span className="text-warning">cram — nothing recorded</span>}
         <button
           type="button"
-          onClick={() => setIndex(queue.length)}
+          onClick={() => setShowShortcuts(true)}
           className="ml-auto underline underline-offset-2 hover:text-fg"
+        >
+          Shortcuts
+        </button>
+        <button
+          type="button"
+          onClick={() => setIndex(queue.length)}
+          className="underline underline-offset-2 hover:text-fg"
         >
           End session
         </button>
       </div>
+
+      <ShortcutOverlay
+        open={showShortcuts}
+        onClose={() => setShowShortcuts(false)}
+      />
 
       <QuestionCard
         question={question}

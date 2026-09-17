@@ -425,7 +425,7 @@ function checkOrphanFiles(): void {
 
   for (const slug of onDisk) {
     if (!registered.has(slug)) {
-      err(
+      shortfall(
         slug,
         "lesson file exists but is not in the registry — run `npm run registry`",
       );

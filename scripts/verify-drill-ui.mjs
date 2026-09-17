@@ -66,7 +66,20 @@ await page.keyboard.press("b");
 await page.waitForTimeout(300);
 await page.keyboard.press("Escape");
 await page.waitForTimeout(300);
-check("Escape ends the session", /session complete/i.test(await page.locator("main").innerText()));
+// "?" opens the shortcut overlay; Escape closes it before ending the session.
+await page.keyboard.press("?");
+await page.waitForTimeout(300);
+check("? opens the shortcut overlay",
+  /keyboard shortcuts/i.test(await page.locator("body").innerText()));
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+const afterOverlayClose = await page.locator("main").innerText();
+check("Escape closes the overlay without ending the session",
+  !/session complete/i.test(afterOverlayClose));
+
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+check("Escape then ends the session", /session complete/i.test(await page.locator("main").innerText()));
 
 await page.getByRole("button", { name: /change filters/i }).click();
 await page.waitForTimeout(300);
