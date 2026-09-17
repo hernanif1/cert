@@ -91,7 +91,7 @@ export const lesson = {
     {
       kind: "callout",
       variant: "exam-distractor",
-      md: "*Move to a model with a larger context window* is offered whenever a scenario mentions truncation, cost drift or a long session. It is the right answer only when a single irreducible input genuinely does not fit. When the scenario shows growth over time or degraded answer quality, the keyed option manages what goes in.",
+      md: "The tempting option on this objective is the one that buys headroom at the point of failure — *truncate the oldest turns once requests start being rejected*, *raise the output limit*, *drop to a cheaper tier to absorb the cost*. Each treats a symptom without naming the component that is growing. The keyed option identifies that component, usually conversation history or unprojected tool results, and applies the lever that belongs to it.",
     },
 
     { kind: "practice", questionId: "D2-q405" },
@@ -123,10 +123,10 @@ export const lesson = {
   traps: [
     {
       id: "t1",
-      trap: "A larger context window removes the need to manage context.",
-      why: "Cost and latency scale with the tokens actually sent rather than with the size of the ceiling, and answer quality degrades when the relevant passage is surrounded by material that is merely related.",
+      trap: "Where material sits inside the window does not matter, as long as everything fits.",
+      why: "Assembly order changes both attention and cost: a question buried ahead of a long document competes with everything that follows it, and volatile content placed early invalidates the cached prefix for every token after it.",
       instead:
-        "Treat window size as headroom for irreducible inputs, and keep selecting the smallest context that answers the question.",
+        "Order the prompt deliberately — stable system text and reference material first so the prefix caches, the instruction and the question last so the model acts on what it has just read.",
     },
     {
       id: "t2",

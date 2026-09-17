@@ -143,7 +143,7 @@ export const lesson = {
       trap: "Collecting thumbs-up and thumbs-down ratings gives the team a working feedback loop.",
       why: "An unqualified negative rating cannot be attributed to retrieval, reasoning, latency or an unwanted refusal, so a rising rate tells you something is wrong without telling anyone what to fix.",
       instead:
-        "Require a reason code, route each code to the component it implicates, and promote confirmed defects into the eval set.",
+        "Require a reason code, route each code to the component it implicates, and promote confirmed defects into the golden set.",
     },
     {
       id: "t3",

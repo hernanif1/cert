@@ -65,9 +65,9 @@ export const questions = [
       },
       {
         id: "D",
-        text: "The engineer should have raised the temperature to make the failure surface more readily.",
+        text: "The engineer should have added logging around the balance lookup and waited for the next user report.",
         rationale:
-          "Changing sampling parameters changes the system under test, so whatever is observed afterward no longer describes the production behavior being investigated.",
+          "Instrumentation is worth adding, but deferring the investigation to the next chance occurrence ignores a captured request that can be replayed now to establish the failure rate.",
       },
     ],
     explanation:

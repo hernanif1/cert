@@ -162,7 +162,7 @@ export const questions = [
     id: "D6-q305",
     domain: 6,
     objective: "6.3",
-    stem: "Legal is drafting the service agreement for a generative drafting assistant sold to enterprise customers and asks the architect which commitments can be written into it. Which TWO belong in the SLA as written? (Select TWO.)",
+    stem: "Legal is drafting the service agreement for a generative drafting assistant sold to enterprise customers and asks the architect which commitments can be written into it. Which TWO belong in the SLA as written?",
     choices: [
       {
         id: "A",

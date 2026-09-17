@@ -84,7 +84,7 @@ export const questions = [
     id: "D6-q103",
     domain: 6,
     objective: "6.1",
-    stem: "A discovery call for an internal legal-research assistant produces a one-page requirement: “answers questions about our contracts, 95% accurate, live in Q3.” Which TWO additions would do the most to make that requirement actionable? (Select TWO.)",
+    stem: "A discovery call for an internal legal-research assistant produces a one-page requirement: “answers questions about our contracts, 95% accurate, live in Q3.” Which TWO additions would do the most to make that requirement actionable?",
     choices: [
       {
         id: "A",

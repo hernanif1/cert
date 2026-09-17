@@ -143,9 +143,9 @@ export const questions = [
       },
       {
         id: "D",
-        text: "Increasing temperature so the model commits to an answer sooner instead of deliberating.",
+        text: "Splitting the instruction and policy block across several smaller requests so no single call carries all of it.",
         rationale:
-          "Temperature affects token sampling, not how fast tokens are produced. It has no bearing on latency in either direction.",
+          "Each call still processes its share of the same policy text and adds a round trip of its own, so total input work rises and the wait before the first visible token gets longer rather than shorter.",
       },
     ],
     explanation:
@@ -201,7 +201,7 @@ export const questions = [
     id: "D2-q106",
     domain: 2,
     objective: "2.1",
-    stem: "A document-processing platform handles two million requests a day. About 94% are routine single-page forms and 6% are complex multi-document packets that the smallest model handles badly. Everything currently runs on the most capable model and the workload is well over budget. Which TWO changes reduce cost substantially without regressing the complex packets? (Select TWO.)",
+    stem: "A document-processing platform handles two million requests a day. About 94% are routine single-page forms and 6% are complex multi-document packets that the smallest model handles badly. Everything currently runs on the most capable model and the workload is well over budget. Which TWO changes reduce cost substantially without regressing the complex packets?",
     choices: [
       {
         id: "A",

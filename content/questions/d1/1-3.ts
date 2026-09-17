@@ -162,7 +162,7 @@ export const questions = [
     id: "D1-q305",
     domain: 1,
     objective: "1.3",
-    stem: "An architect is deciding between a code-defined workflow and an agentic design for a new internal tool. Which TWO conditions most strongly favor the agentic design? (Select TWO.)",
+    stem: "An architect is deciding between a code-defined workflow and an agentic design for a new internal tool. Which TWO conditions most strongly favor the agentic design?",
     choices: [
       {
         id: "A",

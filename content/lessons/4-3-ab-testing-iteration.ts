@@ -13,7 +13,7 @@ export const lesson = {
   body: [
     {
       kind: "prose",
-      md: "Offline evaluation and online experimentation answer different questions and neither replaces the other. A golden dataset measures capability against cases you chose; an A/B test measures outcomes against traffic you did not choose, including the inputs nobody thought to write down. A change should clear the cheap gate before it reaches the expensive one.",
+      md: "Offline evaluation and online experimentation answer different questions and neither replaces the other. A golden set measures capability against cases you chose; an A/B test measures outcomes against traffic you did not choose, including the inputs nobody thought to write down. A change should clear the cheap gate before it reaches the expensive one.",
     },
     {
       kind: "table",
@@ -35,7 +35,7 @@ export const lesson = {
         [
           "Canary",
           "A small slice, watched closely",
-          "Operational breakage and guardrail violations, quickly",
+          "Operational breakage and guardrail-metric violations, quickly",
           "Small effects — the sample is deliberately too small",
         ],
         [
@@ -54,7 +54,7 @@ export const lesson = {
       items: [
         "**Change one thing.** If the prompt, the model and the retrieval depth all move together, a win is unattributable and a loss is undiagnosable. Bundled changes are the single most common reason an experiment teaches nothing.",
         "**Pick a sticky randomization unit.** Assign by user or session, not per request. Per-request assignment shows one person both variants, which produces an incoherent experience and contaminates every user-level metric.",
-        "**Name one primary metric before starting**, plus guardrails — p95 latency, cost per resolved task, escalation rate, refusal rate — that can veto a win on the primary.",
+        "**Name one primary metric before starting**, plus **guardrail metrics** — p95 latency, cost per resolved task, escalation rate, refusal rate — that can veto a win on the primary. The two-word form is deliberate: a guardrail metric measures, while a guardrail in Domain 5 is a control that blocks.",
         "**Compute the sample size in advance** from the baseline rate and the smallest effect worth shipping. That number, not impatience, sets the duration, and it usually spans full weekly cycles so weekday and weekend traffic both land in both arms.",
         "**Pre-specify the segments** you will analyze. Slicing after the fact until something looks significant reliably finds noise.",
       ],
@@ -66,7 +66,7 @@ export const lesson = {
     },
     {
       kind: "prose",
-      md: "Statistical significance and practical significance are separate tests, and both must pass. At large traffic volumes a 0.2% improvement can be significant at any confidence level you like and still fail to justify a model that costs 40% more to run. The decision rule an architect writes down looks like *ship if the primary metric improves by at least X, no guardrail degrades beyond Y, and the result holds across the pre-specified segments*.\n\nWatch for the two effects that make early readings lie. **Novelty** inflates engagement with anything that looks different, and fades. **Learning** works the other way: users who had adapted to the old behavior perform worse at first and recover. Both argue for running the full planned duration rather than reading the first two days.",
+      md: "Statistical significance and practical significance are separate tests, and both must pass. At large traffic volumes a 0.2% improvement can be significant at any confidence level you like and still fail to justify a model that costs 40% more to run. The decision rule an architect writes down looks like *ship if the primary metric improves by at least X, no guardrail metric degrades beyond Y, and the result holds across the pre-specified segments*.\n\nWatch for the two effects that make early readings lie. **Novelty** inflates engagement with anything that looks different, and fades. **Learning** works the other way: users who had adapted to the old behavior perform worse at first and recover. Both argue for running the full planned duration rather than reading the first two days.",
     },
     {
       kind: "example",
@@ -74,7 +74,7 @@ export const lesson = {
       scenario:
         "A support assistant deflects tier-one tickets. The team has rewritten its system prompt, switched to a smaller model for cost, and raised retrieved-chunk count from three to six. They want to run a one-week A/B test on 50% of traffic and ship if deflection rate improves.",
       walkthrough:
-        "1. **Unbundle.** Three changes in one arm means a deflection gain could come from the prompt while the model swap quietly costs accuracy. Split into separate arms or sequential tests.\n2. **Gate offline first.** The regression suite runs against each variant. The smaller model drops eight points on the multi-step troubleshooting stratum, which kills that variant before any user sees it.\n3. **Define the decision rule.** Primary: deflection rate. Guardrails: reopened-ticket rate within 48 hours, p95 latency, CSAT, cost per resolved ticket. Deflection that rises while reopens rise is not a win, it is a deferred cost.\n4. **Power the test.** Baseline deflection 31%, smallest worthwhile effect two points; the calculation says the week is short and the split needs longer, so the duration is set by the math.\n5. **Feed the result back.** Whatever ships, the failing troubleshooting cases become permanent regression items.",
+        "1. **Unbundle.** Three changes in one arm means a deflection gain could come from the prompt while the model swap quietly costs accuracy. Split into separate arms or sequential tests.\n2. **Gate offline first.** The regression suite runs against each variant. The smaller model drops eight points on the multi-step troubleshooting stratum, which kills that variant before any user sees it.\n3. **Define the decision rule.** Primary: deflection rate. Guardrail metrics: reopened-ticket rate within 48 hours, p95 latency, CSAT, cost per resolved ticket. Deflection that rises while reopens rise is not a win, it is a deferred cost.\n4. **Power the test.** Baseline deflection 31%, smallest worthwhile effect two points; the calculation says the week is short and the split needs longer, so the duration is set by the math.\n5. **Feed the result back.** Whatever ships, the failing troubleshooting cases become permanent regression items.",
       takeaway:
         "Most A/B failures are design failures, not analysis failures. Bundling changes and letting a calendar rather than a power calculation set the duration are the two that show up on the exam.",
     },
@@ -96,7 +96,7 @@ export const lesson = {
     {
       term: "Guardrail metric",
       definition:
-        "A metric the experiment must not damage even if the primary metric improves: latency, cost, refusal rate, escalation rate. It holds veto power over a win.",
+        "A metric the experiment must not damage even if the primary metric improves: latency, cost, refusal rate, escalation rate. It holds veto power over a win. Named in full to keep it distinct from a Domain 5 guardrail, which enforces rather than measures.",
     },
     {
       term: "Peeking",
@@ -142,7 +142,7 @@ export const lesson = {
       trap: "A statistically significant gain on the primary metric is sufficient grounds to ship.",
       why: "Significance only says the effect is unlikely to be noise; it says nothing about whether the effect is large enough to be worth its cost, or whether a guardrail metric degraded at the same time.",
       instead:
-        "Require a pre-registered effect size and clean guardrails before the result counts as a win.",
+        "Require a pre-registered effect size and clean guardrail metrics before the result counts as a win.",
     },
     {
       id: "t5",

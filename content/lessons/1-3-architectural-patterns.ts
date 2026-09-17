@@ -52,7 +52,7 @@ export const lesson = {
     },
     {
       kind: "prose",
-      md: "Orchestrator–workers is the pattern most often mislabeled. It is a workflow, because the overall structure is fixed by the designer, but its subtasks are produced at run time instead of written down in advance. That is what distinguishes it from parallelization, and what puts it closest to the agentic boundary without crossing it.",
+      md: "Orchestrator–workers is the pattern most often mislabeled. It is a workflow, because the overall structure is fixed by the designer, but its subtasks are produced at run time instead of written down in advance. That is what distinguishes it from parallelization, and what puts it closest to the agentic boundary without crossing it. The crossing happens one step later, and Objective 1.4 draws the line: a delegate that runs its own tool loop and decides for itself when it is done is a second agent, while one that executes a single generated subtask and returns is not.",
     },
 
     { kind: "heading", text: "Choosing between the three levels" },

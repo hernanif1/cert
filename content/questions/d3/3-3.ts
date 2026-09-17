@@ -6,7 +6,7 @@ export const questions = [
     id: "D3-q301",
     domain: 3,
     objective: "3.3",
-    stem: "A conversational assistant must return its first output within 1.5 seconds at p95. The pipeline runs retrieval, then a classification call with extended thinking enabled, then generation. Measured p95 is 4.1 seconds, of which 2.2 seconds is the classification call. Classification assigns one of nine fixed intents, and offline evaluation shows extended thinking moves its accuracy from 96.4% to 96.9%. What is the best first change?",
+    stem: "A conversational assistant must return its first output within 1.5 seconds at p95. The pipeline runs retrieval, then a classification call configured at the highest reasoning effort, then generation. Measured p95 is 4.1 seconds, of which 2.2 seconds is the classification call. Classification assigns one of nine fixed intents, and offline evaluation shows that running it at the highest effort rather than the lowest moves its accuracy from 96.4% to 96.9%. What is the best first change?",
     choices: [
       {
         id: "A",
@@ -16,7 +16,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "Keep extended thinking and stream the classification stage so the user sees progress.",
+        text: "Keep the effort level and stream the classification stage so the user sees progress.",
         rationale:
           "Intermediate classification output is not useful to the user, and streaming an internal stage does not move the first meaningful token any earlier.",
       },
@@ -28,15 +28,15 @@ export const questions = [
       },
       {
         id: "D",
-        text: "Disable extended thinking for the classification stage.",
+        text: "Drop the classification stage to the lowest reasoning effort.",
       },
     ],
     explanation:
-      "Extended thinking is buying half a percentage point of accuracy on a nine-way classification and costing 2.2 seconds of a 1.5-second budget. Reasoning depth pays off on derivation, not on assigning one of a small set of known labels, so this is the lever with the best latency return per point of accuracy given up.",
+      "The highest effort setting is buying half a percentage point of accuracy on a nine-way classification and costing 2.2 seconds of a 1.5-second budget. Reasoning depth pays off on derivation, not on assigning one of a small set of known labels, so this is the lever with the best latency return per point of accuracy given up.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "drill",
-    tags: ["latency", "extended-thinking", "sla"],
+    tags: ["latency", "reasoning-effort", "sla"],
     type: "single",
     correct: "D",
   },
@@ -84,7 +84,7 @@ export const questions = [
     id: "D3-q303",
     domain: 3,
     objective: "3.3",
-    stem: "A medical-coding assistant suggests billing codes that a certified coder reviews and corrects before submission. The team proposes the highest-capability model, a large extended-thinking budget, and a second verification model call on every suggestion, arguing that billing errors are expensive. Turnaround time has become a complaint. Which critique of this configuration is strongest?",
+    stem: "A medical-coding assistant suggests billing codes that a certified coder reviews and corrects before submission. The team proposes the highest-capability model, running every call at `effort: max`, and a second verification model call on every suggestion, arguing that billing errors are expensive. Turnaround time has become a complaint. Which critique of this configuration is strongest?",
     choices: [
       {
         id: "A",
@@ -92,7 +92,7 @@ export const questions = [
       },
       {
         id: "B",
-        text: "Extended thinking should be removed because code assignment is a lookup task.",
+        text: "The maximum effort setting should be dropped because code assignment is a lookup task.",
         rationale:
           "Assigning codes from clinical narrative involves genuine inference, so this dismisses a lever that may well be earning its latency.",
       },
@@ -123,7 +123,7 @@ export const questions = [
     id: "D3-q304",
     domain: 3,
     objective: "3.3",
-    stem: "A customer-facing chat assistant sends a 9,000-token system prompt of brand guidelines and tool definitions that is byte-identical on every request, and returns each answer as one complete response. Users wait a median of 2.9 seconds before seeing anything; the target is under 1.5. Answer quality is considered good and must not regress. Which two changes most directly reduce the wait? (Select TWO.)",
+    stem: "A customer-facing chat assistant sends a 9,000-token system prompt of brand guidelines and tool definitions that is byte-identical on every request, and returns each answer as one complete response. Users wait a median of 2.9 seconds before seeing anything; the target is under 1.5. Answer quality is considered good and must not regress. Which two changes most directly reduce the wait?",
     choices: [
       {
         id: "A",

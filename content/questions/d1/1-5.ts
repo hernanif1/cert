@@ -45,7 +45,7 @@ export const questions = [
     id: "D1-q502",
     domain: 1,
     objective: "1.5",
-    stem: "An architect is deciding where to cut a complex document-processing task into subtasks. Which TWO properties make a given boundary a good place to split? (Select TWO.)",
+    stem: "An architect is deciding where to cut a complex document-processing task into subtasks. Which TWO properties make a given boundary a good place to split?",
     choices: [
       {
         id: "A",
@@ -167,7 +167,7 @@ export const questions = [
     id: "D1-q505",
     domain: 1,
     objective: "1.5",
-    stem: "A compliance team must check 4,000 call transcripts against the same thirty-point checklist and produce both a per-transcript record and one aggregate report. Transcripts are independent of one another. Which decomposition fits the work?",
+    stem: "A compliance team must check 4,000 call transcripts against the same thirty-point checklist and produce both a per-transcript record and one aggregate report. Every transcript gets all thirty checks in the same order, nothing about a transcript changes which checks run, and transcripts are independent of one another. Which decomposition fits the work?",
     choices: [
       {
         id: "A",

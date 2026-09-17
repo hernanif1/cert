@@ -9,18 +9,18 @@ export const lesson = {
     "Design evaluation datasets and test frameworks using mixed methodologies",
   title: "Eval Datasets and Test Frameworks",
   summary:
-    "A test framework for an LLM system is three graders — code assertions, an LLM judge, and humans — pointed at one versioned dataset. The architecture question is which grader each check belongs to, and how the dataset is built so it keeps catching regressions instead of quietly becoming a training set.",
+    "A test framework for an LLM system is three graders — code assertions, an LLM judge, and humans — pointed at one versioned golden set. The architecture question is which grader each check belongs to, and how the golden set is built so it keeps catching regressions instead of quietly becoming a training set.",
 
   body: [
     {
       kind: "prose",
-      md: "Evaluation is the only thing standing between a demo and a system anyone can rely on, and it rests on two artifacts: a dataset that represents the work, and a framework that grades outputs against it. Neither is optional, and the exam treats *mixed methodologies* as the load-bearing phrase — no single grading method covers a real system.",
+      md: "Evaluation is the only thing standing between a demo and a system anyone can rely on, and it rests on two artifacts: a golden set that represents the work, and a framework that grades outputs against it. Neither is optional, and the exam treats *mixed methodologies* as the load-bearing phrase — no single grading method covers a real system.",
     },
 
-    { kind: "heading", text: "Building the dataset" },
+    { kind: "heading", text: "Building the golden set" },
     {
       kind: "prose",
-      md: "A golden dataset is a set of inputs paired with either a reference output or the criteria by which an output is judged acceptable. Four sources feed it, and a suite built from only one is fragile:",
+      md: "A **golden set** pairs inputs with either a reference output or the criteria by which an output is judged acceptable. Four sources feed it, and a suite built from only one is fragile:",
     },
     {
       kind: "list",
@@ -34,11 +34,11 @@ export const lesson = {
     {
       kind: "callout",
       variant: "key-concept",
-      md: "Stratify deliberately. A dataset sampled purely at random mirrors production, which means the rare, high-consequence cases that actually matter appear once or twice and the aggregate score is dominated by easy traffic. Over-sample the hard strata and report per-stratum scores as well as an overall number. Fifty well-chosen cases run on every change beat two thousand run once a quarter.",
+      md: "Stratify the golden set deliberately. A set sampled purely at random mirrors production, which means the rare, high-consequence cases that actually matter appear once or twice and the aggregate score is dominated by easy traffic. Over-sample the hard strata and report per-stratum scores as well as an overall number. Fifty well-chosen cases run on every change beat two thousand run once a quarter.",
     },
     {
       kind: "prose",
-      md: "Hold out a slice. Once a team iterates prompts against the whole dataset, that dataset has become a training set: scores climb because the prompt has been fitted to those specific items, not because the system improved. Keep a blind split that is used only to confirm a release, and version the dataset so a score is always attributable to a known snapshot.",
+      md: "Hold out a slice. Once a team iterates prompts against the whole golden set, that set has become a training set: scores climb because the prompt has been fitted to those specific items, not because the system improved. Keep a blind split that is used only to confirm a release, and version the golden set so a score is always attributable to a known snapshot.",
     },
 
     { kind: "heading", text: "Three graders, one framework" },
@@ -77,14 +77,14 @@ export const lesson = {
       scenario:
         "The assistant extracts key terms from a contract, flags clauses that deviate from a playbook, and drafts a summary for counsel. The team has one notebook that runs twelve hand-picked contracts and prints outputs for someone to read.",
       walkthrough:
-        "1. **Split the checks by grader.** Extracted dates, parties and values become code assertions against a labeled key. Deviation flags become classification against a labeled set, scored with per-class recall. Only the drafted summary needs a judge.\n2. **Build the dataset in strata.** Two hundred contracts, over-sampled on the clause types counsel says are risky, plus every contract that has ever produced a miss.\n3. **Calibrate the judge.** Two lawyers score 150 summaries against the same rubric; the judge prompt is revised until agreement with them is acceptable, and that agreement is itself tracked.\n4. **Wire it into the pipeline.** Code assertions run on every commit as a blocking gate. The full suite including the judge runs nightly and before release. Humans review a weekly sample plus every case where the judge and a code assertion disagree.",
+        "1. **Split the checks by grader.** Extracted dates, parties and values become code assertions against a labeled key. Deviation flags become classification against a labeled set, scored with per-class recall. Only the drafted summary needs a judge.\n2. **Build the golden set in strata.** Two hundred contracts, over-sampled on the clause types counsel says are risky, plus every contract that has ever produced a miss.\n3. **Calibrate the judge.** Two lawyers score 150 summaries against the same rubric; the judge prompt is revised until agreement with them is acceptable, and that agreement is itself tracked.\n4. **Wire it into the pipeline.** Code assertions run on every commit as a blocking gate. The full suite including the judge runs nightly and before release. Humans review a weekly sample plus every case where the judge and a code assertion disagree.",
       takeaway:
         "The methodologies are layered by cost and frequency, not chosen once. Deterministic checks run constantly, judges run often, humans run rarely and calibrate everything else.",
     },
     {
       kind: "callout",
       variant: "exam-distractor",
-      md: "*Have the same model grade its own outputs* and *collect more production data until the dataset is large enough* both appear as tempting answers. The first introduces self-preference bias into the only signal you have; the second delays every decision and still misses the rare strata that random sampling underrepresents.",
+      md: "*Have the same model grade its own outputs* and *collect more production data until the golden set is large enough* both appear as tempting answers. The first introduces self-preference bias into the only signal you have; the second delays every decision and still misses the rare strata that random sampling underrepresents.",
     },
 
     { kind: "practice", questionId: "D4-q201" },
@@ -92,9 +92,9 @@ export const lesson = {
 
   keyTerms: [
     {
-      term: "Golden dataset",
+      term: "Golden set",
       definition:
-        "A versioned set of inputs paired with reference outputs or acceptance criteria, used as the fixed yardstick against which every system change is scored.",
+        "A versioned set of inputs paired with reference outputs or acceptance criteria, used as the fixed yardstick against which every system change is scored. The house name for this artifact — not \"golden dataset\" or \"eval set\".",
     },
     {
       term: "LLM-as-judge",
@@ -114,7 +114,7 @@ export const lesson = {
     {
       term: "Held-out split",
       definition:
-        "Cases reserved from prompt iteration so that a release score reflects generalization rather than fitting to the evaluation set.",
+        "Cases reserved from prompt iteration so that a release score reflects generalization rather than fitting to the golden set.",
     },
   ],
 
@@ -135,7 +135,7 @@ export const lesson = {
     },
     {
       id: "t3",
-      trap: "A larger evaluation dataset always produces a more trustworthy result.",
+      trap: "A larger golden set always produces a more trustworthy result.",
       why: "A large set sampled at random is still dominated by easy, common traffic, and its cost and runtime push teams to run it rarely, which removes the fast feedback that actually catches regressions.",
       instead:
         "Stratify toward hard and high-consequence cases, keep the suite fast enough to run on every change, and report per-stratum scores.",
@@ -143,9 +143,9 @@ export const lesson = {
     {
       id: "t4",
       trap: "Eval scores rising release over release proves the system is genuinely improving.",
-      why: "If prompts were iterated against the entire dataset, the score measures fit to those specific items rather than capability, and the gain frequently fails to appear in production.",
+      why: "If prompts were iterated against the entire golden set, the score measures fit to those specific items rather than capability, and the gain frequently fails to appear in production.",
       instead:
-        "Reserve a held-out split that is only ever used to confirm a release, and version the dataset alongside the code.",
+        "Reserve a held-out split that is only ever used to confirm a release, and version the golden set alongside the code.",
     },
     {
       id: "t5",

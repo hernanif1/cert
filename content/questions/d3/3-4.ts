@@ -129,7 +129,7 @@ export const questions = [
     id: "D3-q404",
     domain: 3,
     objective: "3.4",
-    stem: "A team is defining alerts for a production retrieval-augmented assistant serving 30 tenants. They already alert on p95 latency and 5xx rate. Which three additional signals are most likely to catch a quality regression before customers report one? (Select THREE.)",
+    stem: "A team is defining alerts for a production retrieval-augmented assistant serving 30 tenants. They already alert on p95 latency and 5xx rate. Which three additional signals are most likely to catch a quality regression before customers report one?",
     choices: [
       {
         id: "A",

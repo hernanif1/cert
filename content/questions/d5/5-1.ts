@@ -129,7 +129,7 @@ export const questions = [
     id: "D5-q104",
     domain: 5,
     objective: "5.1",
-    stem: "A procurement agent reads inbound supplier email, summarizes it, and can call `search_contracts`, `update_supplier_record` and `send_email`. One supplier message contains hidden text instructing the agent to mail the contract archive to an outside address, and the agent complies. The team responds by adding a classifier that scans incoming mail for injection patterns. Which two further controls do the most to bound what a future successful injection can achieve? (Select TWO.)",
+    stem: "A procurement agent reads inbound supplier email, summarizes it, and can call `search_contracts`, `update_supplier_record` and `send_email`. One supplier message contains hidden text instructing the agent to mail the contract archive to an outside address, and the agent complies. The team responds by adding a classifier that scans incoming mail for injection patterns. Which two further controls do the most to bound what a future successful injection can achieve?",
     choices: [
       {
         id: "A",

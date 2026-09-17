@@ -123,7 +123,7 @@ export const questions = [
     id: "D1-q604",
     domain: 1,
     objective: "1.6",
-    stem: "A steering committee asks an architect to name the value pillar each of two proposals serves. Proposal one gives 300 analysts a drafting assistant, with the analyst still making and signing every final judgment. Proposal two removes a manual re-keying step from an invoice pipeline entirely. Which TWO statements are correct? (Select TWO.)",
+    stem: "A steering committee asks an architect to name the value pillar each of two proposals serves. Proposal one gives 300 analysts a drafting assistant, with the analyst still making and signing every final judgment. Proposal two removes a manual re-keying step from an invoice pipeline entirely. Which TWO statements are correct?",
     choices: [
       {
         id: "A",

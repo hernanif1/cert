@@ -129,7 +129,7 @@ export const questions = [
     id: "D2-q304",
     domain: 2,
     objective: "2.3",
-    stem: "A team plans to add a chain-of-thought instruction to a high-volume extraction endpoint that currently returns a compact JSON object to an internal service. Which TWO consequences should they plan for? (Select TWO.)",
+    stem: "A team plans to add a chain-of-thought instruction to a high-volume extraction endpoint that currently returns a compact JSON object to an internal service. Which TWO consequences should they plan for?",
     choices: [
       {
         id: "A",

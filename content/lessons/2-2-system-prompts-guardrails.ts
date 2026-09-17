@@ -148,10 +148,10 @@ Rules, in order of precedence:
   traps: [
     {
       id: "t1",
-      trap: "A carefully written system prompt is sufficient to stop the model performing a prohibited action.",
-      why: "Instructions are text weighed against all the other text in the window, including anything an adversary supplies, so compliance is probabilistic and a prompt rule cannot function as an enforcement boundary.",
+      trap: "Retrieved documents and tool results can be interpolated straight into the instruction region, as long as the authored rules are stated above them.",
+      why: "Position is not a boundary the model can perceive: undelimited runtime content sits in the same instruction region whatever order it arrives in, so an instruction-shaped sentence inside a claim note competes on equal footing with the rules you wrote.",
       instead:
-        "Use the prompt to set defaults, and enforce anything that must never happen at the tool, authorization or output-validation layer.",
+        "Interpolate runtime content into a delimited data region, label it as data, and state that the authored rules outrank anything inside it.",
     },
     {
       id: "t2",

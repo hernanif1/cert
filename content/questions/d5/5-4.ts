@@ -123,7 +123,7 @@ export const questions = [
     id: "D5-q404",
     domain: 5,
     objective: "5.4",
-    stem: "An insurer plans to use an assistant to decide, with no human involvement, whether to renew motor policies for EU customers — a decision with a significant effect on those customers. Legal has confirmed a valid basis for the processing. Which two capabilities must the architecture provide? (Select TWO.)",
+    stem: "An insurer plans to use an assistant to decide, with no human involvement, whether to renew motor policies for EU customers — a decision with a significant effect on those customers. Legal has confirmed a valid basis for the processing. Which two capabilities must the architecture provide?",
     choices: [
       {
         id: "A",

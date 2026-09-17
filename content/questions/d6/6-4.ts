@@ -49,7 +49,7 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Mark the filter as a fixed constraint and record the data residency obligation that requires it, directly alongside the instruction.",
+        text: "Mark the filter as a fixed constraint the implementer may not change, and enforce it with a test that fails the build when the region filter is missing, with the data residency obligation recorded in the test's failure message.",
       },
       {
         id: "B",
@@ -65,13 +65,13 @@ export const questions = [
       },
       {
         id: "D",
-        text: "Add an automated test that fails the build if the region filter is absent from the query.",
+        text: "Add an assertion to the retrieval test suite that checks for the region filter, with no comment or message explaining what it protects.",
         rationale:
-          "A test is a strong backstop, but an unexplained test gets deleted with the same confidence as the filter; the missing element is the reason, not the enforcement.",
+          "An unexplained assertion reads as leftover scaffolding and is deleted with the same confidence as the filter was; a gate has to carry its reason to survive the next refactor.",
       },
     ],
     explanation:
-      "Implementation guidance must say what an implementer may decide and what they may not, and every fixed item has to carry the reason that makes it fixed. An unexplained constraint reads as an optimization and gets removed by a competent engineer improving the code; a constraint with its obligation attached survives refactoring.",
+      "Implementation guidance must say what an implementer may decide and what they may not, and a regulatory constraint is exactly the case for building the gate rather than restating the instruction. The durable form combines both: the build fails when the filter is missing, and the failure message names the residency obligation, so the next engineer meets the reason at the moment they would otherwise have removed it. Advisory wording alone relies on goodwill, and an unexplained test invites the same deletion as the filter.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "drill",
@@ -84,13 +84,13 @@ export const questions = [
     id: "D6-q403",
     domain: 6,
     objective: "6.4",
-    stem: "An architect is assembling the handoff package for an implementation partner who must reproduce the architect's reported baseline of 91% field accuracy before building on top of it. Which TWO items are essential for that reproduction? (Select TWO.)",
+    stem: "An architect is assembling the handoff package for an implementation partner who must reproduce the architect's reported baseline of 91% field accuracy before building on top of it. Which TWO items are essential for that reproduction?",
     choices: [
       {
         id: "A",
-        text: "A slide deck summarizing the architecture for the partner's leadership.",
+        text: "The architect's evaluation report showing the per-field accuracy breakdown behind the 91% figure.",
         rationale:
-          "A summary helps the partner's managers understand the engagement but contributes nothing to reproducing a measured result.",
+          "A breakdown tells the partner what the result looked like, which is not the same as re-deriving it; reading a number reproduces nothing on its own.",
       },
       {
         id: "B",
@@ -102,19 +102,19 @@ export const questions = [
       },
       {
         id: "D",
-        text: "The list of vendors evaluated during procurement and the selection rationale.",
+        text: "A month of production traces, so the partner can score the system against the real input distribution.",
         rationale:
-          "Procurement history explains how the partner was chosen; it has no bearing on whether an evaluation run can be repeated.",
+          "Live traffic is valuable for finding new failures, but it is not the population the 91% was measured on, so scoring against it yields a different number rather than the same one.",
       },
       {
         id: "E",
-        text: "A signed statement of work covering the implementation schedule and milestones.",
+        text: "A written description of the chunking, retrieval and prompting approach, detailed enough to re-implement it.",
         rationale:
-          "Contractual scope governs the engagement but supplies none of the artifacts or configuration a reproduction requires.",
+          "A description lets the partner build something similar, and something similar scores differently; reproduction needs the exact pinned artifacts rather than a reconstruction of them.",
       },
     ],
     explanation:
-      "Reproducing a number requires the same inputs, the same scoring and the same configuration. A runnable eval against a named golden set supplies the first two, and pinned model, prompt and retrieval settings supply the third; without both, the partner can only take the architect's figure on faith.",
+      "Reproducing a number requires the same inputs, the same scoring and the same configuration. A runnable eval against a named golden set supplies the first two, and pinned model, prompt and retrieval settings supply the third; without both, the partner can only take the architect's figure on faith. Everything else in the package — the reported breakdown, real traffic, a prose description of the approach — is useful work that produces a different number rather than the same one.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "drill",

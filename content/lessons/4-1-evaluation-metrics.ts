@@ -121,7 +121,7 @@ export const lesson = {
     {
       term: "Guardrail metric",
       definition:
-        "A metric that is not the goal of a change but must not degrade because of it — latency and cost while chasing accuracy, refusal rate while chasing safety.",
+        "A metric that is not the goal of a change but must not degrade because of it — latency and cost while chasing accuracy, refusal rate while chasing safety. Always written in the two-word form, because a guardrail in Domain 5 is a control in the request path rather than a measurement.",
     },
   ],
 

@@ -22,7 +22,7 @@ export const questions = [
         id: "C",
         text: "The temperature setting is too low.",
         rationale:
-          "Temperature affects variability, not factual grounding, and nothing in a document refresh would alter it.",
+          "Sampling parameters are rejected outright on the current model family, so this is not a lever that exists; and even where it did, temperature governs variability rather than factual grounding, and a document refresh would not alter it.",
       },
       {
         id: "D",
@@ -93,9 +93,9 @@ export const questions = [
       },
       {
         id: "B",
-        text: "The temperature setting, which may be causing inconsistent field coverage.",
+        text: "The maximum output token limit, which may be cutting the response short before the last two fields are written.",
         rationale:
-          "Temperature would produce variation across repeated runs on the same input, not a consistent pattern that tracks document length.",
+          "A response stopped at the output limit would arrive as truncated, unparseable JSON rather than the well-formed object with six fields the service actually returns.",
       },
       {
         id: "C",
@@ -128,9 +128,9 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Re-run the same question at temperature zero and see whether the answer changes.",
+        text: "Search the knowledge base for any document that mentions a 45-day refund window.",
         rationale:
-          "Reproducibility tells you whether sampling was involved, but both failure classes reproduce consistently at temperature zero.",
+          "What sits in the corpus is not what reached the model; a stale document can remain indexed and unretrieved, so its presence cannot say whether the figure came from the context or from the model.",
       },
       {
         id: "B",

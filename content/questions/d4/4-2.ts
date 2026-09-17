@@ -10,9 +10,9 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Lower the judge's temperature so the verdicts become reproducible.",
+        text: "Give the judge a detailed rubric with worked examples for each of the three checks so its verdicts stabilize.",
         rationale:
-          "Reducing variation still spends a model call on three checks that a parser decides exactly, instantly and for free.",
+          "A sharper rubric narrows disagreement but still spends a model call, and the per-run fee, on three checks that a parser decides exactly, instantly and for free.",
       },
       {
         id: "B",
@@ -123,7 +123,7 @@ export const questions = [
     id: "D4-q204",
     domain: 4,
     objective: "4.2",
-    stem: "A team introduces an LLM judge to score answer quality against a five-point rubric. In a pilot, the judge rates their own model's answers about 0.8 points higher than two domain experts rated the identical answers, and in pairwise comparisons it almost always prefers whichever answer is longer. Which three changes most directly address what the pilot revealed? (Select THREE.)",
+    stem: "A team introduces an LLM judge to score answer quality against a five-point rubric. In a pilot, the judge rates their own model's answers about 0.8 points higher than two domain experts rated the identical answers, and in pairwise comparisons it almost always prefers whichever answer is longer. Which three changes most directly address what the pilot revealed?",
     choices: [
       {
         id: "A",

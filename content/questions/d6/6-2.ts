@@ -123,7 +123,7 @@ export const questions = [
     id: "D6-q204",
     domain: 6,
     objective: "6.2",
-    stem: "An architect joins a company and reads the previous architect's decision log to understand why an agentic support system is built the way it is. Which TWO properties of that log determine whether it actually answers her questions? (Select TWO.)",
+    stem: "An architect joins a company and reads the previous architect's decision log to understand why an agentic support system is built the way it is. Which TWO properties of that log determine whether it actually answers her questions?",
     choices: [
       {
         id: "A",

@@ -123,7 +123,7 @@ export const questions = [
     id: "D2-q404",
     domain: 2,
     objective: "2.4",
-    stem: "An agent's requests sit close to the context limit. Each one carries definitions for 40 tools, an 18-turn history, 20 retrieved chunks and a 4,000-token system prompt, and a typical task uses three or four tools. Which TWO changes reduce context pressure without discarding information the task needs? (Select TWO.)",
+    stem: "An agent's requests sit close to the context limit. Each one carries definitions for 40 tools, an 18-turn history, 20 retrieved chunks and a 4,000-token system prompt, and a typical task uses three or four tools. Which TWO changes reduce context pressure without discarding information the task needs?",
     choices: [
       {
         id: "A",

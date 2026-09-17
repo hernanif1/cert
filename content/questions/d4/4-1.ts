@@ -84,7 +84,7 @@ export const questions = [
     id: "D4-q103",
     domain: 4,
     objective: "4.1",
-    stem: "A vendor presents its safety and security posture for an assistant: a harmful-output rate of 0.02% measured on sampled production traffic, and zero prompt-injection incidents recorded in six months of operation. An architect reviewing the submission identifies two structural weaknesses in how these numbers were produced. Which two? (Select TWO.)",
+    stem: "A vendor presents its safety and security posture for an assistant: a harmful-output rate of 0.02% measured on sampled production traffic, and zero prompt-injection incidents recorded in six months of operation. An architect reviewing the submission identifies two structural weaknesses in how these numbers were produced. Which two?",
     choices: [
       {
         id: "A",

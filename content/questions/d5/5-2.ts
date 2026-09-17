@@ -84,13 +84,13 @@ export const questions = [
     id: "D5-q203",
     domain: 5,
     objective: "5.2",
-    stem: "A customer-facing assistant that has been stable for six months begins quoting shipping policies that were retired last year. There has been no code deployment in five weeks, the model snapshot is pinned, and latency and error rates are unchanged. Which two investigations are most likely to locate the cause? (Select TWO.)",
+    stem: "A customer-facing assistant that has been stable for six months begins quoting shipping policies that were retired last year. There has been no code deployment in five weeks, the model snapshot is pinned, and latency and error rates are unchanged. Which two investigations are most likely to locate the cause?",
     choices: [
       {
         id: "A",
-        text: "Re-run the failing prompts at temperature 0 to check whether the behavior is deterministic.",
+        text: "Add a system-prompt instruction telling the assistant to disregard any policy it believes has been superseded.",
         rationale:
-          "Determinism tells you about sampling variation, and a consistent drift toward superseded content is not a sampling phenomenon.",
+          "Nothing in the retrieved text marks a policy as superseded, so the instruction asks the model to sort on a signal that never reached its context.",
       },
       {
         id: "B",
@@ -128,19 +128,19 @@ export const questions = [
     id: "D5-q204",
     domain: 5,
     objective: "5.2",
-    stem: "A CI suite asserts that a classification prompt returns an exact JSON string for each of 200 fixture inputs. It fails intermittently on four or five cases per run, although spot checks show the answers are acceptable. The team sets temperature to 0; flakiness drops but does not disappear. What is the right conclusion?",
+    stem: "A CI suite asserts that a classification prompt returns an exact JSON string for each of 200 fixture inputs. It fails intermittently on four or five cases per run, although spot checks show the answers are acceptable. The team pins the model snapshot and replays each captured request instead of regenerating it; the failure count falls but never reaches zero. What is the right conclusion?",
     choices: [
       {
         id: "A",
-        text: "Temperature 0 should be fully deterministic, so the remaining failures indicate a bug in the prompt template.",
+        text: "A pinned snapshot replaying a captured request should be fully deterministic, so the remaining failures indicate a bug in the prompt template.",
         rationale:
-          "Greedy decoding reduces but never guarantees identical output — batching, tie-breaking and provider-side changes all shift tokens — so residual variation is expected rather than evidence of a template bug.",
+          "Identical output is never guaranteed even with every version pinned — batching, tie-breaking and serving-side changes all shift tokens — so residual variation is expected rather than evidence of a template bug.",
       },
       {
         id: "B",
-        text: "Pinning the provider's model snapshot will make the suite fully deterministic.",
+        text: "Pinning the retrieval index build and the tool versions as well will make the suite fully deterministic.",
         rationale:
-          "Pinning removes one source of variation and leaves the others, and it does nothing about a suite that is asserting the wrong property in the first place.",
+          "Pinning each remaining dependency removes more sources of variation but never all of them, and it does nothing about a suite that is asserting the wrong property in the first place.",
       },
       {
         id: "C",
@@ -154,7 +154,7 @@ export const questions = [
       },
     ],
     explanation:
-      "LLM output is non-deterministic by construction, and lowering temperature narrows the distribution without collapsing it. Tests must assert the properties that matter — valid schema, correct label, required fields, rubric score above a threshold — because an exact-string assertion measures token identity, which was never the requirement.",
+      "LLM output is non-deterministic by construction, and pinning versions narrows the sources of variation without collapsing the distribution. Tests must assert the properties that matter — valid schema, correct label, required fields, rubric score above a threshold — because an exact-string assertion measures token identity, which was never the requirement.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "drill",

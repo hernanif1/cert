@@ -84,7 +84,7 @@ export const questions = [
     id: "D3-q203",
     domain: 3,
     objective: "3.2",
-    stem: "An architect reviews an MCP integration for a healthcare scheduling assistant. The server authenticates each client connection with a static API key, its tools accept a `patient_id` argument that the model supplies, and the audit log records the server's service account as the actor on every call. Which two findings should the review rank as highest priority? (Select TWO.)",
+    stem: "An architect reviews an MCP integration for a healthcare scheduling assistant. The server authenticates each client connection with a static API key, its tools accept a `patient_id` argument that the model supplies, and the audit log records the server's service account as the actor on every call. Which two findings should the review rank as highest priority?",
     choices: [
       {
         id: "A",

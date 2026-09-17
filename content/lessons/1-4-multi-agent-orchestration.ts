@@ -13,7 +13,7 @@ export const lesson = {
   body: [
     {
       kind: "prose",
-      md: "A multi-agent system has more than one model-driven actor. The most common shape is an orchestrator that decomposes a task, spawns subagents to work on the pieces, and synthesizes what they return.\n\nTwo things are being bought, and naming them precisely is what makes the trade assessable:\n\n**Parallelism.** Independent subtasks run at once, so wall-clock time falls toward the slowest subtask instead of the sum of all of them.\n\n**Context isolation.** Each subagent has its own context window. A subagent can read forty pages and return three sentences, and only those three sentences enter the orchestrator's context. That is the mechanism that makes broad search feasible at all.\n\nThe price is paid in tokens. Every subagent re-reads its own instructions, tool definitions and context, so total consumption scales with agents and turns — routinely an order of magnitude above a single call answering the same question. The design is justified when the answer is valuable enough to absorb that multiplier.",
+      md: "A multi-agent system has more than one actor running its own loop, and that is a narrower claim than the diagrams suggest. An orchestrator that decomposes a task at run time, fans the pieces out and synthesizes what comes back is the **orchestrator–workers** workflow from Objective 1.3: the designer fixed that structure, and only the subtasks are generated per request. The design becomes multi-agent at a different point — when each **subagent** runs its own tool loop and chooses its own stopping point, so how many steps it takes is not knowable in advance and no code path decides it.\n\nSo the fan-out shape never settles the question. Ask what the delegated piece actually is: one generated subtask, executed and returned, or an open-ended investigation the subagent has to steer itself.\n\nWhere it is the second, two things are being bought, and naming them precisely is what makes the trade assessable:\n\n**Parallelism.** Independent subtasks run at once, so wall-clock time falls toward the slowest subtask instead of the sum of all of them.\n\n**Context isolation.** Each subagent has its own context window. A subagent can read forty pages and return three sentences, and only those three sentences enter the orchestrator's context. That is the mechanism that makes broad search feasible at all.\n\nThe price is paid in tokens. Every subagent re-reads its own instructions, tool definitions and context, so total consumption scales with agents and turns — routinely an order of magnitude above a single call answering the same question. The design is justified when the answer is valuable enough to absorb that multiplier.",
     },
 
     { kind: "heading", text: "When the shape fits, and when it does not" },
@@ -43,6 +43,11 @@ export const lesson = {
           "A workflow produces the same result at lower cost and full predictability",
         ],
         [
+          "Each delegated piece is one subtask that returns after a single pass",
+          "Poor",
+          "That is orchestrator–workers: run-time fan-out inside a workflow, not a second agent",
+        ],
+        [
           "The answer is low-value and per-request cost matters",
           "Poor",
           "The token multiplier is never recovered",
@@ -52,12 +57,16 @@ export const lesson = {
 
     { kind: "heading", text: "Orchestration strategies" },
     {
+      kind: "prose",
+      md: "Four arrangements cover nearly everything, and each fails in its own characteristic way.",
+    },
+    {
       kind: "list",
       items: [
-        "**Orchestrator and subagents.** A lead model plans, delegates and synthesizes, and subagents never talk to each other. Keeping the interaction graph a tree is what makes cost and failure attribution tractable.",
-        "**Sequential handoff.** Each agent completes a stage and passes a defined artifact to the next. Cheap and predictable, but the artifact is the entire contract — anything not in it is lost at the boundary.",
-        "**Generator and critic.** One agent produces, another scores against a rubric, over a bounded number of rounds. Effective wherever quality is judged rather than computed.",
-        "**Shared workspace.** Agents read and write one common artifact. Powerful and dangerous: without an explicit write protocol, concurrent edits quietly drop each other's changes.",
+        "**Orchestrator and subagents.** A lead model plans, delegates and synthesizes; subagents never call one another. Keeping the interaction graph a tree is what makes cost and failure attribution tractable, because every finding has exactly one path back to the request that produced it. The right shape for breadth — many independent lines of inquiry whose results compress — and the wrong one the moment two subagents need each other's intermediate work.",
+        "**Sequential handoff.** Each subagent completes a stage and passes a defined artifact to the next: extract, then verify, then draft. Cheap, predictable and easy to resume, because every boundary artifact is inspectable on its own. The artifact is also the entire contract — a judgment made upstream and not written into it is gone — so this arrangement fails at the seams rather than inside a stage, and the fix is a richer interface rather than a stronger model.",
+        "**Generator and critic.** One subagent produces, a second scores the draft against a rubric and returns specific defects, over a bounded number of rounds. It pays for itself where quality is judged rather than computed, and where the critic holds something the generator lacks: a rubric, a test result, a different toolset. A critic sharing the generator's context and instructions mostly agrees with it, so bound the rounds and exit on the rubric being met rather than on the critic declaring itself satisfied.",
+        "**Shared workspace.** Subagents read and write one common artifact — a plan file, a document, a task board. State survives any individual agent, which makes long-running work resumable, and concurrent edits silently drop each other, which makes it dangerous. It needs an explicit write protocol: per-section ownership, append-only updates, or a coordinator that serializes writes. Without one the last writer wins and nothing raises an error.",
       ],
     },
     {
@@ -72,7 +81,7 @@ export const lesson = {
       scenario:
         "A procurement team wants forty vendors compared across eight criteria. The single-agent version fills its context after about twelve vendors, then starts producing shallow summaries and contradicting its own earlier findings.",
       walkthrough:
-        "1. **Check independence.** Each vendor can be researched without reference to the others, so the work is genuinely parallel.\n2. **Design the contract.** Each subagent gets one vendor, the eight criteria, an output schema and a cap on tool calls.\n3. **Compress at the boundary.** Subagents return the filled schema, not their browsing transcripts. Forty short records fit comfortably where twelve transcripts did not.\n4. **Scope the tools.** Research subagents get search and fetch and nothing else; only the orchestrator writes the final document.\n5. **Budget.** Forty subagents cost roughly an order of magnitude more tokens than the failed single-agent attempt. The team accepts it because the comparison informs a seven-figure decision.",
+        "1. **Check independence.** Each vendor can be researched without reference to the others, so the work is genuinely parallel.\n2. **Design the contract.** Each subagent gets one vendor, the eight criteria, an output schema and a cap on tool calls. Which pages it opens, and how many, is its own decision — vendor sites are organized differently and the path to a given criterion cannot be written down in advance. That open loop, not the fan-out, is what makes this multi-agent rather than orchestrator–workers.\n3. **Compress at the boundary.** Subagents return the filled schema, not their browsing transcripts. Forty short records fit comfortably where twelve transcripts did not.\n4. **Scope the tools.** Research subagents get search and fetch and nothing else; only the orchestrator writes the final document.\n5. **Budget.** Forty subagents cost roughly an order of magnitude more tokens than the failed single-agent attempt. The team accepts it because the comparison informs a seven-figure decision.",
       takeaway:
         "Isolation was the point. Parallelism made it fast, but the compressed boundary is what made it possible at all.",
     },
@@ -93,9 +102,14 @@ export const lesson = {
         "Giving each subagent its own context window so it can consume large input and return only a compressed result, keeping the orchestrator's context small.",
     },
     {
+      term: "Subagent",
+      definition:
+        "A delegated actor that runs its own tool loop and chooses its own stopping point. The word is reserved for that; a delegate executing a single generated subtask and returning is a worker inside the orchestrator–workers workflow, not a second agent.",
+    },
+    {
       term: "Orchestrator",
       definition:
-        "The lead model that decomposes the task, delegates to subagents, and synthesizes their returned artifacts into one answer.",
+        "The lead model that decomposes the task, delegates to subagents, and synthesizes their returned artifacts into one answer. The same shape appears in the orchestrator–workers workflow, so it is what the delegates are allowed to do — not the fan-out — that makes a design multi-agent.",
     },
     {
       term: "Stopping condition",

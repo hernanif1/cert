@@ -14,7 +14,7 @@ export const lesson = {
   body: [
     {
       kind: "prose",
-      md: "Accuracy and latency are not independent dials. Extended thinking, verification passes, re-ranking, larger models and multi-step decomposition all raise quality by spending time. Smaller models, fewer retrieved chunks, shorter reasoning and single-pass answers give time back by accepting more error.\n\nThe exam does not want a default. It wants a justification that starts from the workflow: how bad is a wrong answer here, who catches it, and what does the user experience while waiting?",
+      md: "Accuracy and latency are not independent dials. Deeper reasoning effort, verification passes, re-ranking, larger models and multi-step decomposition all raise quality by spending time. Smaller models, fewer retrieved chunks, shorter reasoning and single-pass answers give time back by accepting more error.\n\nThe exam does not want a default. It wants a justification that starts from the workflow: how bad is a wrong answer here, who catches it, and what does the user experience while waiting?",
     },
 
     { kind: "heading", text: "What actually costs time" },
@@ -29,8 +29,8 @@ export const lesson = {
           "Task difficulty is the binding constraint, not throughput",
         ],
         [
-          "Extended thinking budget",
-          "Better multi-step reasoning; latency scales with the budget",
+          "Higher reasoning effort",
+          "Better multi-step reasoning; latency scales with the effort level, low through max",
           "Problems genuinely require derivation, not recall or formatting",
         ],
         [
@@ -80,9 +80,9 @@ export const lesson = {
       kind: "example",
       title: "Practical example: a triage assistant missing its SLA",
       scenario:
-        "A customer-support triage assistant classifies an incoming ticket and drafts a reply. The product SLA is a two-second p95 to first token. Current p95 is 6.4 seconds. The pipeline runs a moderation check, then retrieval, then classification with extended thinking enabled, then drafting, then a second model call that verifies the draft against policy. Classification accuracy is 94%; drafts are reviewed by an agent before sending.",
+        "A customer-support triage assistant classifies an incoming ticket and drafts a reply. The product SLA is a two-second p95 to first token. Current p95 is 6.4 seconds. The pipeline runs a moderation check, then retrieval, then classification at a high reasoning effort, then drafting, then a second model call that verifies the draft against policy. Classification accuracy is 94%; drafts are reviewed by an agent before sending.",
       walkthrough:
-        "1. **Attribute the time.** Spans show retrieval at 300 ms, classification at 2.8 s, drafting at 1.9 s, verification at 1.2 s, moderation at 200 ms.\n2. **Ask what each stage protects.** Every draft is already read by a human before it is sent, so the verification pass is guarding an output that has a second reviewer downstream.\n3. **Cut the redundant stage.** Removing verification returns 1.2 s and costs nothing the human reviewer was not already catching.\n4. **Right-size the reasoning.** Classification into eleven known categories is pattern matching, not derivation. Dropping extended thinking for this stage recovers most of its 2.8 s, and offline evaluation shows accuracy falling from 94% to 93%.\n5. **Move the fixed cost.** The system prompt and tool definitions are identical on every request, so caching that prefix trims time to first token again.",
+        "1. **Attribute the time.** Spans show retrieval at 300 ms, classification at 2.8 s, drafting at 1.9 s, verification at 1.2 s, moderation at 200 ms.\n2. **Ask what each stage protects.** Every draft is already read by a human before it is sent, so the verification pass is guarding an output that has a second reviewer downstream.\n3. **Cut the redundant stage.** Removing verification returns 1.2 s and costs nothing the human reviewer was not already catching.\n4. **Right-size the reasoning.** Classification into eleven known categories is pattern matching, not derivation. Dropping this stage to the lowest reasoning effort recovers most of its 2.8 s, and offline evaluation shows accuracy falling from 94% to 93%.\n5. **Move the fixed cost.** The system prompt and tool definitions are identical on every request, so caching that prefix trims time to first token again.",
       takeaway:
         "The latency was spent on accuracy the workflow did not need, because a human reviewer already provided it. Trade-offs are priced against the whole system, not against the model call in isolation.",
     },
@@ -129,27 +129,20 @@ export const lesson = {
     },
     {
       id: "t2",
-      trap: "Enabling streaming reduces the system's latency.",
-      why: "Streaming changes when the first token becomes visible but not how long generation takes, so total completion time is unchanged and any downstream stage that needs the whole response waits exactly as long.",
-      instead:
-        "Use streaming to improve perceived latency, and treat time to first token and completion time as separate budgets.",
-    },
-    {
-      id: "t3",
       trap: "A verification pass should be added whenever accuracy matters.",
       why: "A second model call adds its full duration to every request while catching errors on only a small fraction, and it is pure waste where a human reviewer or a downstream check already inspects the same output.",
       instead:
         "Apply verification selectively — to low-confidence or high-stakes cases — and only where nothing else in the workflow already reviews the result.",
     },
     {
-      id: "t4",
+      id: "t3",
       trap: "Prompt caching improves answer quality by giving the model more stable context.",
       why: "Caching changes how a repeated prefix is billed and processed, not what the model sees or how it reasons, so the output distribution for an identical request is unaffected.",
       instead:
         "Treat caching as a cost and time-to-first-token optimization, and pursue accuracy through context, retrieval or reasoning changes.",
     },
     {
-      id: "t5",
+      id: "t4",
       trap: "Median latency is the right target when tuning an interactive system.",
       why: "The median describes the requests nobody complains about, while the slow tail is what breaks an SLA and drives users away, and tail behavior often moves in the opposite direction to the median.",
       instead:

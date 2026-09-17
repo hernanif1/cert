@@ -124,7 +124,7 @@ export const questions = [
     id: "D2-q504",
     domain: 2,
     objective: "2.5",
-    stem: "An organization runs four Claude-based surfaces that are supposed to share the same tone and escalation rules. Today those rules exist as four copies that have drifted apart, and a team proposes replacing them with a shared prompt-fragment library. Which TWO controls should accompany that change? (Select TWO.)",
+    stem: "An organization runs four Claude-based surfaces that are supposed to share the same tone and escalation rules. Today those rules exist as four copies that have drifted apart, and a team proposes replacing them with a shared prompt-fragment library. Which TWO controls should accompany that change?",
     choices: [
       {
         id: "A",

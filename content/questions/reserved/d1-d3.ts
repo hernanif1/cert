@@ -16,7 +16,7 @@ export const questions = [
     id: "D1-q901",
     domain: 1,
     objective: "1.1",
-    stem: "An airline's loyalty team asks for an assistant that will cut average call handle time from nine minutes to five. Discovery shows handle time breaks down into roughly 90 seconds of agent research, 30 seconds of conversation with the member, and a five-to-six minute wait on a legacy mainframe lookup that runs once per call. Which response BEST translates this business problem?",
+    stem: "An airline's loyalty team asks for an assistant that will cut average call handle time from eight minutes to five. Discovery shows handle time breaks down into roughly 90 seconds of agent research, 30 seconds of conversation with the member, and a five-to-six minute wait on a legacy mainframe lookup that runs once per call. Which response best translates this business problem?",
     choices: [
       {
         id: "A",
@@ -55,7 +55,7 @@ export const questions = [
     id: "D1-q902",
     domain: 1,
     objective: "1.1",
-    stem: "A national retailer asks for an assistant that tells store managers what to reorder, on the grounds that Claude can read four years of point-of-sale history. Reviewing the data, the architect finds that stockouts were never recorded anywhere: the history shows what was sold, not what customers wanted and could not buy. What is the MOST important implication for the translation of this problem?",
+    stem: "A national retailer asks for an assistant that tells store managers what to reorder, on the grounds that Claude can read four years of point-of-sale history. Reviewing the data, the architect finds that stockouts were never recorded anywhere: the history shows what was sold, not what customers wanted and could not buy. What is the most important implication for the translation of this problem?",
     choices: [
       {
         id: "A",
@@ -94,7 +94,7 @@ export const questions = [
     id: "D1-q903",
     domain: 1,
     objective: "1.2",
-    stem: "A radiology-intake service accepts referral documents from sixty clinics. About half arrive as digital text PDFs and half as scans of faxed forms. Field-extraction accuracy is 93% overall, but a per-clinic breakdown shows 97% for clinics that send digital files and 61% for clinics that send scans. The team proposes moving to a more capable model. Which change BEST addresses the failure?",
+    stem: "A radiology-intake service accepts referral documents from sixty clinics. About half arrive as digital text PDFs and half as scans of faxed forms. Field-extraction accuracy is 93% overall, but a per-clinic breakdown shows 97% for clinics that send digital files and 61% for clinics that send scans. The team proposes moving to a more capable model. Which change best addresses the failure?",
     choices: [
       {
         id: "A",
@@ -139,41 +139,41 @@ export const questions = [
     id: "D1-q904",
     domain: 1,
     objective: "1.2",
-    stem: "An order-support assistant issues account credits by calling a `post_credit` tool. During a gateway incident, requests that had already reached the tool timed out on the client side and were retried automatically. Finance later found customers who had received the same credit two and three times. Which TWO changes to the end-to-end design most directly prevent a recurrence? (Select TWO.)",
+    stem: "A network-provisioning assistant turns an engineer's free-text change request into a JSON configuration object that the provisioning service applies. About 2% of responses fail the service's schema check: a port count written as the word `twelve`, an unrecognized extra field, a bandwidth value with no unit. The service catches the exception, writes a debug-level log line and returns an empty configuration, so the requesting engineer's screen goes blank with no indication that anything went wrong. Which TWO changes to the end-to-end design most directly address this?",
     choices: [
       {
         id: "A",
-        text: "Derive an idempotency key from the originating business event and have the credit service reject a repeat of a key it has already applied.",
+        text: "Validate the model's output against the schema inside the service and, when validation fails, re-prompt once with the validation error attached before giving up.",
       },
       {
         id: "B",
-        text: "Raise the client-side timeout so requests have more time to complete before a retry is issued.",
+        text: "Raise the output token limit so a long configuration is never cut off before the object closes.",
         rationale:
-          "A longer timeout makes the race rarer without removing it. Any timeout shorter than infinity still fires on a slow but successful call.",
+          "Truncation produces text that does not parse at all. These responses parse cleanly and then violate the contract, which is a different defect with a different remedy.",
       },
       {
         id: "C",
-        text: "Lower the model's temperature so it is less likely to call the credit tool more than once.",
+        text: "Have the service coerce near-misses — read `twelve` as 12, discard fields it does not recognize — so more responses clear the check.",
         rationale:
-          "The duplicates came from the transport layer retrying a whole request, not from the model choosing to call the tool twice. Sampling settings have no bearing on it.",
+          "Coercion guesses at what the model meant and then commits that guess to a live network change. It turns a loud, countable failure into a quiet wrong value that nobody is alerted to.",
       },
       {
         id: "D",
-        text: "Record the intent to issue a credit in a durable log before the tool call, and reconcile that log against posted credits so a partially completed action is visible rather than repeated.",
+        text: "Stop swallowing the failure: return a distinct error the requesting engineer's screen can render, and count every validation failure as a metric that can be alerted on.",
       },
       {
         id: "E",
-        text: "Add a system-prompt instruction telling the assistant never to issue a credit it has already issued.",
+        text: "Retry the identical request up to three times and use the first response that validates.",
         rationale:
-          "A retried request is a fresh invocation with no memory of the first, so the instruction has nothing to compare against. It is also a prompt where a transactional guarantee is required.",
+          "A blind retry pays for whole generations again and still returns nothing when the model reproduces the same structural error, and the engineer is told nothing either way.",
       },
     ],
     explanation:
-      "The output stage of an end-to-end architecture is where model decisions become irreversible side effects, and any network in front of it will eventually deliver the same instruction twice. Idempotency keys make a repeat a no-op, and a durable intent log makes a partially completed action visible to reconciliation. Both are design properties of the action stage, not prompt behavior.",
+      "An end-to-end design owns the boundary where a model's output becomes another system's input, and a probabilistic generator will eventually emit something the contract does not allow. The processing stage should check the output against the schema and feed the error back so the model can repair its own response, and the output stage should make a residual failure visible — a distinct error the caller can render and a counted metric someone can alert on — instead of returning an empty result that looks like a legitimate answer.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "reserved",
-    tags: ["end-to-end", "side-effects", "idempotency"],
+    tags: ["end-to-end", "output-validation", "error-surfacing"],
     type: "multi",
     selectCount: 2,
     correct: ["A", "D"],
@@ -222,7 +222,7 @@ export const questions = [
     id: "D1-q906",
     domain: 1,
     objective: "1.3",
-    stem: "An architect reviews production traces for an agentic claims assistant. In 95% of sessions the agent makes the same four tool calls in the same order. The remaining 5% are genuine exceptions where it investigates, backtracks, and sometimes asks for help. Cost per session varies by an order of magnitude, and the team cannot reproduce a past session for audit. What is the MOST appropriate redesign?",
+    stem: "An architect reviews production traces for an agentic claims assistant. In 95% of sessions the agent makes the same four tool calls in the same order. The remaining 5% are genuine exceptions where it investigates, backtracks, and sometimes asks for help. Cost per session varies by an order of magnitude, and the team cannot reproduce a past session for audit. What is the most appropriate redesign?",
     choices: [
       {
         id: "A",
@@ -261,7 +261,7 @@ export const questions = [
     id: "D1-q907",
     domain: 1,
     objective: "1.4",
-    stem: "An incident-investigation orchestrator delegates to three specialist subagents. When one subagent's query tool errors, that subagent returns a fluent paragraph reporting that it found nothing relevant, and the orchestrator's final report states there is no evidence of the failure in that system. Which TWO changes most directly address this? (Select TWO.)",
+    stem: "An incident-investigation orchestrator delegates to three specialist subagents. When one subagent's query tool errors, that subagent returns a fluent paragraph reporting that it found nothing relevant, and the orchestrator's final report states there is no evidence of the failure in that system. Which TWO changes most directly address this?",
     choices: [
       {
         id: "A",
@@ -305,7 +305,7 @@ export const questions = [
     id: "D1-q908",
     domain: 1,
     objective: "1.4",
-    stem: "A market-research system pairs a writer agent with a critic agent: the writer drafts, the critic returns objections, and the loop repeats until the critic raises none. About one session in twelve never converges and runs until the request times out, returning nothing at all. Which change MOST directly addresses this?",
+    stem: "A market-research system pairs a writer agent with a critic agent: the writer drafts, the critic returns objections, and the loop repeats until the critic raises none. About one session in twelve never converges and runs until the request times out, returning nothing at all. Which change most directly addresses this?",
     choices: [
       {
         id: "A",
@@ -344,7 +344,7 @@ export const questions = [
     id: "D1-q909",
     domain: 1,
     objective: "1.5",
-    stem: "A grant-review pipeline runs three chained steps: summarize the application, score the summary against a rubric, then write applicant feedback from the score. Reviewers report that the feedback regularly praises strengths the application never claims and misses weaknesses stated plainly in it. Each step passes its own evaluation. What BEST explains the failure?",
+    stem: "A grant-review pipeline runs three chained steps: summarize the application, score the summary against a rubric, then write applicant feedback from the score. Reviewers report that the feedback regularly praises strengths the application never claims and misses weaknesses stated plainly in it. Each step passes its own evaluation. What best explains the failure?",
     choices: [
       {
         id: "A",
@@ -389,7 +389,7 @@ export const questions = [
     id: "D1-q910",
     domain: 1,
     objective: "1.5",
-    stem: "A proposal-drafting assistant does three things in one prompt: find relevant past answers, adapt them to the new question, and check the result against the current product catalog. When an answer is wrong, the team cannot tell which of the three went wrong. What does decomposing this into three steps MOST directly buy them?",
+    stem: "A proposal-drafting assistant does three things in one prompt: find relevant past answers, adapt them to the new question, and check the result against the current product catalog. When an answer is wrong, the team cannot tell which of the three went wrong. What does decomposing this into three steps most directly buy them?",
     choices: [
       {
         id: "A",
@@ -514,7 +514,7 @@ export const questions = [
     id: "D2-q902",
     domain: 2,
     objective: "2.1",
-    stem: "A content-moderation classifier assigns one of five labels, runs about 40 million times a month, and refers anything it is unsure about to a human queue staffed for a 5% referral rate. An architect is choosing the model tier. Which consideration should dominate the decision?",
+    stem: "A content-moderation classifier assigns one of five labels, runs about 40 million times a month, and refers anything it is unsure about to a human queue staffed for a 5% referral rate. Offline evaluation on a labeled sample puts the candidate tiers within a point of one another on the posts they decide automatically; what separates them is how often they refer. An architect is choosing the model tier. Which consideration should dominate the decision?",
     choices: [
       {
         id: "A",
@@ -540,9 +540,9 @@ export const questions = [
       },
     ],
     explanation:
-      "Model trade-offs are resolved against the constraint the system actually imposes. Here the quality requirement is fully specified by the referral budget the human queue can absorb, and everything above that floor is pure cost repeated at extreme volume. The correct selection is the cheapest model that clears the floor.",
-    difficulty: 1,
-    cognitiveLevel: "recall",
+      "Model trade-offs are resolved against the constraint the system actually imposes. Two quantities matter for quality here — how many posts escape as confident errors, and how many land in the human queue — and the offline result says the candidates are equivalent on the first, so the referral rate is what distinguishes them and the queue's 5% capacity is the floor. Everything above that floor is pure cost repeated 40 million times a month, so the correct selection is the cheapest model that clears it.",
+    difficulty: 2,
+    cognitiveLevel: "analysis",
     pool: "reserved",
     tags: ["model-selection", "cost"],
     type: "single",
@@ -553,7 +553,7 @@ export const questions = [
     id: "D2-q903",
     domain: 2,
     objective: "2.2",
-    stem: "A wealth-management assistant's system prompt states in bold that it must never give personalized investment advice. Red-team testing confirms it refuses direct requests. Over eight-turn conversations in which the user gradually supplies age, balance and risk appetite, it produces a specific allocation recommendation about one time in five. Which change MOST directly strengthens the control?",
+    stem: "A wealth-management assistant's system prompt states in bold that it must never give personalized investment advice. Red-team testing confirms it refuses direct requests. Over eight-turn conversations in which the user gradually supplies age, balance and risk appetite, it produces a specific allocation recommendation about one time in five. Which change most directly strengthens the control?",
     choices: [
       {
         id: "A",
@@ -592,7 +592,7 @@ export const questions = [
     id: "D2-q904",
     domain: 2,
     objective: "2.2",
-    stem: "A pre-sales assistant's system prompt lists nine prohibitions: do not name competitors, do not speculate about the roadmap, do not give legal opinions, and six more. Compliance is excellent. Sales leadership complains that the assistant is evasive — it declines, says nothing useful, and leaves the customer without a next step. Which revision MOST improves the output without weakening the rules?",
+    stem: "A pre-sales assistant's system prompt lists nine prohibitions: do not name competitors, do not speculate about the roadmap, do not give legal opinions, and six more. Compliance is excellent. Sales leadership complains that the assistant is evasive — it declines, says nothing useful, and leaves the customer without a next step. Which revision most improves the output without weakening the rules?",
     choices: [
       {
         id: "A",
@@ -631,7 +631,7 @@ export const questions = [
     id: "D2-q905",
     domain: 2,
     objective: "2.3",
-    stem: "A team adds six worked examples to a ticket-triage prompt. Overall accuracy improves by four points, but the share of tickets labeled `urgent` rises from a historical 11% to 29%, almost entirely from borderline cases. Five of the six examples the team happened to pick are urgent tickets. What is the MOST likely cause?",
+    stem: "A team adds six worked examples to a ticket-triage prompt. Overall accuracy improves by four points, but the share of tickets labeled `urgent` rises from a historical 11% to 29%, almost entirely from borderline cases. Five of the six examples the team happened to pick are urgent tickets. What is the most likely cause?",
     choices: [
       {
         id: "A",
@@ -670,7 +670,7 @@ export const questions = [
     id: "D2-q906",
     domain: 2,
     objective: "2.3",
-    stem: "An eligibility-determination prompt asks for the verdict first and the reasoning afterward, so a downstream parser can read the first line. On applications that turn on one condition it is accurate. On applications that turn on three or four interacting conditions it is wrong about a quarter of the time, and the reasoning that follows often contradicts the verdict above it. Which change MOST directly addresses this?",
+    stem: "An eligibility-determination prompt asks for the verdict first and the reasoning afterward, so a downstream parser can read the first line. On applications that turn on one condition it is accurate. On applications that turn on three or four interacting conditions it is wrong about a quarter of the time, and the reasoning that follows often contradicts the verdict above it. Which change most directly addresses this?",
     choices: [
       {
         id: "A",
@@ -715,7 +715,7 @@ export const questions = [
     id: "D2-q907",
     domain: 2,
     objective: "2.4",
-    stem: "A long-running agent compacts its session by summarizing the oldest turns whenever the transcript passes a threshold. After each compaction the agent re-runs tool calls it already completed earlier in the session, sometimes repeating their side effects. Which TWO changes BEST address this? (Select TWO.)",
+    stem: "A long-running agent compacts its session by summarizing the oldest turns whenever the transcript passes a threshold. After each compaction the agent re-runs tool calls it already completed earlier in the session, sometimes repeating their side effects. Which TWO changes best address this?",
     choices: [
       {
         id: "A",
@@ -733,9 +733,9 @@ export const questions = [
       },
       {
         id: "D",
-        text: "Lower the temperature so the agent is less likely to repeat itself.",
+        text: "Instruct the summarizer to keep a prose list of every tool call it saw while compacting the oldest turns.",
         rationale:
-          "Sampling settings do not restore information the compaction removed. Given a context with no record of the call, repeating it is the reasonable action.",
+          "That list is written by the same lossy pass it is meant to survive, so it thins with each successive compaction and gives the agent nothing it can reliably check a pending call against.",
       },
       {
         id: "E",
@@ -759,7 +759,7 @@ export const questions = [
     id: "D2-q908",
     domain: 2,
     objective: "2.5",
-    stem: "An internal underwriting tool sends a 20,000-token reference appendix, unchanged for months, ahead of a short case description. Traffic is about 40 requests a day arriving at unpredictable intervals of ten to sixty minutes. The team enables prompt caching and finds that cost per request goes slightly up rather than down. What BEST explains this?",
+    stem: "An internal underwriting tool sends a 20,000-token reference appendix, unchanged for months, ahead of a short case description. Traffic is about 40 requests a day arriving at unpredictable intervals of ten to sixty minutes. The team enables prompt caching and finds that cost per request goes slightly up rather than down. What best explains this?",
     choices: [
       {
         id: "A",
@@ -800,7 +800,7 @@ export const questions = [
     id: "D3-q901",
     domain: 3,
     objective: "3.1",
-    stem: "A support agent's `search_tickets` tool returns the full body of every match, often forty tickets or more. Traces show sessions consuming most of the context window after two searches, after which the agent loses track of the original request and searches again. The team proposes moving to a model with a larger context window. Which change BEST addresses the cause?",
+    stem: "A support agent's `search_tickets` tool returns the full body of every match, often forty tickets or more. Traces show sessions consuming most of the context window after two searches, after which the agent loses track of the original request and searches again. The team proposes moving to a model with a larger context window. Which change best addresses the cause?",
     choices: [
       {
         id: "A",
@@ -839,7 +839,7 @@ export const questions = [
     id: "D3-q902",
     domain: 3,
     objective: "3.1",
-    stem: "An agent creates tickets through a `create_ticket` tool whose `priority` parameter is typed as a free-form string and described as the ticket's priority. The ticketing system routes only on the values P1 through P4. About 8% of created tickets arrive with values such as `high` or `urgent` and land in an unrouted queue nobody watches. Which change to the tool configuration BEST fixes this?",
+    stem: "An agent creates tickets through a `create_ticket` tool whose `priority` parameter is typed as a free-form string and described as the ticket's priority. The ticketing system routes only on the values P1 through P4. About 8% of created tickets arrive with values such as `high` or `urgent` and land in an unrouted queue nobody watches. Which change to the tool configuration best fixes this?",
     choices: [
       {
         id: "A",
@@ -878,7 +878,7 @@ export const questions = [
     id: "D3-q903",
     domain: 3,
     objective: "3.2",
-    stem: "An orchestrator agent signs the user in, then spawns subagents that reach three backend systems using the orchestrator's own service credentials, which hold tenant-wide access. A security review flags the design. Which TWO changes most directly close the authorization gap? (Select TWO.)",
+    stem: "An orchestrator agent signs the user in, then spawns subagents that reach three backend systems using the orchestrator's own service credentials, which hold tenant-wide access. A security review flags the design. Which TWO changes most directly close the authorization gap?",
     choices: [
       {
         id: "A",
@@ -922,7 +922,7 @@ export const questions = [
     id: "D3-q904",
     domain: 3,
     objective: "3.2",
-    stem: "A contractor's account is disabled in the identity provider at 17:00 on their last day. The next morning they open the assistant and it answers questions about internal projects as usual: the integration layer holds a refresh token obtained weeks earlier and renews access on its own. Which change MOST directly addresses this class of failure?",
+    stem: "A contractor's account is disabled in the identity provider at 17:00 on their last day. The next morning they open the assistant and it answers questions about internal projects as usual: the integration layer holds a refresh token obtained weeks earlier and renews access on its own. Which change most directly addresses this class of failure?",
     choices: [
       {
         id: "A",
@@ -961,7 +961,7 @@ export const questions = [
     id: "D3-q905",
     domain: 3,
     objective: "3.3",
-    stem: "A quoting endpoint is called inside a checkout flow that abandons the call and displays a stale cached price if nothing has returned within 800 ms. The pipeline answers in 310 ms at p50, but 6% of requests take a second verification pass and land at 2.4 seconds, so those customers see the stale price. Which change BEST satisfies the contract?",
+    stem: "A quoting endpoint is called inside a checkout flow that abandons the call and displays a stale cached price if nothing has returned within 800 ms. The pipeline answers in 310 ms at p50, but 6% of requests take a second verification pass and land at 2.4 seconds, so those customers see the stale price. Which change best satisfies the contract?",
     choices: [
       {
         id: "A",
@@ -1000,7 +1000,7 @@ export const questions = [
     id: "D3-q906",
     domain: 3,
     objective: "3.4",
-    stem: "A platform handling two million agent requests a day samples 1% of traces uniformly and retains them for thirty days. Support escalations consistently describe failures for which the team can find no trace at all. Which change BEST improves their ability to investigate these reports?",
+    stem: "A platform handling two million agent requests a day samples 1% of traces uniformly and retains them for thirty days. Support escalations consistently describe failures for which the team can find no trace at all. Which change best improves their ability to investigate these reports?",
     choices: [
       {
         id: "A",
@@ -1045,7 +1045,7 @@ export const questions = [
     id: "D3-q907",
     domain: 3,
     objective: "3.5",
-    stem: "A multi-turn research assistant embeds the user's latest message verbatim as its retrieval query. Opening questions retrieve well. Follow-ups such as \"and for the Canadian entity?\" retrieve almost nothing useful, even though the relevant documents are indexed and would be found by a fully worded question. Which change BEST addresses this?",
+    stem: "A multi-turn research assistant embeds the user's latest message verbatim as its retrieval query. Opening questions retrieve well. Follow-ups such as \"and for the Canadian entity?\" retrieve almost nothing useful, even though the relevant documents are indexed and would be found by a fully worded question. Which change best addresses this?",
     choices: [
       {
         id: "A",
@@ -1084,7 +1084,7 @@ export const questions = [
     id: "D3-q908",
     domain: 3,
     objective: "3.5",
-    stem: "A policy corpus is split into 600-token chunks. Many chunks read like \"This limit does not apply to entities listed in Section 4\" with nothing indicating which policy or jurisdiction they came from. Evaluation shows the correct chunk is usually retrieved, yet answers frequently attribute a rule to the wrong policy. Which indexing change MOST directly addresses this?",
+    stem: "A policy corpus is split into 600-token chunks. Many chunks read like \"This limit does not apply to entities listed in Section 4\" with nothing indicating which policy or jurisdiction they came from. Evaluation shows the correct chunk is usually retrieved, yet answers frequently attribute a rule to the wrong policy. Which indexing change most directly addresses this?",
     choices: [
       {
         id: "A",
@@ -1129,7 +1129,7 @@ export const questions = [
     id: "D3-q909",
     domain: 3,
     objective: "3.6",
-    stem: "Legal operations asks an assistant which of the company's 1,800 active contracts contain a most-favored-nation clause. Backed by top-k vector retrieval over the contract text, the assistant names four. Manual review finds thirty-one. Which TWO changes fit this query shape? (Select TWO.)",
+    stem: "Legal operations asks an assistant which of the company's 1,800 active contracts contain a most-favored-nation clause. Backed by top-k vector retrieval over the contract text, the assistant names four. Manual review finds thirty-one. Which TWO changes fit this query shape?",
     choices: [
       {
         id: "A",
@@ -1251,7 +1251,7 @@ export const questions = [
     id: "D3-q912",
     domain: 3,
     objective: "3.8",
-    stem: "An assistant over a 200,000-document knowledge base uses a four-level discovery hierarchy: the model reads a domain index, then a subdomain index, then a document index, then fetches the document. Answer quality is good. Median time to a first answer is eleven seconds, and traces show seven to nine sequential retrieval round trips before the model writes anything. Which change BEST reduces latency without returning to a monolithic context?",
+    stem: "An assistant over a 200,000-document knowledge base uses a four-level discovery hierarchy: the model reads a domain index, then a subdomain index, then a document index, then fetches the document. Answer quality is good. Median time to a first answer is eleven seconds, and traces show seven to nine sequential retrieval round trips before the model writes anything. Which change best reduces latency without returning to a monolithic context?",
     choices: [
       {
         id: "A",
@@ -1267,9 +1267,9 @@ export const questions = [
       },
       {
         id: "C",
-        text: "Return to loading the corpus into context, since answer quality is already good.",
+        text: "Prefetch every child index one level ahead, so the next lookup is already in memory by the time the model asks for it.",
         rationale:
-          "Two hundred thousand documents will not fit, and the question explicitly excludes abandoning progressive discovery.",
+          "Prefetching takes the storage latency out of each hop but not the model call that decides which child to descend into, and those seven to nine sequential decisions are what set the eleven seconds.",
       },
       {
         id: "D",

@@ -45,7 +45,7 @@ export const questions = [
     id: "D4-q602",
     domain: 4,
     objective: "4.6",
-    stem: "A silent quality regression in a drafting assistant went undetected for three weeks. The architect is asked to add monitoring that would have surfaced the same regression within a day. Which two additions are most effective? (Select TWO.)",
+    stem: "A silent quality regression in a drafting assistant went undetected for three weeks. The architect is asked to add monitoring that would have surfaced the same regression within a day. Which two additions are most effective?",
     choices: [
       {
         id: "A",

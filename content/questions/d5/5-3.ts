@@ -84,7 +84,7 @@ export const questions = [
     id: "D5-q303",
     domain: 5,
     objective: "5.3",
-    stem: "A medical-coding assistant proposes billing codes that a coder approves or edits. Over six months the override rate has fallen from 9% to 0.5% while the model has not changed, and sampled audits put its accuracy steady at 93%. Which two changes are most likely to restore effective review? (Select TWO.)",
+    stem: "A medical-coding assistant proposes billing codes that a coder approves or edits. Over six months the override rate has fallen from 9% to 0.5% while the model has not changed, and sampled audits put its accuracy steady at 93%. Which two changes are most likely to restore effective review?",
     choices: [
       {
         id: "A",

@@ -56,7 +56,7 @@ export const questions = [
     id: "D4-q902",
     domain: 4,
     objective: "4.1",
-    stem: "An architect reviews the metric set for an agent that reads internal tickets and can call `create_ticket`, `update_ticket` and `post_comment` on behalf of the requesting user. Accuracy, p95 latency, cost per resolved ticket and a harmful-content rate are all defined and instrumented. Nothing measures the security dimension. Which two metrics best fill that gap? (Select TWO.)",
+    stem: "An architect reviews the metric set for an agent that reads internal tickets and can call `create_ticket`, `update_ticket` and `post_comment` on behalf of the requesting user. Accuracy, p95 latency, cost per resolved ticket and a harmful-content rate are all defined and instrumented. Nothing measures the security dimension. Which two metrics best fill that gap?",
     choices: [
       {
         id: "A",
@@ -106,7 +106,7 @@ export const questions = [
     id: "D4-q903",
     domain: 4,
     objective: "4.2",
-    stem: "A team builds its first evaluation dataset for a warranty-claims assistant by asking a model to generate 250 realistic-looking claims with expected answers. The suite scored 96% on its first run and has never dropped below 94%. Production complaints, meanwhile, concern claims with photographs attached, claims filed in Portuguese, and claims where the purchase date is missing. Which three changes most directly repair the dataset? (Select THREE.)",
+    stem: "A team builds its first evaluation dataset for a warranty-claims assistant by asking a model to generate 250 realistic-looking claims with expected answers. The suite scored 96% on its first run and has never dropped below 94%. Production complaints, meanwhile, concern claims with photographs attached, claims filed in Portuguese, and claims where the purchase date is missing. Which three changes most directly repair the dataset?",
     choices: [
       {
         id: "A",
@@ -219,7 +219,7 @@ export const questions = [
       },
     ],
     explanation:
-      "A/B testing is one instrument among several, and it only earns its place when traffic can power the comparison inside a useful timeframe. At this volume it cannot, so the defensible route is an offline measurement on labeled data, where every case is graded, followed by a staged rollout with guardrails to catch what the offline set did not cover.",
+      "A/B testing is one instrument among several, and it only earns its place when traffic can power the comparison inside a useful timeframe. At this volume it cannot, so the defensible route is an offline measurement on labeled data, where every case is graded, followed by a staged rollout with guardrail metrics to catch what the offline set did not cover.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "reserved",
@@ -310,39 +310,45 @@ export const questions = [
     id: "D4-q908",
     domain: 4,
     objective: "4.4",
-    stem: "An insurance document assistant scores 93% overall. Broken out by intake channel it scores 97% on documents submitted through the web form and 61% on documents arriving as email attachments. Prompt, model and retrieval configuration are identical for both channels. Sampling the low-scoring outputs shows fields populated with fragments of neighboring text. Where should the architect investigate first?",
+    stem: "A payroll-integration assistant reads the monthly PDF files that twelve country payroll providers submit and pulls out each employee's gross pay and pay date. It grades at 86% field accuracy overall. Broken out by provider it scores 95% for providers who print amounts as 1,250.00 and 48% for providers who print them as 1.250,00 and write the day before the month. Prompt, model and retrieval configuration are identical for every provider. Sampling the failures shows the assistant returning the value exactly as it appears on the page, while the record that reaches the payroll ledger holds a figure a thousand times too large and a pay date in the wrong month. Where should the architect investigate first?",
     choices: [
       {
         id: "A",
-        text: "The system prompt, which may need examples drawn from attachment-sourced documents.",
+        text: "The system prompt, which may need explicit instructions about continental number and date conventions.",
         rationale:
-          "Prompt examples cannot recover characters that were never read correctly, and the identical prompt already succeeds on the same task via the web form.",
+          "The assistant already returns what the page says, character for character, so the extraction step is doing its job. No instruction to the model changes what happens to that string afterwards.",
       },
       {
         id: "B",
-        text: "The model's handling of long inputs, since attachments tend to be longer.",
+        text: "The model's capability on non-English documents, since a more capable model would read these files more carefully.",
         rationale:
-          "Length failures truncate or omit content. Fields holding fragments of adjacent text point at how the page was read, not at how much of it there was.",
+          "Capability cannot be the differentiator when the sampled outputs match the source text exactly. The stage being blamed is the one stage that is demonstrably correct.",
       },
       {
         id: "C",
-        text: "The text-extraction stage that turns attachments into the text the model actually sees.",
+        text: "The document-conversion stage that turns the submitted PDFs into the text the model reads.",
+        rationale:
+          "A conversion defect garbles, drops or interleaves characters. Here the extracted string reproduces the printed value faithfully, so the page was read correctly and the damage happens later.",
       },
       {
         id: "D",
-        text: "The retrieval index, which may be ranking attachment-derived chunks poorly.",
+        text: "The normalization step that parses the extracted strings into typed amounts and dates, which applies one fixed locale to every provider.",
+      },
+      {
+        id: "E",
+        text: "The grading rubric, which may be penalizing a formatting difference rather than a genuine extraction error.",
         rationale:
-          "Poor ranking surfaces irrelevant but coherent passages. Interleaved neighboring text is a signature of layout parsing rather than of ranking.",
+          "A gross-pay figure a thousandfold too large and a pay date in the wrong month are wrong values with real consequences, not formatting variants a rubric could be excusing.",
       },
     ],
     explanation:
-      "Diagnosis starts by isolating what differs between a healthy cohort and a failing one. Everything downstream of intake is identical here, so the defect lives in the stage that is not: the conversion of attachments into text. The fragment symptom confirms it — the model is faithfully reading badly extracted characters.",
+      "Diagnosis means isolating what differs between a healthy cohort and a failing one, then walking the pipeline stage by stage rather than reaching for the model. Everything from intake to the model call is identical across the two cohorts, and the sampled output matches the source exactly, so the defect sits downstream of the model in the code that turns text into typed values. A parser hard-coded to one locale reads a decimal comma as a thousands separator and a day-first date as month-first, which is exactly the split the cohort breakdown shows.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "reserved",
-    tags: ["diagnosis", "cohort-analysis", "document-pipeline"],
+    tags: ["diagnosis", "cohort-analysis", "locale-normalization"],
     type: "single",
-    correct: "C",
+    correct: "D",
   },
   {
     schemaVersion: 1,
@@ -430,7 +436,7 @@ export const questions = [
     id: "D5-q901",
     domain: 5,
     objective: "5.1",
-    stem: "A research agent has a web-fetch tool and a scratch-file tool and is told to keep working until it has answered the question. During an overnight run it fell into a cycle of fetching, summarizing and re-fetching the same three pages, and stopped only when the account hit its monthly spend limit at 6 a.m. The team proposes adding \"do not fetch the same page twice\" to the system prompt. Which two controls should the architect require instead? (Select TWO.)",
+    stem: "A research agent has a web-fetch tool and a scratch-file tool and is told to keep working until it has answered the question. During an overnight run it fell into a cycle of fetching, summarizing and re-fetching the same three pages, and stopped only when the account hit its monthly spend limit at 6 a.m. The team proposes adding \"do not fetch the same page twice\" to the system prompt. Which two controls should the architect require instead?",
     choices: [
       {
         id: "A",
@@ -444,9 +450,9 @@ export const questions = [
       },
       {
         id: "C",
-        text: "A lower sampling temperature so the agent behaves more deterministically.",
+        text: "A deduplicating cache on the web-fetch tool, so a page already retrieved during the run is served from cache instead of fetched again.",
         rationale:
-          "Determinism does not bound work. A deterministic agent loops just as reliably, and sampling settings create no stopping condition of any kind.",
+          "This makes each repetition cheaper without ending it: the agent still cycles with no stopping condition, and the spend simply moves from fetches to the model tokens spent re-reading the same three pages.",
       },
       {
         id: "D",
@@ -517,7 +523,7 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Constraints stated once at the start are evicted as the conversation is trimmed to fit the context window.",
+        text: "Constraints stated once at the start are evicted when the application's own history management trims older turns to keep the request inside the context window.",
       },
       {
         id: "B",
@@ -539,7 +545,7 @@ export const questions = [
       },
     ],
     explanation:
-      "Silent context truncation is a standard failure mode of long sessions: the model does not report that it lost the rules, it simply stops applying them. Durable constraints belong in the system prompt or are re-injected each turn, so that trimming conversation history can never remove them. The length correlation is the tell.",
+      "The trimming here is the application's own history management, not the API: an over-length request is rejected outright rather than quietly shortened, so a request that still succeeds while missing its opening turns is evidence that the client dropped them before sending. The loss is silent to the model, which does not report that the rules are gone — it simply stops applying them. Durable constraints belong in the system prompt or are re-injected each turn, so that trimming conversation history can never remove them. The correlation with conversation length is the tell.",
     difficulty: 1,
     cognitiveLevel: "application",
     pool: "reserved",
@@ -552,7 +558,7 @@ export const questions = [
     id: "D5-q904",
     domain: 5,
     objective: "5.2",
-    stem: "An order-management agent calls `submit_return`, which occasionally times out after the warehouse system has already recorded the return. The agent retries on timeout, and finance now finds duplicate return credits on roughly one order in 400. The engineering lead proposes lengthening the timeout. Which two changes actually address the failure? (Select TWO.)",
+    stem: "An order-management agent calls `submit_return`, which occasionally times out after the warehouse system has already recorded the return. The agent retries on timeout, and finance now finds duplicate return credits on roughly one order in 400. The engineering lead proposes lengthening the timeout. Which two changes actually address the failure?",
     choices: [
       {
         id: "A",
@@ -560,9 +566,9 @@ export const questions = [
       },
       {
         id: "B",
-        text: "Raise the sampling temperature so the agent varies its retry behavior.",
+        text: "Have the warehouse system suppress a second `submit_return` that matches an existing one on order id, item and a five-minute time window.",
         rationale:
-          "Sampling variability has no bearing on duplicate side effects, and it makes the agent's behavior less predictable at exactly the wrong boundary.",
+          "A fuzzy match on attributes only guesses at which calls are the same logical request: it swallows genuine second returns on the same item and misses retries that arrive after the window closes.",
       },
       {
         id: "C",
@@ -911,7 +917,7 @@ export const questions = [
     id: "D6-q904",
     domain: 6,
     objective: "6.2",
-    stem: "An architect must take a choice to a steering committee: keep the current single-pass design at 3.1 seconds p95 and 88% resolution, or add a verification pass reaching 94% resolution at 5.4 seconds p95 and 1.6 times the cost per case. The draft slide lists those six numbers and nothing else. Which two additions most improve the committee's ability to decide? (Select TWO.)",
+    stem: "An architect must take a choice to a steering committee: keep the current single-pass design at 3.1 seconds p95 and 88% resolution, or add a verification pass reaching 94% resolution at 5.4 seconds p95 and 1.6 times the cost per case. The draft slide lists those six numbers and nothing else. Which two additions most improve the committee's ability to decide?",
     choices: [
       {
         id: "A",
@@ -1192,7 +1198,7 @@ export const questions = [
     id: "D7-q902",
     domain: 7,
     objective: "7.1",
-    stem: "A 200-engineer organization is moving from a 15-person pilot to a full rollout of agentic coding tooling next quarter. The pilot ran on one shared account with no per-team breakdown, and finance has asked what the rollout will cost and who will own it. Which two things should the architect put in place before the rollout? (Select TWO.)",
+    stem: "A 200-engineer organization is moving from a 15-person pilot to a full rollout of agentic coding tooling next quarter. The pilot ran on one shared account with no per-team breakdown, and finance has asked what the rollout will cost and who will own it. Which two things should the architect put in place before the rollout?",
     choices: [
       {
         id: "A",

@@ -88,9 +88,9 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Retry the extraction call at a higher temperature when the load job fails, so the model produces a different answer.",
+        text: "Ask the model to return the amount as a string and have the load job parse it with a permissive numeric parser.",
         rationale:
-          "Resampling without a check leaves nothing detecting the bad value, and raising temperature makes malformed output more likely rather than less.",
+          "A permissive parser turns an unreadable amount into a plausible-looking wrong number, replacing a loud abort with a silent financial error and still leaving the pipeline with no output contract.",
       },
       {
         id: "B",
@@ -123,7 +123,7 @@ export const questions = [
     id: "D1-q204",
     domain: 1,
     objective: "1.2",
-    stem: "A team is designing the feedback stage for a customer-email triage system that routes messages to one of nine queues. Which TWO mechanisms give the team evidence they can actually act on? (Select TWO.)",
+    stem: "A team is designing the feedback stage for a customer-email triage system that routes messages to one of nine queues. Which TWO mechanisms give the team evidence they can actually act on?",
     choices: [
       {
         id: "A",

@@ -84,7 +84,7 @@ export const questions = [
     id: "D5-q503",
     domain: 5,
     objective: "5.5",
-    stem: "A city agency deploys an assistant that answers benefits-eligibility questions for residents and drafts a recommended determination for a caseworker. An oversight board asks what transparency measures are in place. Which two commitments are the most substantive? (Select TWO.)",
+    stem: "A city agency deploys an assistant that answers benefits-eligibility questions for residents and drafts a recommended determination for a caseworker. An oversight board asks what transparency measures are in place. Which two commitments are the most substantive?",
     choices: [
       {
         id: "A",

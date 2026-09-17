@@ -84,7 +84,7 @@ export const questions = [
     id: "D7-q103",
     domain: 7,
     objective: "7.1",
-    stem: "A platform team is standardizing agent configuration across twenty repositories so that the same request produces comparable behavior regardless of who runs it. Which TWO pieces of configuration belong in version control alongside the code? (Select TWO.)",
+    stem: "A platform team is standardizing agent configuration across twenty repositories so that the same request produces comparable behavior regardless of who runs it. Which TWO pieces of configuration belong in version control alongside the code?",
     choices: [
       {
         id: "A",

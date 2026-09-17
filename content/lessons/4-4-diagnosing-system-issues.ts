@@ -14,7 +14,7 @@ export const lesson = {
   body: [
     {
       kind: "prose",
-      md: "An LLM system fails in layers, and the layers produce symptoms that look identical from the outside: a fluent, confident, wrong answer. Diagnosis is the work of deciding which layer produced it. Guessing is expensive, because every layer has a plausible-sounding remedy and applying the wrong one adds complexity while the defect survives.\n\nTwo habits do most of the work before any theory is formed. **Correlate with change**: if the system was fine on Tuesday and wrong on Wednesday, the diff between them is the shortest path to the cause — a re-index, a prompt edit, a model version pin that was loosened, an upstream schema change. **Reproduce deterministically**: pin the input, set temperature to zero, and capture the *rendered* prompt, not the template. Truncation, a variable that resolved empty, and a tool result that arrived malformed are all invisible in the template and obvious in what was actually sent.",
+      md: "An LLM system fails in layers, and the layers produce symptoms that look identical from the outside: a fluent, confident, wrong answer. Diagnosis is the work of deciding which layer produced it. Guessing is expensive, because every layer has a plausible-sounding remedy and applying the wrong one adds complexity while the defect survives.\n\nTwo habits do most of the work before any theory is formed. **Correlate with change**: if the system was fine on Tuesday and wrong on Wednesday, the diff between them is the shortest path to the cause — a re-index, a prompt edit, a model version pin that was loosened, an upstream schema change. **Reproduce by replay**: pin the model snapshot, prompt version, tool definitions and retrieval index build, then replay the captured request N times and read the *rendered* prompt rather than the template. Identical output is never guaranteed even where sampling controls exist, and on the current model family they are not available at all, so the unit of reproduction is a failure rate rather than a single run. Truncation, a variable that resolved empty, and a tool result that arrived malformed are all invisible in the template and obvious in what was actually sent.",
     },
 
     { kind: "heading", text: "Reading the signature" },
@@ -68,11 +68,11 @@ export const lesson = {
       kind: "example",
       title: "Practical example: an assistant that invents policy numbers",
       scenario:
-        "An internal assistant answers benefits questions. Support reports that it sometimes cites policy document numbers that do not exist. The team's proposed fix is to add \"Do not make up information\" to the system prompt and lower the temperature.",
+        "An internal assistant answers benefits questions. Support reports that it sometimes cites policy document numbers that do not exist. The team's proposed fix is to add \"Do not make up information\" to the system prompt and to resend any answer a user complains about.",
       walkthrough:
-        "1. **Reproduce.** Fifteen failing conversations are replayed at temperature zero with the exact rendered prompts. Twelve reproduce, so this is not sampling variance.\n2. **Check the context.** In eleven of the twelve, no policy number appears anywhere in the retrieved context. The model was asked a question its context could not answer and had no sanctioned way to say so.\n3. **Rule out model mismatch.** The same twelve cases run on a more capable model with identical prompt and context. Ten still fabricate, so capability is not the constraint.\n4. **Fix the structure, not the wording.** The output contract now requires a quoted supporting span for every cited number, an explicit no-answer branch is added and shown in the examples, and a cheap post-check rejects any citation whose number is absent from context.\n5. **Lock it in.** All twelve cases join the regression suite.",
+        "1. **Reproduce.** Fifteen failing conversations are replayed ten times each against the pinned snapshot, prompt version and index build, using the exact rendered prompts. Twelve fabricate on most replays, so this is a rate, not a one-off.\n2. **Check the context.** In eleven of the twelve, no policy number appears anywhere in the retrieved context. The model was asked a question its context could not answer and had no sanctioned way to say so.\n3. **Rule out model mismatch.** The same twelve cases run on a more capable model with identical prompt and context. Ten still fabricate, so capability is not the constraint.\n4. **Fix the structure, not the wording.** The output contract now requires a quoted supporting span for every cited number, an explicit no-answer branch is added and shown in the examples, and a cheap post-check rejects any citation whose number is absent from context.\n5. **Lock it in.** All twelve cases join the regression suite.",
       takeaway:
-        "Temperature controls variability, not truthfulness, and an instruction not to hallucinate gives the model no mechanism to comply. Fabrication under insufficient context is fixed by structure: citations, a refusal path, and verification.",
+        "Wording and resampling control variability, not truthfulness, and an instruction not to hallucinate gives the model no mechanism to comply. Fabrication under insufficient context is fixed by structure: citations, a refusal path, and verification.",
     },
     {
       kind: "callout",
@@ -121,10 +121,10 @@ export const lesson = {
     },
     {
       id: "t2",
-      trap: "Setting temperature to zero removes hallucination because the output becomes deterministic.",
-      why: "Temperature governs how much the sampler deviates from the highest-probability continuation; a fabricated detail that is highest-probability under the given context is produced just as confidently at zero.",
+      trap: "Pinning a sampling parameter makes a failing case reproducible, so one clean replay clears the ticket.",
+      why: "Identical output is not guaranteed even where such controls exist, the current model family rejects them outright, and a fabricated detail that is the most probable continuation under thin context would survive greedy decoding anyway.",
       instead:
-        "Treat temperature as a reproducibility tool for debugging, and fix grounding at the context and contract level.",
+        "Pin the model snapshot, prompt version, tool definitions and index build, replay the captured request N times, and compare failure rates before and after a fix.",
     },
     {
       id: "t3",

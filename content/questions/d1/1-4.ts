@@ -20,15 +20,15 @@ export const questions = [
       },
       {
         id: "C",
-        text: "The orchestrator model is not capable enough to coordinate five workers reliably.",
+        text: "The orchestrator model is not capable enough to coordinate five subagents reliably.",
         rationale:
-          "Coordination capacity is not the binding constraint when every worker must read the same full document and each other's output anyway.",
+          "Coordination capacity is not the binding constraint when every subagent must read the same full document and each other's output anyway.",
       },
       {
         id: "D",
         text: "The subagents should have been run sequentially rather than in parallel.",
         rationale:
-          "Serializing coupled workers removes the parallel speedup while retaining every token of duplicated context, which makes latency worse.",
+          "Serializing coupled subagents removes the parallel speedup while retaining every token of duplicated context, which makes latency worse.",
       },
     ],
     explanation:
@@ -45,7 +45,7 @@ export const questions = [
     id: "D1-q402",
     domain: 1,
     objective: "1.4",
-    stem: "A research assistant must survey forty vendor websites and produce one comparison table. Each site can be examined independently, and the useful findings from a site compress to a short structured summary. Which orchestration strategy fits the work?",
+    stem: "A research assistant must survey forty vendor websites and produce one comparison table. The sites are organized differently, so covering one means following whatever links it offers until the eight required fields can be filled — which pages are read, and how many, cannot be written down in advance. Each site can be examined independently, and the useful findings from a site compress to a short structured summary. Which orchestration strategy fits the work?",
     choices: [
       {
         id: "A",
@@ -61,7 +61,7 @@ export const questions = [
       },
       {
         id: "C",
-        text: "An orchestrator that spawns parallel subagents, one per site, each returning a compressed summary the orchestrator synthesizes.",
+        text: "An orchestrator that spawns parallel subagents, one per site, each running its own browse loop until it can fill the schema and returning a compressed summary the orchestrator synthesizes.",
       },
       {
         id: "D",
@@ -71,7 +71,7 @@ export const questions = [
       },
     ],
     explanation:
-      "Independent subtasks whose results compress are the canonical case for orchestrator and subagents. Parallelism cuts wall-clock time toward the slowest site, and context isolation means the orchestrator receives forty short records instead of forty browsing transcripts, which is what keeps the synthesis step feasible.",
+      "Independent subtasks whose results compress are the canonical case for orchestrator and subagents, and what makes this genuinely multi-agent rather than a fan-out workflow is that each subagent steers its own browse loop and decides when the schema is filled. Parallelism cuts wall-clock time toward the slowest site, and context isolation means the orchestrator receives forty short records instead of forty browsing transcripts, which is what keeps the synthesis step feasible.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "drill",
@@ -84,7 +84,7 @@ export const questions = [
     id: "D1-q403",
     domain: 1,
     objective: "1.4",
-    stem: "An architect is designing an orchestrator-and-subagent system for production incident investigation. Which THREE design decisions most directly reduce the common multi-agent failure modes? (Select THREE.)",
+    stem: "An architect is designing an orchestrator-and-subagent system for production incident investigation. Which THREE design decisions most directly reduce the common multi-agent failure modes?",
     choices: [
       {
         id: "A",
@@ -112,9 +112,9 @@ export const questions = [
       },
       {
         id: "F",
-        text: "Run subagents at a higher temperature so the investigation explores more hypotheses.",
+        text: "Let the orchestrator re-run any subagent whose findings look thin, until the investigation converges.",
         rationale:
-          "Sampling variance is not a search strategy; it makes runs irreproducible and complicates attributing a wrong conclusion to a step.",
+          "An open-ended re-run policy is exactly the unbounded work a stopping condition exists to prevent, and it inflates cost and latency with no defined notion of convergence.",
       },
     ],
     explanation:
@@ -175,9 +175,9 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Multi-agent workloads are billed at a higher per-token rate than single calls.",
+        text: "Prompt caching cannot help here, because each subagent starts a fresh conversation rather than reusing the single-call version's cached prefix.",
         rationale:
-          "There is no separate multi-agent rate; tokens are tokens, so the explanation has to come from how many of them are consumed.",
+          "Caching changes the price of a repeated prefix, but the multiplier remains even when every subagent's prefix is cached, because each one still accumulates and re-reads its own growing context.",
       },
       {
         id: "B",
@@ -187,9 +187,9 @@ export const questions = [
       },
       {
         id: "C",
-        text: "Parallel execution forces the platform to hold more state in memory for the duration of the request.",
+        text: "Subagents duplicate each other's work where their assigned pieces overlap, so the same research is paid for more than once.",
         rationale:
-          "Infrastructure memory is not what the bill reflects, and it is not where the cost multiplier originates.",
+          "Overlapping assignments do waste tokens, but the multiplier shows up even when the decomposition is perfectly disjoint, because it comes from per-agent context rather than repeated research.",
       },
       {
         id: "D",

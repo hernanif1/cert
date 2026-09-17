@@ -84,7 +84,7 @@ export const questions = [
     id: "D4-q503",
     domain: 4,
     objective: "4.5",
-    stem: "A team proposes a cascade: a small model answers every request, and a larger model is called whenever the small model's answer fails a validation check. They project a 70% cost reduction based on the small model's list price. Which two factors most determine whether that saving actually materializes? (Select TWO.)",
+    stem: "A team proposes a cascade: a small model answers every request, and a larger model is called whenever the small model's answer fails a validation check. They project a 70% cost reduction based on the small model's list price. Which two factors most determine whether that saving actually materializes?",
     choices: [
       {
         id: "A",

@@ -84,7 +84,7 @@ export const questions = [
     id: "D7-q203",
     domain: 7,
     objective: "7.2",
-    stem: "A team wants to delegate a framework migration that touches about 180 files across a service with uneven test coverage. Which TWO practices most reduce the risk of the migration? (Select TWO.)",
+    stem: "A team wants to delegate a framework migration that touches about 180 files across a service with uneven test coverage. Which TWO practices most reduce the risk of the migration?",
     choices: [
       {
         id: "A",

@@ -84,7 +84,7 @@ export const questions = [
     id: "D6-q503",
     domain: 6,
     objective: "6.5",
-    stem: "Anthropic announces a newer Claude model, and the engineering lead wants to adopt it next sprint to capture the quality gain. The assistant currently runs under an SLA that commits p95 latency and a cost-per-case budget. Which TWO steps should the architect insist on before any production traffic moves? (Select TWO.)",
+    stem: "Anthropic announces a newer Claude model, and the engineering lead wants to adopt it next sprint to capture the quality gain. The assistant currently runs under an SLA that commits p95 latency and a cost-per-case budget. Which TWO steps should the architect insist on before any production traffic moves?",
     choices: [
       {
         id: "A",

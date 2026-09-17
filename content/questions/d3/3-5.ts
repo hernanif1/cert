@@ -42,34 +42,34 @@ export const questions = [
     id: "D3-q502",
     domain: 3,
     objective: "3.5",
-    stem: "An enterprise search assistant handles two query styles: conceptual questions phrased in natural language, and lookups of exact part numbers such as HX-4471-B. Conceptual questions work well against the existing vector index; part-number lookups frequently return unrelated components. What should the architect change?",
+    stem: "A team indexes several thousand product spec sheets exported as HTML. The data that matters sits in tables whose column headers carry the unit and meaning of every number beneath them. The current parser strips all markup to plain text before chunking, and retrieved chunks routinely contain bare figures that the assistant then attributes to the wrong attribute. Which pipeline change addresses the cause?",
     choices: [
       {
         id: "A",
-        text: "Increase the embedding dimensionality so identifiers are represented more precisely.",
+        text: "Increase chunk overlap so a header is more likely to appear in the neighbouring chunk.",
         rationale:
-          "Dimensionality does not give a model semantic signal that is not there. Near-identical identifier strings embed to near-identical vectors regardless of how many dimensions are used.",
+          "Overlap only repeats whatever text sits at a boundary, and in a long table the header is thousands of characters away from most rows, so it is not recovered.",
       },
-      { id: "B", text: "Add lexical search alongside the vector index and combine the results." },
+      { id: "B", text: "Parse the tables as structure and chunk them as row groups with the column headers replayed into every chunk." },
       {
         id: "C",
-        text: "Lower the similarity threshold so more candidates are returned for identifier queries.",
+        text: "Embed each spec sheet as a single chunk so no table is ever split.",
         rationale:
-          "Returning more low-similarity candidates from an index that cannot distinguish identifiers surfaces more wrong parts, not the right one.",
+          "One vector standing for a whole sheet represents many attributes at once, which dilutes the embedding and lowers similarity for every question asked of it.",
       },
       {
         id: "D",
-        text: "Instruct the model in the system prompt to pay closer attention to part numbers.",
+        text: "List the attribute names in the system prompt so the assistant can map bare figures back to their columns.",
         rationale:
-          "Prompting cannot recover a document that retrieval never returned. The failure happens before the model sees anything.",
+          "A generic list cannot tell the model which column a particular retrieved number came from, because that association was destroyed at parse time, long before retrieval ran.",
       },
     ],
     explanation:
-      "Part numbers carry almost no semantic signal, so dense embeddings place unrelated identifiers close together. Hybrid retrieval pairs dense search for paraphrase with lexical matching for exact tokens, which is the standard answer whenever a corpus mixes conceptual and identifier queries.",
+      "Parsing is the first pipeline decision, and a parser that flattens markup throws away the structure the chunker needs. Column headers carry the meaning of the numbers beneath them, so tabular sources are chunked as row groups with the header replayed into each chunk. No amount of overlap, prompt wording or chunk resizing restores signal that was discarded before chunking began.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "drill",
-    tags: ["rag", "hybrid-retrieval"],
+    tags: ["rag", "parsing", "chunking"],
     type: "single",
     correct: "B",
   },
@@ -78,14 +78,14 @@ export const questions = [
     id: "D3-q503",
     domain: 3,
     objective: "3.5",
-    stem: "A support assistant is grounded in a knowledge base that is re-indexed nightly. After a routine re-index, users report that the assistant answers confidently but cites procedures that were retired two years ago. Latency, model version and prompt template are all unchanged. Which two actions most directly address the root cause? (Select TWO.)",
+    stem: "A support assistant is grounded in a knowledge base that is re-indexed nightly. After a routine re-index, users report that the assistant answers confidently but cites procedures that were retired two years ago. Latency, model version and prompt template are all unchanged. Which two actions most directly address the root cause?",
     choices: [
       { id: "A", text: "Add document status and effective-date metadata to the index and filter on it at retrieval time." },
       {
         id: "B",
-        text: "Raise the model's temperature so it hedges more on uncertain answers.",
+        text: "Instruct the assistant in the system prompt to cite only the most recently updated procedure available to it.",
         rationale:
-          "Temperature changes phrasing variability, not which documents were retrieved. The assistant is faithfully reporting what it was given.",
+          "Nothing in the retrieved text tells the model which procedure is newest, so the instruction asks it to sort on metadata that was never indexed or passed into the context.",
       },
       { id: "C", text: "Verify that retired documents were actually removed or superseded in the re-index job." },
       {
@@ -116,34 +116,34 @@ export const questions = [
     id: "D3-q504",
     domain: 3,
     objective: "3.5",
-    stem: "An architect reviews a RAG pipeline where evaluation shows the correct chunk appears in the top twenty retrieved results roughly 95% of the time, but appears in the top three only 40% of the time. The prompt passes the top three chunks to the model. What is the most appropriate change?",
+    stem: "An architect evaluates a policy assistant against 300 questions drawn from a 900-page handbook of continuous prose. The retrieved chunk is on topic 96% of the time, yet graders mark a fifth of the answers incomplete, and inspection shows the chunk ending partway through a rule whose qualifying exception begins in the following chunk. The handbook is split into 750-token units with no overlap. What is the most appropriate change?",
     choices: [
       {
         id: "A",
-        text: "Re-chunk the corpus with smaller chunks and more overlap.",
+        text: "Raise the number of chunks passed to the model from three to ten so the continuation is more likely to be included.",
         rationale:
-          "Re-chunking addresses recall, and recall is already 95%. The correct content is being found; the problem is where it lands in the ordering.",
+          "Nothing makes the adjacent unit rank highly enough to be among the ten returned, so this pays input cost on every query and only sometimes works by accident.",
       },
-      { id: "B", text: "Add a re-ranking pass over the top twenty candidates before selecting three." },
+      { id: "B", text: "Add overlap of roughly 10-15% of the chunk size so a statement that spans a boundary survives intact in at least one chunk." },
       {
         id: "C",
-        text: "Switch to a different embedding model and re-index the corpus.",
+        text: "Halve the unit size to 375 tokens so each chunk is more tightly focused.",
         rationale:
-          "A full re-index is an expensive response to a precision problem that a re-ranker solves directly, and it risks regressing the recall that currently works well.",
+          "Smaller units double the number of boundaries, which makes it more likely rather than less that a rule and its exception end up separated.",
       },
       {
         id: "D",
-        text: "Pass all twenty retrieved chunks to the model instead of three.",
+        text: "Re-embed the corpus with a model that accepts a longer input.",
         rationale:
-          "This raises cost and latency on every request and buries the right chunk among seventeen irrelevant ones, which degrades answer quality even though the content is technically present.",
+          "The embedding model's input limit is not the constraint here, because the text is split before it is ever embedded, so a longer limit changes nothing about where the boundaries fall.",
       },
     ],
     explanation:
-      "High recall with poor precision is the textbook signal for re-ranking: a fast first pass finds the right material, and a slower, more accurate model reorders the shortlist. Re-chunking or re-embedding would target recall, which is not the failing metric here.",
+      "Chunk size trades recall against sufficiency, and the failing property here is sufficiency: retrieval reaches the right region, but the unit it returns does not contain the whole rule. Overlap repeats the tail of each chunk at the head of the next, which keeps a statement that crosses a boundary intact without giving up the sharper embeddings that smaller units provide.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "drill",
-    tags: ["rag", "re-ranking", "evaluation"],
+    tags: ["rag", "chunking", "overlap"],
     type: "single",
     correct: "B",
   },

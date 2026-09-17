@@ -75,7 +75,7 @@ export const lesson = {
         "**A queue that can actually be cleared.** Reviewer throughput times headcount must exceed routed volume with headroom, or the backlog gets resolved by approving faster.",
         "**A cheap, blameless reject path.** Rejecting should be one click plus a reason code. If rejection requires a written justification, the approval rate tells you nothing.",
         "**Measurement of the reviewers.** Track override rate, time on task, and agreement against gold cases seeded into the queue. A 100% approval rate is a finding, not a success.",
-        "**A feedback loop.** Overrides and reason codes are the best evaluation data the system will ever produce; route them into the eval set, not only into the audit log.",
+        "**A feedback loop.** Overrides and reason codes are the best evaluation data the system will ever produce; route them into the golden set, not only into the audit log.",
       ],
     },
 
@@ -143,10 +143,10 @@ export const lesson = {
     },
     {
       id: "t2",
-      trap: "The model's self-reported confidence score is the natural trigger for escalation to a human.",
-      why: "Expressed confidence is generated text rather than a calibrated probability, so it tracks fluency and phrasing more closely than correctness and escalates the wrong population of cases.",
+      trap: "A review step satisfies a human-oversight requirement as long as a named person signs off before the action takes effect.",
+      why: "Oversight means the reviewer could actually reach a different outcome, so a sign-off carries nothing where the reviewer lacks authority to overturn the decision, lacks the evidence behind it, or faces a queue that clears only by approving.",
       instead:
-        "Trigger on decision properties — value, reversibility, novelty, conflict with a system of record — plus external signals such as retrieval scores or disagreement between independent runs.",
+        "Give the reviewer authority to overturn, the evidence the recommendation rests on, and a reject path that costs no more effort than approval.",
     },
     {
       id: "t3",

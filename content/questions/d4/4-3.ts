@@ -84,7 +84,7 @@ export const questions = [
     id: "D4-q303",
     domain: 4,
     objective: "4.3",
-    stem: "A team runs an A/B test on a support assistant. Traffic is split by hashing the request id, so a returning user can land in either arm on any given message. The only metric tracked is first-contact deflection rate, which is up six points and comfortably powered. Which two objections should block the rollout? (Select TWO.)",
+    stem: "A team runs an A/B test on a support assistant. Traffic is split by hashing the request id, so a returning user can land in either arm on any given message. The only metric tracked is first-contact deflection rate, which is up six points and comfortably powered. Which two objections should block the rollout?",
     choices: [
       {
         id: "A",

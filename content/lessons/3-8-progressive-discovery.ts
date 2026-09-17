@@ -51,7 +51,7 @@ export const lesson = {
     {
       kind: "callout",
       variant: "key-concept",
-      md: "A large context window makes monolithic loading *possible*, not *free*. Filling a window with mostly-irrelevant material dilutes attention across it, and the tokens are processed on every turn of a multi-turn session. The relevant question is not whether the corpus fits — it is what fraction of what you loaded the task actually needed.",
+      md: "A large context window makes monolithic loading *possible*, not *free*. Filling a window with mostly-irrelevant material dilutes attention across it, and the tokens are processed on every turn of a multi-turn session. The relevant question is not whether the corpus fits — it is what fraction of what you loaded the task actually needed. That fraction is the discriminator worth memorizing: **load and cache when a typical task touches most of a small, stable corpus; use progressive discovery when a typical task touches a small fraction of a large one.** Capacity is a separate property from effectiveness, and only the fraction speaks to effectiveness.",
     },
 
     { kind: "heading", text: "The hybrid is usually the answer" },

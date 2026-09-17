@@ -46,7 +46,7 @@ export const questions = [
     id: "D3-q102",
     domain: 3,
     objective: "3.1",
-    stem: "A code-review assistant is connected to three MCP servers exposing 38 tools between them. Engineers report that it sometimes opens pull requests when asked only to summarize a diff, and that every request carries roughly 19,000 tokens of tool definitions before any code is included. Call logs show that tools from two of the three servers have never been invoked. Which two changes most directly address both complaints? (Select TWO.)",
+    stem: "A code-review assistant is connected to three MCP servers exposing 38 tools between them. Engineers report that it sometimes opens pull requests when asked only to summarize a diff, and that every request carries roughly 19,000 tokens of tool definitions before any code is included. Call logs show that tools from two of the three servers have never been invoked. Which two changes most directly address both complaints?",
     choices: [
       {
         id: "A",

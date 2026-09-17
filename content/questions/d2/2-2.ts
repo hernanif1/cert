@@ -88,9 +88,9 @@ export const questions = [
     choices: [
       {
         id: "A",
-        text: "Sampling variance; lower the temperature so the model applies the rules consistently.",
+        text: "Position bias; move the compliance rule up so it sits directly beside the length limit and both are read together.",
         rationale:
-          "Temperature affects word choice, not which of two contradictory rules wins. Lowering it would make the behavior consistently arbitrary rather than correct.",
+          "Placing the two rules side by side makes the contradiction easier for a human reader to spot, but it still leaves the model with no statement of which rule wins, so the behavior stays unpredictable.",
       },
       {
         id: "B",
@@ -123,7 +123,7 @@ export const questions = [
     id: "D2-q204",
     domain: 2,
     objective: "2.2",
-    stem: "A team is drafting the system prompt for an assistant whose JSON response is consumed directly by a billing service, where an unparseable message fails the batch. Which TWO practices most improve the reliability of that contract in production? (Select TWO.)",
+    stem: "A team is drafting the system prompt for an assistant whose JSON response is consumed directly by a billing service, where an unparseable message fails the batch. Which TWO practices most improve the reliability of that contract in production?",
     choices: [
       {
         id: "A",

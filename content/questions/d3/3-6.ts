@@ -116,7 +116,7 @@ export const questions = [
       },
     ],
     explanation:
-      "Retrieval exists because corpora exceed what you can pass. A 30-page, twice-yearly document does not, so a pipeline here adds chunk-boundary errors, ranking errors and an ingestion job to operate, in exchange for nothing. Loading it as a cached prefix is both cheaper and strictly more reliable.",
+      "The discriminator is what fraction of the corpus a typical task touches. Load and cache when a typical question touches most of a small, stable corpus; reach for retrieval or progressive discovery when it touches a small fraction of a large one. A 30-page handbook revised twice a year sits firmly on the first side, so a pipeline here adds chunk-boundary errors, ranking errors and an ingestion job to operate, in exchange for nothing.",
     difficulty: 2,
     cognitiveLevel: "application",
     pool: "drill",
@@ -129,17 +129,17 @@ export const questions = [
     id: "D3-q604",
     domain: 3,
     objective: "3.6",
-    stem: "A compliance assistant retrieves from a policy index where each chunk carries `jurisdiction`, `effective_date` and `status`. Users in Germany report that answers sometimes cite superseded EU-wide guidance instead of current German rules. Evaluation shows the correct German chunk exists in the index but is retrieved for the query only 30% of the time. Which two changes address this? (Select TWO.)",
+    stem: "A compliance assistant retrieves from a policy index where each chunk carries `jurisdiction`, `effective_date` and `status`. Users in Germany report that answers sometimes cite superseded EU-wide guidance instead of current German rules. Evaluation shows the correct German chunk is retrieved inside top-k on most queries, but superseded EU guidance is consistently ranked above it and the answer is written from whichever passage came first. Which two changes address this?",
     choices: [
       {
         id: "A",
-        text: "Apply `jurisdiction` and `status` as pre-filters so similarity is computed only over current, applicable policies.",
+        text: "Apply `status` and `effective_date` as pre-filters so similarity is computed only over policies currently in force.",
       },
       {
         id: "B",
         text: "Raise top-k so the German chunk is included more often.",
         rationale:
-          "More candidates raise the chance of inclusion while leaving superseded guidance in the pool, competing for the model's attention.",
+          "The right chunk is already inside top-k; adding candidates cannot change the fact that superseded text out-ranks it, and it enlarges the pool competing for the model's attention.",
       },
       {
         id: "C",
@@ -159,7 +159,7 @@ export const questions = [
       },
     ],
     explanation:
-      "Two things are wrong and both are about constraints rather than ranking. The applicable jurisdiction is known from the user's account and should be a hard predicate rather than something the model infers from phrasing, and status and jurisdiction should narrow the candidate set before similarity is computed so superseded text is never scored at all.",
+      "Nothing here is a recall problem, so a deeper top-k cannot help: the right passage is already retrieved and is simply losing to text that should never have been a candidate at all. The fix is constraint rather than ranking. Status and effective date should narrow the candidate set before similarity is computed, so superseded guidance is never scored, and the jurisdiction that applies is known from the user's account and belongs in the query as a hard predicate rather than as something the model infers from phrasing.",
     difficulty: 3,
     cognitiveLevel: "analysis",
     pool: "drill",

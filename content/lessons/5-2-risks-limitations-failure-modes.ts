@@ -164,10 +164,10 @@ export const lesson = {
     },
     {
       id: "t3",
-      trap: "Setting temperature to 0 makes the system deterministic, so exact-match assertions are safe.",
-      why: "Greedy decoding reduces but does not remove variation — batching, hardware, tie-breaking and model updates all shift output — and an exact-match suite stays flaky while measuring the wrong property anyway.",
+      trap: "Pinning a sampling parameter makes an LLM system reproducible, so exact-match assertions are safe.",
+      why: "The current model family rejects those controls outright, and even where they exist they never guarantee identical tokens; retrieval results, tool responses and context assembly also vary independently of decoding, so the suite stays flaky while measuring the wrong property anyway.",
       instead:
-        "Assert on schema validity, required properties and rubric scores.",
+        "Pin the model snapshot and index build for replay, and assert on schema validity, required properties and rubric scores.",
     },
     {
       id: "t4",

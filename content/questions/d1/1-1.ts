@@ -84,7 +84,7 @@ export const questions = [
     id: "D1-q103",
     domain: 1,
     objective: "1.1",
-    stem: "A manufacturer is evaluating an assistant that would answer engineers' questions about equipment maintenance history. Which TWO characteristics most strongly indicate the task is a good fit for a Claude-based solution? (Select TWO.)",
+    stem: "A manufacturer is evaluating an assistant that would answer engineers' questions about equipment maintenance history. Which TWO characteristics most strongly indicate the task is a good fit for a Claude-based solution?",
     choices: [
       {
         id: "A",
