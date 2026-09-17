@@ -10,6 +10,8 @@
  * Errors exit 1. Warnings print and exit 0.
  */
 import { DOMAINS } from "../content/domains";
+import { AUTHORED } from "../content/lessons/registry";
+import { QUESTIONS as BANK } from "../content/questions";
 import {
   correctIdsOf,
   type ChoiceId,
@@ -20,13 +22,26 @@ import {
 const errors: string[] = [];
 const warnings: string[] = [];
 
+/**
+ * Content lands in batches (Phase 7), so an INCOMPLETE bank is a normal
+ * intermediate state and must not break the build. Shortfalls warn; an
+ * OVERSHOOT is always an error, because writing more items than an objective
+ * asks for is a real mistake rather than unfinished work.
+ *
+ * `npm run validate -- --strict` (used before release) turns every shortfall
+ * into an error.
+ */
+const STRICT = process.argv.includes("--strict");
+const shortfall = (where: string, msg: string) =>
+  (STRICT ? errors : warnings).push(`${where}: ${msg}`);
+
 const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
 const warn = (where: string, msg: string) => warnings.push(`${where}: ${msg}`);
 
-/* Content authored so far. Empty until Phase 7 — the structural checks below
- * still run, and the coverage report shows how far off completion we are. */
-const LESSONS: Lesson[] = [];
-const QUESTIONS: Question[] = [];
+/* The real content. Imported from the registry rather than content/lessons,
+ * which is server-only and cannot load in a plain Node context. */
+const LESSONS: Lesson[] = Object.values(AUTHORED);
+const QUESTIONS: Question[] = BANK;
 
 const EXPECTED_MOCK_TOTAL = 63;
 const LESSON_MIN_WORDS = 750;
@@ -175,8 +190,8 @@ function checkLessons(): void {
   }
 
   const missing = [...OBJECTIVE_SLUG.values()].filter((s) => !bySlug.has(s));
-  if (missing.length > 0 && LESSONS.length > 0) {
-    warn("lessons", `${missing.length} of ${OBJECTIVE_SLUG.size} not yet authored`);
+  if (missing.length > 0) {
+    shortfall("lessons", `${missing.length} of ${OBJECTIVE_SLUG.size} not yet authored`);
   }
 }
 
@@ -257,34 +272,40 @@ function checkQuestions(): void {
     }
   }
 
-  checkCounts(byId);
+  checkCounts();
   checkAnswerBalance();
 }
 
-function checkCounts(byId: Map<string, Question>): void {
-  if (byId.size === 0) return; // nothing authored yet
-
+function checkCounts(): void {
   for (const d of DOMAINS) {
     const drill = QUESTIONS.filter((q) => q.domain === d.id && q.pool === "drill" && !q.retired);
     const reserved = QUESTIONS.filter((q) => q.domain === d.id && q.pool === "reserved" && !q.retired);
     const target = d.objectives.reduce((a, o) => a + o.drillTarget, 0);
 
-    if (drill.length !== target) {
-      err(d.code, `${drill.length} drill questions, expected ${target}`);
+    if (drill.length > target) {
+      err(d.code, `${drill.length} drill questions, expected ${target} — overshoot`);
+    } else if (drill.length < target) {
+      shortfall(d.code, `${drill.length}/${target} drill questions authored`);
     }
-    if (reserved.length !== d.mockItemCount) {
-      err(d.code, `${reserved.length} reserved questions, expected ${d.mockItemCount}`);
+
+    if (reserved.length > d.mockItemCount) {
+      err(d.code, `${reserved.length} reserved questions, expected ${d.mockItemCount} — overshoot`);
+    } else if (reserved.length < d.mockItemCount) {
+      shortfall(d.code, `${reserved.length}/${d.mockItemCount} reserved questions authored`);
     }
+
     // The check that exists so /mock-exam cannot fail at runtime in front of a user.
     const available = drill.length + reserved.length;
     if (available < d.mockItemCount) {
-      err(d.code, `only ${available} items available, cannot fill ${d.mockItemCount} mock slots`);
+      shortfall(d.code, `only ${available} items available, cannot fill ${d.mockItemCount} mock slots`);
     }
 
     for (const o of d.objectives) {
       const n = drill.filter((q) => q.objective === o.id).length;
-      if (n !== o.drillTarget) {
-        err(o.slug, `${n} drill questions, expected ${o.drillTarget}`);
+      if (n > o.drillTarget) {
+        err(o.slug, `${n} drill questions, expected ${o.drillTarget} — overshoot`);
+      } else if (n < o.drillTarget) {
+        shortfall(o.slug, `${n}/${o.drillTarget} drill questions authored`);
       }
     }
 
@@ -294,10 +315,12 @@ function checkCounts(byId: Map<string, Question>): void {
     }
   }
 
-  const multi = QUESTIONS.filter((q) => q.type === "multi").length;
-  const share = multi / QUESTIONS.length;
-  if (share < 0.15 || share > 0.2) {
-    warn("bank", `${Math.round(share * 100)}% multi-select, expected 15-20%`);
+  if (QUESTIONS.length >= 40) {
+    const multi = QUESTIONS.filter((q) => q.type === "multi").length;
+    const share = multi / QUESTIONS.length;
+    if (share < 0.15 || share > 0.2) {
+      warn("bank", `${Math.round(share * 100)}% multi-select, expected 15-20%`);
+    }
   }
 }
 
@@ -361,10 +384,11 @@ function main(): void {
     for (const e of errors) console.error(`  error  ${e}`);
     process.exit(1);
   }
+  const complete = LESSONS.length === 38 && QUESTIONS.length === 263;
   console.log(
     warnings.length > 0
-      ? `\nvalidate-content: ok with ${warnings.length} warning(s)`
-      : "\nvalidate-content: ok",
+      ? `\nvalidate-content: ok with ${warnings.length} warning(s)${STRICT ? "" : " (authoring in progress)"}`
+      : `\nvalidate-content: ok${complete ? " — content complete" : ""}`,
   );
 }
 

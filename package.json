@@ -9,11 +9,15 @@
     "validate": "tsx scripts/validate-content.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
-    "check": "npm run typecheck && npm run lint && npm run validate && npm run verify:readiness && npm run verify:drill",
+    "check": "npm run typecheck && npm run lint && npm run validate && npm run verify:readiness && npm run verify:drill && npm run verify:exam",
     "serve": "npx --yes serve out -l 3001",
     "verify:storage": "node scripts/verify-storage.mjs",
     "verify:readiness": "tsx scripts/verify-readiness.ts",
-    "verify:drill": "tsx scripts/verify-drill.ts"
+    "verify:drill": "tsx scripts/verify-drill.ts",
+    "verify:exam": "tsx scripts/verify-exam.ts",
+    "verify:exam-ui": "node scripts/verify-exam-ui.mjs",
+    "verify:ui": "npm run verify:storage && npm run verify:exam-ui",
+    "validate:strict": "tsx scripts/validate-content.ts --strict"
   },
   "dependencies": {
     "clsx": "^2.1.1",

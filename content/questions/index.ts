@@ -19,9 +19,15 @@ import type {
  * Question ids are IMMUTABLE once shipped — drill state is keyed by them. A bad
  * question gets `retired: true`, never deletion or renumbering.
  *
- * Authored in Phase 7.
+ * Authored in Phase 7. The three items below are transcribed from the exam
+ * guide's own §8 sample questions — the only calibrated data we have on real
+ * item style, so they anchor the voice of everything written after them.
  */
-export const QUESTIONS: Question[] = [];
+import { questions as d2_5 } from "@/content/questions/d2/2-5";
+import { questions as d3_1 } from "@/content/questions/d3/3-1";
+import { questions as d4_4 } from "@/content/questions/d4/4-4";
+
+export const QUESTIONS: Question[] = [...d2_5, ...d3_1, ...d4_4];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));
 
