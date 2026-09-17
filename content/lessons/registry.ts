@@ -1,5 +1,7 @@
 import type { Lesson } from "@/content/schema";
 
+import { lesson as l3_5 } from "@/content/lessons/3-5-rag-pipeline-design";
+
 /**
  * Authored lesson bodies, keyed by slug.
  *
@@ -10,4 +12,6 @@ import type { Lesson } from "@/content/schema";
  *
  * Lessons are added here as they are authored (Phase 7).
  */
-export const AUTHORED: Record<string, Lesson> = {};
+export const AUTHORED: Record<string, Lesson> = {
+  [l3_5.slug]: l3_5,
+};

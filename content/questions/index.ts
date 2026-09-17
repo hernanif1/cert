@@ -25,9 +25,10 @@ import type {
  */
 import { questions as d2_5 } from "@/content/questions/d2/2-5";
 import { questions as d3_1 } from "@/content/questions/d3/3-1";
+import { questions as d3_5 } from "@/content/questions/d3/3-5";
 import { questions as d4_4 } from "@/content/questions/d4/4-4";
 
-export const QUESTIONS: Question[] = [...d2_5, ...d3_1, ...d4_4];
+export const QUESTIONS: Question[] = [...d2_5, ...d3_1, ...d3_5, ...d4_4];
 
 const BY_ID = new Map<string, Question>(QUESTIONS.map((q) => [q.id, q]));
 

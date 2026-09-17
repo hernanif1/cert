@@ -3,7 +3,7 @@ import type { Question } from "@/content/schema";
 export const questions = [
   {
     schemaVersion: 1,
-    id: "D2-q001",
+    id: "D2-q501",
     domain: 2,
     objective: "2.5",
     stem: "An application sends the same 8,000-token system prompt and policy document on every request, followed by a short, varying user message. Latency and cost are both concerns. Which optimization most directly addresses both?",

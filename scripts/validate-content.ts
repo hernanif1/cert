@@ -206,9 +206,25 @@ function checkQuestions(): void {
     if (byId.has(q.id)) err(where, "duplicate question id");
     byId.set(q.id, q);
 
-    if (!/^D[1-7]-q\d{3}$/.test(q.id)) err(where, "id must match D<n>-q<nnn>");
-    if (!q.id.startsWith(`D${q.domain}-`)) {
-      err(where, `id prefix does not match domain ${q.domain}`);
+    const idMatch = /^D([1-7])-q([1-9])(\d{2})$/.exec(q.id);
+    if (!idMatch) {
+      err(where, "id must match D<domain>-q<objective><NN>, e.g. D3-q502");
+    } else {
+      const [, dPart, oPart] = idMatch;
+      if (Number(dPart) !== q.domain) {
+        err(where, `id says domain ${dPart} but the question is in domain ${q.domain}`);
+      }
+      // Objective digit 9 is reserved for Mock Form A; real objectives are 1-8.
+      const expectedObjectiveDigit =
+        q.pool === "reserved" ? "9" : q.objective.split(".")[1];
+      if (oPart !== expectedObjectiveDigit) {
+        err(
+          where,
+          q.pool === "reserved"
+            ? `reserved items must use objective digit 9, got ${oPart}`
+            : `id says objective ${dPart}.${oPart} but the question targets ${q.objective}`,
+        );
+      }
     }
     if (!q.objective.startsWith(`${q.domain}.`)) {
       err(where, `objective ${q.objective} does not belong to domain ${q.domain}`);

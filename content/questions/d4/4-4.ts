@@ -3,7 +3,7 @@ import type { Question } from "@/content/schema";
 export const questions = [
   {
     schemaVersion: 1,
-    id: "D4-q001",
+    id: "D4-q401",
     domain: 4,
     objective: "4.4",
     stem: "A RAG system suddenly returns confident but incorrect answers after a document refresh, while latency and model version are unchanged. What is the most likely first place to investigate?",

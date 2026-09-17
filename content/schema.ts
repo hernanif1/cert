@@ -17,7 +17,19 @@ export type DomainNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 /** "3.5" — domain and objective, matching the exam guide's numbering. */
 export type ObjectiveId = `${DomainNumber}.${number}`;
 
-/** "D3-q014". IMMUTABLE once shipped: drill state is keyed by this. */
+/**
+ * "D3-q502" — domain 3, objective 3.5, item 02.
+ *
+ * Format: `D<domain>-q<objective><NN>`, where the objective digit makes the id
+ * self-describing and gives every objective a private number range. That is
+ * what lets objectives be authored independently without id collisions.
+ * Reserved Mock Form A items use objective digit 9, which no real objective
+ * uses (objectives run 1-8).
+ *
+ * IMMUTABLE once shipped: drill state is keyed by this, so a renumber would
+ * silently orphan every user's review history with no way to detect it after
+ * the fact. Retire a question with `retired: true`; never reuse its id.
+ */
 export type QuestionId = `D${DomainNumber}-q${string}`;
 
 /* ─────────────────────────────── Blueprint ─────────────────────────────── */

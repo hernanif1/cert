@@ -3,7 +3,7 @@ import type { Question } from "@/content/schema";
 export const questions = [
   {
     schemaVersion: 1,
-    id: "D3-q001",
+    id: "D3-q101",
     domain: 3,
     objective: "3.1",
     stem: "A team exposes a customer-support agent that can read tickets, draft replies, issue refunds, and delete user accounts. Support staff only ever need to read tickets and draft replies. Applying least-privilege principles, which change best reduces risk?",
