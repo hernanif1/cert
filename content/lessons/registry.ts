@@ -31,9 +31,14 @@ import { lesson as l_5_1_guardrails_safety_controls } from "@/content/lessons/5-
 import { lesson as l_5_2_risks_limitations_failure_modes } from "@/content/lessons/5-2-risks-limitations-failure-modes";
 import { lesson as l_5_3_human_in_the_loop } from "@/content/lessons/5-3-human-in-the-loop";
 import { lesson as l_5_4_regulatory_compliance } from "@/content/lessons/5-4-regulatory-compliance";
+import { lesson as l_5_5_ethical_ai } from "@/content/lessons/5-5-ethical-ai";
 import { lesson as l_6_1_structured_discovery } from "@/content/lessons/6-1-structured-discovery";
 import { lesson as l_6_2_communicating_decisions } from "@/content/lessons/6-2-communicating-decisions";
 import { lesson as l_6_3_feedback_loops_slas } from "@/content/lessons/6-3-feedback-loops-slas";
+import { lesson as l_6_4_documenting_architectures } from "@/content/lessons/6-4-documenting-architectures";
+import { lesson as l_6_5_lifecycle_phases } from "@/content/lessons/6-5-lifecycle-phases";
+import { lesson as l_7_1_team_tooling_claude_code } from "@/content/lessons/7-1-team-tooling-claude-code";
+import { lesson as l_7_2_ai_assisted_workflows } from "@/content/lessons/7-2-ai-assisted-workflows";
 
 /**
  * Authored lesson bodies, keyed by slug.
@@ -73,7 +78,12 @@ export const AUTHORED: Record<string, Lesson> = {
   [l_5_2_risks_limitations_failure_modes.slug]: l_5_2_risks_limitations_failure_modes,
   [l_5_3_human_in_the_loop.slug]: l_5_3_human_in_the_loop,
   [l_5_4_regulatory_compliance.slug]: l_5_4_regulatory_compliance,
+  [l_5_5_ethical_ai.slug]: l_5_5_ethical_ai,
   [l_6_1_structured_discovery.slug]: l_6_1_structured_discovery,
   [l_6_2_communicating_decisions.slug]: l_6_2_communicating_decisions,
   [l_6_3_feedback_loops_slas.slug]: l_6_3_feedback_loops_slas,
+  [l_6_4_documenting_architectures.slug]: l_6_4_documenting_architectures,
+  [l_6_5_lifecycle_phases.slug]: l_6_5_lifecycle_phases,
+  [l_7_1_team_tooling_claude_code.slug]: l_7_1_team_tooling_claude_code,
+  [l_7_2_ai_assisted_workflows.slug]: l_7_2_ai_assisted_workflows,
 };

@@ -185,8 +185,8 @@ export const lesson = {
       kind: "anthropic-blog",
     },
     {
-      label: "Claude Docs — Build with Claude",
-      url: "https://docs.claude.com/en/docs/build-with-claude/overview",
+      label: "Claude Docs",
+      url: "https://docs.claude.com/en/home",
       kind: "anthropic-docs",
     },
   ],

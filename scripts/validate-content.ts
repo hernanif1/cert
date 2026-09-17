@@ -46,6 +46,24 @@ const warn = (where: string, msg: string) => warnings.push(`${where}: ${msg}`);
 const LESSONS: Lesson[] = Object.values(AUTHORED);
 const QUESTIONS: Question[] = BANK;
 
+/**
+ * Sources are restricted to URLs a human has actually opened.
+ *
+ * Generated content invents plausible-looking URLs, and a 404 in a study guide
+ * is worse than no link at all because it looks authoritative. An allowlist
+ * makes fabrication structurally impossible: adding a source is a deliberate
+ * act that puts the URL in front of a person first. Link LIVENESS is not
+ * checked here on purpose — network flakiness would make the build
+ * nondeterministic.
+ */
+const SOURCE_ALLOWLIST = new Set([
+  "/exam-guide.pdf",
+  "https://docs.claude.com/en/home",
+  "https://www.anthropic.com/engineering/building-effective-agents",
+  "https://www.anthropic.com/news/contextual-retrieval",
+  "https://modelcontextprotocol.io",
+]);
+
 const EXPECTED_MOCK_TOTAL = 63;
 const LESSON_MIN_WORDS = 750;
 const LESSON_MAX_WORDS = 1300;
@@ -176,6 +194,12 @@ function checkLessons(): void {
     for (const s of l.sources) {
       if (!/^(https:\/\/|\/)/.test(s.url)) {
         err(where, `source "${s.label}" must be https or a site-relative path`);
+      }
+      if (!SOURCE_ALLOWLIST.has(s.url)) {
+        err(
+          where,
+          `source URL not on the allowlist: ${s.url} — a human must verify a link before it ships`,
+        );
       }
     }
 
