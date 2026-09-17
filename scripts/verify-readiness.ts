@@ -7,6 +7,8 @@ import { EXAM } from "../content/exam-facts";
 import { toScaledScore, passed, minimumCorrectToPass } from "../lib/exam/scoring";
 import { computeReadiness } from "../lib/exam/readiness";
 import { EMPTY_STATE, type AppState, type MockAttempt } from "../lib/storage/schema";
+import { OBJECTIVES_WITH_QUESTIONS, questionsByObjective } from "../content/questions";
+import { newCard } from "../lib/drill/leitner";
 import type { DomainNumber } from "../content/schema";
 
 let failures = 0;
@@ -64,21 +66,43 @@ check("empty state scores 0", empty.score === 0, String(empty.score));
 check("empty state is Just Beginning", empty.label === "Just Beginning");
 check("empty state reports mock locked", empty.mockLocked);
 
-const allLessons = computeReadiness(withLessons(38));
+/**
+ * The anti-click-farm gate: a lesson only counts once its objective has been
+ * exercised. Objectives with no questions written yet are waived, so the
+ * shortfall below is exactly the objectives that DO have questions.
+ */
+const clicked = computeReadiness(withLessons(38));
 check(
-  "all 38 lessons alone earns the full 25, and no more",
-  allLessons.lessons.earned === 25 && allLessons.score === 25,
-  `score=${allLessons.score}`,
+  "marking all 38 complete without answering anything falls short of 25",
+  clicked.lessons.earned < 25,
+  `${clicked.lessons.earned}/25 with ${OBJECTIVES_WITH_QUESTIONS.size} gated objective(s)`,
+);
+
+/** Answer one question on every objective that has any. */
+function withAnswers(state: AppState): AppState {
+  const cards = { ...state.drill.cards };
+  for (const objective of OBJECTIVES_WITH_QUESTIONS) {
+    const q = questionsByObjective(objective as never)[0];
+    if (q) cards[q.id] = { ...newCard(), b: 2, r: 1, c: 1, last: Date.now() };
+  }
+  return { ...state, drill: { ...state.drill, cards } };
+}
+
+const allLessons = computeReadiness(withAnswers(withLessons(38)));
+check(
+  "all 38 complete AND exercised earns the full 25",
+  allLessons.lessons.earned === 25,
+  `${allLessons.lessons.earned}/25`,
 );
 check(
   "lessons alone cannot reach Exam Ready",
   allLessons.label === "Building Foundations",
-  allLessons.label,
+  `${allLessons.label} @ ${allLessons.score}`,
 );
 
 /* The hard gate: a high composite must not outrank a failing mock. */
 const highButFailing: AppState = {
-  ...withLessons(38),
+  ...withAnswers(withLessons(38)),
   examHistory: [attempt(900, 57), attempt(910, 58), attempt(690, 42)],
 };
 const gated = computeReadiness(highButFailing);
@@ -104,7 +128,7 @@ check(
 );
 
 const weak: AppState = {
-  ...withLessons(38),
+  ...withAnswers(withLessons(38)),
   examHistory: [attempt(900, 57), attempt(905, 57), attempt(910, 58, 3)],
 };
 const weakGated = computeReadiness(weak);
@@ -125,9 +149,9 @@ check(
   `${lessonGated.label} — ${lessonGated.gateReason ?? ""}`,
 );
 
-const single = computeReadiness({ ...withLessons(38), examHistory: [attempt(820, 52)] });
+const single = computeReadiness({ ...withAnswers(withLessons(38)), examHistory: [attempt(820, 52)] });
 const triple = computeReadiness({
-  ...withLessons(38),
+  ...withAnswers(withLessons(38)),
   examHistory: [attempt(820, 52), attempt(820, 52), attempt(820, 52)],
 });
 check(
