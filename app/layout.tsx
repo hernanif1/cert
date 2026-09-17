@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Inter } from "next/font/google";
+import { Source_Serif_4, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeScript } from "@/components/providers/ThemeScript";
 import { AppChrome } from "@/components/providers/AppChrome";
 import { TopBar } from "@/components/layout/TopBar";
@@ -22,6 +22,13 @@ const sans = Inter({
   display: "swap",
 });
 
+// Variable on Google Fonts, so one file covers every weight.
+const mono = JetBrains_Mono({
+  variable: "--font-mono-var",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: `${EXAM.code} Study Guide`,
@@ -37,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${serif.variable} ${sans.variable} h-full antialiased`}
+      className={`${serif.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
         <ThemeScript />

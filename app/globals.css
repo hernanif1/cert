@@ -10,7 +10,7 @@
 @theme {
   --font-display: var(--font-serif-var), ui-serif, Georgia, "Times New Roman", serif;
   --font-sans: var(--font-sans-var), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-mono-var), ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
   --color-clay-50: #fbf0ec;
   --color-clay-100: #f5dfd6;
@@ -30,6 +30,22 @@
   --color-ink-600: #40403e;
   --color-ink-800: #1f1e1d;
   --color-ink-900: #141413; /* Anthropic black */
+
+  /* ── Reading scale ──────────────────────────────────────────────────────
+     17px/1.7 is the lesson body. Everything secondary sits at 15px so that
+     tables, callouts and cards read as content rather than as footnotes.  */
+  --text-reading: 1.0625rem; /* 17px */
+  --text-reading--line-height: 1.7;
+  --text-lede: 1.1875rem; /* 19px — the one-paragraph lesson summary */
+  --text-lede--line-height: 1.55;
+  --text-aux: 0.9375rem; /* 15px — tables, callouts, cards, key terms */
+  --text-aux--line-height: 1.65;
+  --text-code: 0.875rem; /* 14px mono ≈ 0.82× the body */
+  --text-code--line-height: 1.65;
+
+  /* One measure for the whole lesson page: 640px ≈ 75 characters per line
+     for Inter at 17px (avg advance ≈ 0.5em). The old max-w-3xl was ~94. */
+  --container-reading: 40rem;
 
   --radius-card: 0.75rem;
 }
@@ -95,18 +111,34 @@
   color-scheme: dark;
 }
 
-body {
-  background-color: var(--ui-bg);
-  color: var(--ui-fg);
-}
+/* MUST be layered: unlayered rules outrank every Tailwind utility, which
+   would make `font-medium` on a heading a silent no-op. */
+@layer base {
+  body {
+    background-color: var(--ui-bg);
+    color: var(--ui-fg);
+  }
 
-h1,
-h2,
-h3,
-.font-display {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.015em;
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  /* A 390px column cannot afford an unbreakable identifier or URL. */
+  :where(p, li, dd, dt, td, th, h1, h2, h3) {
+    overflow-wrap: break-word;
+  }
 }
 
 /* Counters must not reflow when 9/38 becomes 12/38. */
