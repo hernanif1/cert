@@ -16,6 +16,19 @@ import { homedir } from "node:os";
 const BASE = process.argv[2] ?? "http://localhost:3001";
 const KEY = "ccarp:v1";
 
+/** Read the 38 lesson slugs out of the rendered curriculum, so this test
+ *  cannot drift from content/domains.ts. */
+async function allLessonSlugs(page) {
+  return page.$$eval('a[href^="/learn/"]', (as) =>
+    [...new Set(
+      as.map((a) => a.getAttribute("href"))
+        .map((h) => h.replace(/\/$/, "").split("/").filter(Boolean))
+        .filter((p) => p.length === 3)
+        .map((p) => p[2]),
+    )],
+  );
+}
+
 function findChromium() {
   const root = join(homedir(), "Library/Caches/ms-playwright");
   if (!existsSync(root)) return undefined;
@@ -220,6 +233,93 @@ async function main() {
       msgs.filter((m) => m.startsWith("pageerror"))[0] ?? "");
     const banner = await page.getByRole("status").count();
     check("blocked storage: banner shown", banner > 0);
+    await ctx.close();
+  }
+
+
+  /* 9 — dashboard reflects state, and readiness contradicts a failing mock */
+  {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    const msgs = watchConsole(page);
+    await page.goto(`${BASE}/learn/`, { waitUntil: "networkidle" });
+    const ALL_SLUGS = [];
+    for (const d of await page.$$eval('nav a[href^="/learn/"]', (as) =>
+      as.map((a) => a.getAttribute("href")).filter((h) => /^\/learn\/\d-/.test(h)))) {
+      await page.goto(`${BASE}${d}`, { waitUntil: "domcontentloaded" });
+      ALL_SLUGS.push(...(await allLessonSlugs(page)));
+    }
+    await page.goto(`${BASE}/learn/progress/`, { waitUntil: "networkidle" });
+    check("collected all 38 lesson slugs", ALL_SLUGS.length === 38, String(ALL_SLUGS.length));
+    check("dashboard: no hydration warnings", hydrationNoise(msgs).length === 0,
+      hydrationNoise(msgs)[0] ?? "");
+
+    // All 38 lessons plus three failing mocks: a composite high enough to be
+    // making a claim, contradicted by the number that actually decides.
+    await page.evaluate(([key, slugs]) => {
+      const lessons = {};
+      for (const s of slugs) lessons[s] = { completedAt: 1, viewedAt: 1 };
+      const byDomain = {1:{correct:11,total:11},2:{correct:8,total:8},3:{correct:12,total:12},
+        4:{correct:10,total:10},5:{correct:9,total:9},6:{correct:9,total:9},7:{correct:4,total:4}};
+      const mock = (id) => ({ id, seed:1, startedAt:1, submittedAt: Date.now(),
+        durationMs:1, timedOut:false, raw:42, total:63, scaled:690, passed:false,
+        byDomain, questionIds:[], correctness:[] });
+      localStorage.setItem(key, JSON.stringify({
+        schemaVersion: 1, lessons,
+        examHistory: [mock("a"), mock("b"), mock("c")],
+      }));
+    }, [KEY, ALL_SLUGS]);
+    await page.reload({ waitUntil: "networkidle" });
+
+    const body = await page.locator("main").innerText();
+    check("dashboard shows 38/38 lessons", body.includes("38/38"), "");
+    check(
+      "readiness warns about the failing mock",
+      body.includes("690") && /that decides/i.test(body),
+      "",
+    );
+    check("readiness never claims Exam Ready on a failed mock",
+      !body.includes("Exam Ready"), "");
+    await ctx.close();
+  }
+
+  /* 10 — export, reset, re-import round-trips to identical state */
+  {
+    const ctx = await browser.newContext({ acceptDownloads: true });
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/learn/progress/`, { waitUntil: "networkidle" });
+    await page.evaluate((key) => {
+      localStorage.setItem(key, JSON.stringify({
+        schemaVersion: 1,
+        lessons: {
+          "2-1-model-selection": { completedAt: 5, viewedAt: 5 },
+          "4-4-diagnosing-system-issues": { completedAt: 6, viewedAt: 6 },
+        },
+      }));
+    }, KEY);
+    await page.reload({ waitUntil: "networkidle" });
+
+    const before = (await page.locator("main").innerText()).includes("2/38");
+    check("pre-export state reads 2/38", before);
+
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByRole("button", { name: /export progress/i }).click(),
+    ]);
+    const path = await download.path();
+    check("export produced a file", Boolean(path), download.suggestedFilename());
+
+    await page.getByRole("button", { name: /^reset progress$/i }).click();
+    await page.getByRole("button", { name: /delete all progress/i }).click();
+    await page.waitForTimeout(400);
+    check("reset clears to 0/38",
+      (await page.locator("main").innerText()).includes("0/38"));
+
+    await page.locator('input[type="file"]').setInputFiles(path);
+    await page.getByRole("button", { name: /^replace everything$/i }).click();
+    await page.waitForTimeout(400);
+    check("import restores 2/38",
+      (await page.locator("main").innerText()).includes("2/38"));
     await ctx.close();
   }
 

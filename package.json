@@ -9,9 +9,10 @@
     "validate": "tsx scripts/validate-content.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
-    "check": "npm run typecheck && npm run lint && npm run validate",
+    "check": "npm run typecheck && npm run lint && npm run validate && npm run verify:readiness",
     "serve": "npx --yes serve out -l 3001",
-    "verify:storage": "node scripts/verify-storage.mjs"
+    "verify:storage": "node scripts/verify-storage.mjs",
+    "verify:readiness": "tsx scripts/verify-readiness.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
