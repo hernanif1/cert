@@ -2,6 +2,8 @@ import type { LessonBlock } from "@/content/schema";
 import { md, mdInline } from "@/lib/markdown";
 import { Prose } from "@/components/content/Prose";
 import { Callout } from "@/components/content/Callout";
+import { PracticeScenario } from "@/components/lesson/PracticeScenario";
+import { getQuestion } from "@/content/questions";
 
 /**
  * Server-side switch over the LessonBlock discriminated union, with a `never`
@@ -124,13 +126,13 @@ function Block({ block }: { block: LessonBlock }) {
         </section>
       );
 
-    case "practice":
-      // Wired to the real QuestionCard in Phase 4.
-      return (
-        <section className="my-6 rounded-card border border-dashed border-border p-5 text-sm text-fg-muted">
-          Practice scenario <code className="font-mono">{block.questionId}</code>
-        </section>
-      );
+    case "practice": {
+      const question = getQuestion(block.questionId);
+      // The validator guarantees this resolves; render nothing rather than
+      // crashing a page if a question is mid-authoring.
+      if (!question) return null;
+      return <PracticeScenario question={question} />;
+    }
 
     default: {
       const _exhaustive: never = block;
