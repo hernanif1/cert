@@ -16,11 +16,12 @@
     "verify:drill": "tsx scripts/verify-drill.ts",
     "verify:exam": "tsx scripts/verify-exam.ts",
     "verify:exam-ui": "node scripts/verify-exam-ui.mjs",
-    "verify:ui": "npm run verify:storage && npm run verify:exam-ui && npm run verify:drill-ui",
+    "verify:ui": "npm run verify:storage && npm run verify:exam-ui && npm run verify:drill-ui && npm run verify:site",
     "validate:strict": "tsx scripts/validate-content.ts --strict",
     "verify:queue": "tsx scripts/verify-queue.ts",
     "verify:drill-ui": "node scripts/verify-drill-ui.mjs",
-    "registry": "tsx scripts/generate-registry.ts"
+    "registry": "tsx scripts/generate-registry.ts",
+    "verify:site": "node scripts/verify-site.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
