@@ -94,7 +94,18 @@ export const lesson = {
       md: "*Add more few-shot examples* is the most over-offered distractor in this objective, because it sounds like effort. Examples fix form and boundaries. They do not fix missing knowledge, and they do not fix skipped reasoning.",
     },
 
-    { kind: "practice", questionId: "D2-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D2-q301",
+        "D2-q302",
+        "D2-q303",
+        "D2-q304",
+        "D2-q305",
+        "D2-q306",
+        "D2-q307",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -150,8 +161,6 @@ export const lesson = {
         "Have the model reason inside delimiters and emit the final answer in the contracted shape, then parse only that section.",
     },
   ],
-
-  practiceQuestionIds: ["D2-q301", "D2-q305"],
 
   sources: [
     {

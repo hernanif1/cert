@@ -38,6 +38,14 @@ for (const d of DOMAINS) {
 
 const BANK = { drill, reserved };
 
+/* Derived, not hard-coded: the bank grows as objectives are authored, and a
+ * stale literal here would fail the build for a content change that is fine. */
+const DRILL_TOTAL = DOMAINS.reduce(
+  (a, d) => a + d.objectives.reduce((b, o) => b + o.drillTarget, 0),
+  0,
+);
+const RESERVED_TOTAL = DOMAINS.reduce((a, d) => a + d.mockItemCount, 0);
+
 const DAY = 86_400_000;
 const NOW = Date.now();
 const cards = (entries: [string, Partial<CardState>][]): AppState["drill"]["cards"] =>
@@ -49,8 +57,8 @@ const base: AppState = { ...EMPTY_STATE };
 
 /* Form A isolation */
 check(
-  "before a first mock, drill sees only the 200-item pool",
-  availableBank(base, BANK).length === 200,
+  `before a first mock, drill sees only the ${DRILL_TOTAL}-item pool`,
+  availableBank(base, BANK).length === DRILL_TOTAL,
   String(availableBank(base, BANK).length),
 );
 const afterMock: AppState = {
@@ -61,7 +69,7 @@ const afterMock: AppState = {
 };
 check(
   "after a first mock, Form A joins the drill pool",
-  availableBank(afterMock, BANK).length === 263,
+  availableBank(afterMock, BANK).length === DRILL_TOTAL + RESERVED_TOTAL,
   String(availableBank(afterMock, BANK).length),
 );
 

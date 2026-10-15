@@ -35,7 +35,7 @@ export const lesson = {
     { kind: "heading", text: "Is it a Claude-shaped problem?" },
     {
       kind: "prose",
-      md: "Not every expensive process is a language problem. The fit test is about the shape of the work, not its cost.\n\n**Good fit:** unstructured or semi-structured language in, a judgment a competent person could make from written criteria, enough volume that consistency matters, and a downstream step that can absorb or catch an error.\n\n**Poor fit:** arithmetic that must be exact, a lookup an existing API already answers deterministically, a rule set small and stable enough to express as code, or a decision nobody is willing to review. The last one matters most — an unreviewable decision with no error budget is a governance problem before it is an architecture problem.",
+      md: "Not every expensive process is a language problem. The fit test is about the shape of the work, not its cost.\n\n**Good fit:** unstructured or semi-structured language in, a judgment a competent person could make from written criteria, enough volume that consistency matters, and a downstream step that can absorb or catch an error.\n\n:::example\n*A good-fit request:* “We receive 4,000 complaint emails a month. We want each classified into one of the twelve categories in our service manual, with the order number and reason extracted, so the agent opens a pre-filled ticket and corrects whatever is wrong.” All four conditions hold, and the agent catches an error before it costs anything.\n:::\n\n**Poor fit:** arithmetic that must be exact, a lookup an existing API already answers deterministically, a rule set small and stable enough to express as code, or a decision nobody is willing to review. The last one matters most — an unreviewable decision with no error budget is a governance problem before it is an architecture problem.\n\n:::example\n*A poor-fit request:* “We want Claude to calculate each claim's payout from the coverage table and pay it automatically, with nobody checking.” Exact arithmetic over a stable table belongs in deterministic code, and the payment is a decision nobody will review. Nothing in the request is language-shaped, and the one step that would catch an error has been removed.\n:::",
     },
     {
       kind: "table",
@@ -76,7 +76,14 @@ export const lesson = {
     {
       kind: "callout",
       variant: "key-concept",
-      md: "A success criterion that cannot be evaluated is not a success criterion. Before committing to an architecture, write twenty representative inputs and the output you would accept for each. If the team cannot agree on those twenty, the problem is still mistranslated, and no model choice will rescue it.",
+      md: "A success criterion that cannot be evaluated is not a success criterion. Before committing to an architecture, write twenty representative inputs and the output you would accept for each — two of them are below. If the team cannot agree on those twenty, the problem is still mistranslated, and no model choice will rescue it.",
+    },
+    {
+      kind: "code",
+      // "text", not "json": the strings ARE the content a reader must read, so
+      // this block is translated rather than held byte-identical across locales.
+      lang: "text",
+      code: '[\n  {\n    "input": "Order 48213 arrived with the screen cracked, I want a replacement.",\n    "accept": {\n      "category": "transit damage",\n      "order": "48213",\n      "reason": "screen cracked on delivery",\n      "ticket": "pre-filled, agent approves"\n    }\n  },\n  {\n    "input": "Third time you people get it wrong and nobody ever calls me back.",\n    "accept": {\n      "category": "service complaint",\n      "order": null,\n      "reason": "repeat failure, no callback",\n      "confidence": "low",\n      "ticket": "opened unfilled, routed to an agent"\n    },\n    "note": "A guessed order number is a failure even when the guess is right."\n  }\n]',
     },
 
     {
@@ -96,7 +103,19 @@ export const lesson = {
       md: "Distractors in this objective start from technology rather than from the problem: *prototype with the most capable model and iterate*, *index the whole archive first*, *replace the process end to end*. All of them skip the metric, the task and the error budget. The keyed answer names a measurable outcome and a bounded task.",
     },
 
-    { kind: "practice", questionId: "D1-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q101",
+        "D1-q102",
+        "D1-q103",
+        "D1-q104",
+        "D1-q105",
+        "D1-q106",
+        "D1-q107",
+        "D1-q108",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -152,8 +171,6 @@ export const lesson = {
         "Translate the asymmetry into the metric, usually as recall subject to a ceiling on review volume.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q101", "D1-q104"],
 
   sources: [
     {

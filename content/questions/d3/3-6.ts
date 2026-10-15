@@ -207,4 +207,87 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q606",
+    domain: 3,
+    objective: "3.6",
+    stem: "A customer-success assistant is grounded in a vector index of account notes. It answers \"what did we discuss with Northwind in March\" well. It answers \"which accounts have had no contact in 90 days\" with a short, confident and wrong list. Why does the second question fail?",
+    choices: [
+      {
+        id: "A",
+        text: "Establishing that something is absent requires examining every account, and a top-k retriever returns the closest matches rather than a complete set.",
+      },
+      {
+        id: "B",
+        text: "The notes do not record contact dates in a form the embedding can represent.",
+        rationale:
+          "Dates are usually present in the notes, and even perfectly embedded dates would not let a similarity search prove that nothing else exists.",
+      },
+      {
+        id: "C",
+        text: "The phrasing is negated, and negation is known to embed poorly, so the query vector lands near notes about contact.",
+        rationale:
+          "Negated phrasing does confuse similarity scoring, but rewording the query still cannot produce the exhaustive scan the answer depends on.",
+      },
+      {
+        id: "D",
+        text: "Ninety days of notes exceed the context window once enough chunks are retrieved.",
+        rationale:
+          "Capacity would cap how much is read, while the answer is wrong in kind: it names some accounts rather than all qualifying ones.",
+      },
+    ],
+    explanation:
+      "Negation and exhaustiveness are query patterns that similarity search cannot serve, because both are claims about a complete set and retrieval returns a ranked sample. Questions of that shape belong against a queryable store of the underlying records, with retrieval reserved for finding relevant passages.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["retrieval-selection", "negation", "completeness"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q607",
+    domain: 3,
+    objective: "3.6",
+    stem: "A benefits assistant is asked \"how does this year's parental leave policy differ from last year's\". Retrieval returns five chunks, four from the current policy and one from the prior year, and the answer describes the current policy while asserting that little has changed. Which TWO changes address the cause?",
+    choices: [
+      {
+        id: "A",
+        text: "Increase the number of retrieved chunks so more of the prior policy is included.",
+        rationale:
+          "A longer list still lets one document dominate the ranking, because nothing in the retrieval makes the two years compete on equal terms.",
+      },
+      {
+        id: "B",
+        text: "Decompose the question into two retrievals, one scoped to each policy year, and compare the results.",
+      },
+      {
+        id: "C",
+        text: "Filter on the policy-year metadata so each sub-query draws only from its own version.",
+      },
+      {
+        id: "D",
+        text: "Instruct the model to state explicitly when it has not seen enough of one document to compare.",
+        rationale:
+          "An honesty instruction turns a wrong answer into a refusal, which is better, but it still does not get the prior policy in front of the model.",
+      },
+      {
+        id: "E",
+        text: "Re-rank the five retrieved chunks so the prior-year chunk is presented first.",
+        rationale:
+          "Ordering changes emphasis within an unbalanced set, and one chunk of the prior policy is not enough to ground a comparison whatever position it holds.",
+      },
+    ],
+    explanation:
+      "A comparative question is two retrievals and a comparison, not one retrieval over a mixed corpus: a single ranked query lets whichever document is better represented crowd out the other. Decomposing the query and pinning each part to its version with metadata gives the comparison both sides to work from.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["retrieval-selection", "query-decomposition", "comparative"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["B", "C"],
+  },
 ] satisfies Question[];

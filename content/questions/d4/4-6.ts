@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q606",
+    domain: 4,
+    objective: "4.6",
+    stem: "A drafting assistant produces replies that agents edit before sending. The team wants a quality signal that reacts within hours rather than the days an LLM-judge sample takes, and that needs no labeling. Which signal fits?",
+    choices: [
+      {
+        id: "A",
+        text: "The share of conversations in which the agent used the assistant at all.",
+        rationale:
+          "Adoption tracks whether people reach for the tool, which moves with habit and training long after quality has changed.",
+      },
+      {
+        id: "B",
+        text: "The proportion of drafts sent unedited, and how much of the text agents change when they do edit.",
+      },
+      {
+        id: "C",
+        text: "A weekly survey asking agents to rate the assistant's usefulness.",
+        rationale:
+          "A survey is explicit labeling on a weekly cadence, which is slower than the judge sample it is meant to beat and sparser.",
+      },
+      {
+        id: "D",
+        text: "The rate of HTTP errors and timeouts from the drafting endpoint.",
+        rationale:
+          "Those are operational signals, and a silent quality regression produces successful responses that nobody had to correct any faster.",
+      },
+    ],
+    explanation:
+      "A proxy quality metric is a behavior the system already records that correlates with quality and costs nothing to collect. Edit distance on human-corrected output reacts almost immediately and needs no judge, which is what makes it the fastest of the three complementary signals even though it is blind to drafts nobody reviews carefully.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["monitoring", "proxy-quality-metric"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q607",
+    domain: 4,
+    objective: "4.6",
+    stem: "A judge-scored quality metric fell over an eight-day window. The team ships prompt changes several times a week, rebuilds the index nightly and updates model configuration occasionally, and reconstructing what happened when takes two engineers most of a day. What should be added to the monitoring so this is answerable immediately?",
+    choices: [
+      {
+        id: "A",
+        text: "A finer sampling interval on the quality metric, so the shift is located to the hour.",
+        rationale:
+          "Knowing the precise hour of the drop still leaves the team searching several systems for what changed around it.",
+      },
+      {
+        id: "B",
+        text: "Alerting on the quality metric, so the next drop is noticed sooner.",
+        rationale:
+          "Earlier notice shortens the exposure and does nothing about the attribution work that follows the alert.",
+      },
+      {
+        id: "C",
+        text: "Deploy annotations on the metric timeline, marking every prompt, index and configuration change as it happens.",
+      },
+      {
+        id: "D",
+        text: "Retention of full prompts and completions for the affected window.",
+        rationale:
+          "Stored payloads show what the system produced, not which of the week's changes altered what it was producing.",
+      },
+    ],
+    explanation:
+      "A metric that moves is only actionable if the timeline carries what changed beside it. Annotating deploys as they happen turns correlation into a first guess that takes seconds, which is the difference between a monitoring system that reports a problem and one that helps locate it.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["monitoring", "deploy-annotation", "attribution"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

@@ -46,6 +46,12 @@ export interface ReadinessComponent {
   pct: number;
 }
 
+export type ReadinessGate =
+  | { kind: "no-mock"; score: number }
+  | { kind: "failed-mock"; score: number; scaled: number; cut: number }
+  | { kind: "weak-domain"; weak: { id: DomainNumber; pct: number }[]; min: number }
+  | { kind: "lessons"; score: number; done: number; needed: number };
+
 export interface Readiness {
   score: number;
   label: ReadinessLabel;
@@ -54,6 +60,8 @@ export interface Readiness {
   mock: ReadinessComponent;
   /** Set when the composite was capped below "Exam Ready" — explains why. */
   gateReason: string | null;
+  /** The same explanation as DATA, so the UI can say it in any language. */
+  gate: ReadinessGate | null;
   mockAttempts: number;
   /** Shown when the mock component is structurally unreachable. */
   mockLocked: boolean;
@@ -183,7 +191,7 @@ function applyGate(
   label: ReadinessLabel,
   state: AppState,
   completedLessons: number,
-): { label: ReadinessLabel; gateReason: string | null } {
+): { label: ReadinessLabel; gateReason: string | null; gate: ReadinessGate | null } {
   const last = state.examHistory[state.examHistory.length - 1];
 
   if (!last) {
@@ -193,6 +201,7 @@ function applyGate(
         label === "Exam Ready"
           ? `Your composite is ${score}, but you have not taken a mock exam. That is the number that decides.`
           : null,
+      gate: label === "Exam Ready" ? { kind: "no-mock", score } : null,
     };
   }
 
@@ -202,6 +211,10 @@ function applyGate(
       gateReason:
         score >= CLAIM_THRESHOLD
           ? `Your composite is ${score}, but your last mock scored ${last.scaled} — below the ${EXAM.passScaled} cut. That is the number that decides.`
+          : null,
+      gate:
+        score >= CLAIM_THRESHOLD
+          ? { kind: "failed-mock", score, scaled: last.scaled, cut: EXAM.passScaled }
           : null,
     };
   }
@@ -221,6 +234,10 @@ function applyGate(
         score >= CLAIM_THRESHOLD
           ? `Your last mock passed, but ${names} is below ${MIN_DOMAIN_PCT_FOR_READY}%. Shore that up before sitting the real exam.`
           : null,
+      gate:
+        score >= CLAIM_THRESHOLD
+          ? { kind: "weak-domain", weak, min: MIN_DOMAIN_PCT_FOR_READY }
+          : null,
     };
   }
 
@@ -231,10 +248,14 @@ function applyGate(
         label === "Exam Ready"
           ? `Your composite is ${score}, but only ${completedLessons} of 38 lessons are complete (${MIN_LESSONS_FOR_READY} needed).`
           : null,
+      gate:
+        label === "Exam Ready"
+          ? { kind: "lessons", score, done: completedLessons, needed: MIN_LESSONS_FOR_READY }
+          : null,
     };
   }
 
-  return { label, gateReason: null };
+  return { label, gateReason: null, gate: null };
 }
 
 export function computeReadiness(state: AppState): Readiness {
@@ -250,7 +271,7 @@ export function computeReadiness(state: AppState): Readiness {
     0,
   );
 
-  const { label, gateReason } = applyGate(
+  const { label, gateReason, gate } = applyGate(
     score,
     labelFor(score),
     state,
@@ -264,6 +285,7 @@ export function computeReadiness(state: AppState): Readiness {
     drill: component(d, WEIGHT_DRILL),
     mock: component(m, WEIGHT_MOCK),
     gateReason,
+    gate,
     mockAttempts: state.examHistory.length,
     mockLocked: state.examHistory.length === 0,
   };

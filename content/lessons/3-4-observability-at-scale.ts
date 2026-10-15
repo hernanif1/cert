@@ -102,7 +102,18 @@ export const lesson = {
       md: "*Add more latency and error-rate dashboards* and *extend log retention* are the reflexive operational answers, and on this objective they are usually distractors: both scale up instrumentation that is already blind to the failure being described. Look for the option that adds a **new kind** of signal — a correctness check, a sampled quality score, a correlating trace id, or version metadata.",
     },
 
-    { kind: "practice", questionId: "D3-q401" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q401",
+        "D3-q402",
+        "D3-q403",
+        "D3-q404",
+        "D3-q405",
+        "D3-q406",
+        "D3-q407",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -165,8 +176,6 @@ export const lesson = {
         "Stamp every trace with prompt version, index build and tool versions so a quality shift can be correlated to a specific deployment.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q401", "D3-q403"],
 
   sources: [
     {

@@ -246,4 +246,82 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D5-q107",
+    domain: 5,
+    objective: "5.1",
+    stem: "An agent that can cancel subscriptions runs an output filter which inspects the final response for policy violations and blocks it when one is found. During an incident the filter correctly blocked a response, yet the customer's subscription had already been cancelled. The team proposes making the filter stricter. What is the real defect?",
+    choices: [
+      {
+        id: "A",
+        text: "The filter's policy rules are incomplete, since a stricter version would have flagged the request earlier.",
+        rationale:
+          "Strictness changes what the filter catches, and it would still be reading a response produced after the cancellation had happened.",
+      },
+      {
+        id: "B",
+        text: "The control is in the wrong position: a check that runs on the response cannot prevent a tool call that already executed.",
+      },
+      {
+        id: "C",
+        text: "The cancellation tool should be idempotent so the blocked response leaves the account unchanged.",
+        rationale:
+          "Idempotency makes a repeated call harmless without stopping the first one, which is the call that cancelled the subscription.",
+      },
+      {
+        id: "D",
+        text: "The filter should fail closed, so a blocked response also rolls back the conversation.",
+        rationale:
+          "Fail-closed governs behavior when a control is unavailable, and rolling back a conversation does not reverse an effect in another system.",
+      },
+    ],
+    explanation:
+      "Ordering matters as much as coverage: each layer can only act on what exists when it runs, and an output filter runs after the model has already taken its actions. Anything with an external effect has to be gated at tool authorization, before the call, where a decision can still prevent rather than merely describe.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["guardrails", "ordering", "layered-defense"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D5-q108",
+    domain: 5,
+    objective: "5.1",
+    stem: "An input classifier on an internal research assistant fires on about 12% of questions, and review shows the great majority are legitimate. Engineers now route around the assistant for anything sensitive, and one team has asked for the classifier to be disabled. What should the architect do?",
+    choices: [
+      {
+        id: "A",
+        text: "Disable the classifier and rely on the output filter and tool authorization already in place.",
+        rationale:
+          "Removing a layer because it is badly tuned gives up the coverage it was added for, and the other layers are blind to what it screens.",
+      },
+      {
+        id: "B",
+        text: "Keep the classifier as it is and require teams to submit a justification when they bypass it.",
+        rationale:
+          "A bypass process formalizes the workaround while leaving the false-positive rate that created the demand for it.",
+      },
+      {
+        id: "C",
+        text: "Raise the classifier's threshold until the firing rate falls to a level teams tolerate.",
+        rationale:
+          "Moving the threshold by tolerance rather than by evidence trades an unknown amount of true-positive coverage for quieter complaints.",
+      },
+      {
+        id: "D",
+        text: "Collect the confirmed false positives and tune the classifier against them, while routing borderline cases to review rather than blocking.",
+      },
+    ],
+    explanation:
+      "A control that fires constantly on legitimate traffic gets worked around, and a guardrail people route around protects nothing. Tuning on confirmed false positives is the maintenance a classifier requires, and sending borderline cases to review keeps coverage while removing the cost that is driving the bypass.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["guardrails", "false-positives", "tuning"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

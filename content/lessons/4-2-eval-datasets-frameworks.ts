@@ -87,7 +87,19 @@ export const lesson = {
       md: "*Have the same model grade its own outputs* and *collect more production data until the golden set is large enough* both appear as tempting answers. The first introduces self-preference bias into the only signal you have; the second delays every decision and still misses the rare strata that random sampling underrepresents.",
     },
 
-    { kind: "practice", questionId: "D4-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q201",
+        "D4-q202",
+        "D4-q203",
+        "D4-q204",
+        "D4-q205",
+        "D4-q206",
+        "D4-q207",
+        "D4-q208",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -155,8 +167,6 @@ export const lesson = {
         "Use synthetic data to fill known coverage gaps, and anchor the suite on redacted real traces.",
     },
   ],
-
-  practiceQuestionIds: ["D4-q201", "D4-q205"],
 
   sources: [
     {

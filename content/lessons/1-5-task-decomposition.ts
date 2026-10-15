@@ -97,7 +97,18 @@ export const lesson = {
       md: "When a stem reports high per-step accuracy and disappointing end-to-end results, *one of the step evaluations must be measured wrong* is the trap. Independent steps multiply, so the numbers usually reconcile exactly. The keyed answer adds verification at the seams or removes seams, rather than doubting the measurement.",
     },
 
-    { kind: "practice", questionId: "D1-q501" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q501",
+        "D1-q502",
+        "D1-q503",
+        "D1-q504",
+        "D1-q505",
+        "D1-q506",
+        "D1-q507",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -153,8 +164,6 @@ export const lesson = {
         "Evaluate end to end as well, and validate the artifacts that actually cross seams.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q501", "D1-q504"],
 
   sources: [
     {

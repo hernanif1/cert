@@ -9,12 +9,12 @@ export const lesson = {
     "Monitor system performance using logging and observability tools",
   title: "Logging and Performance Monitoring",
   summary:
-    "LLM systems fail silently: the call succeeds, the text is fluent, and the answers have quietly stopped being good. Monitoring one is therefore about carrying a continuous quality signal alongside the operational ones, and about logging enough per request that a regression can be attributed to a change.",
+    "LLM systems fail silently: the call succeeds, the text is fluent, and the answers have quietly stopped being good. Monitoring one therefore means carrying a continuous quality signal alongside the operational ones, and logging enough per request that a regression can be attributed to a change.",
 
   body: [
     {
       kind: "prose",
-      md: "Conventional monitoring assumes failures announce themselves — a non-200, a stack trace, a timeout. An LLM system returns 200 with a plausible paragraph while its accuracy falls by fifteen points, and no operational dashboard notices. That single property shapes everything here: the monitoring design has to manufacture the signal that the system will not emit on its own.",
+      md: "Conventional monitoring assumes failures announce themselves — a non-200, a stack trace, a timeout. An LLM system returns 200 with a plausible paragraph while its accuracy falls fifteen points, and no dashboard notices. That property shapes everything here: the monitoring design has to manufacture the signal the system will not emit on its own.",
     },
 
     { kind: "heading", text: "What every request should carry" },
@@ -32,6 +32,36 @@ export const lesson = {
         "**Downstream signal** — whether a human accepted, edited, or escalated the result. This is the cheapest proxy for quality you will ever get.",
         "**Redaction state** — what was scrubbed and under which policy, with a retention window, since prompts and completions routinely contain regulated content.",
       ],
+    },
+
+    { kind: "heading", text: "Exporting Claude Code telemetry to a SIEM" },
+    {
+      kind: "prose",
+      md: "Claude Code ships an OpenTelemetry exporter for this record-keeping, off until `CLAUDE_CODE_ENABLE_TELEMETRY=1` is set. Its default export is *structural*: durations, token and cost counters, model names, tool names, permission decisions, session and account identifiers. Prompt text arrives as `<REDACTED>`, tool arguments are omitted, and third-party tool names collapse to `custom`. Conversation content leaves the machine only through separate opt-in switches:",
+    },
+    {
+      kind: "code",
+      lang: "bash",
+      code: `export CLAUDE_CODE_ENABLE_TELEMETRY=1
+export OTEL_METRICS_EXPORTER=otlp
+export OTEL_LOGS_EXPORTER=otlp
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://otel-collector.internal:4317
+
+# Structural: labels, identifiers, tracing — no conversation content
+export OTEL_RESOURCE_ATTRIBUTES=department=eng,service.version=1.4.0
+export OTEL_METRICS_INCLUDE_SESSION_ID=false   # metrics only; events keep session.id
+export CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1   # span tracing; needs OTEL_TRACES_EXPORTER
+
+# Content opt-ins: each one exports what users typed or the agent did
+export OTEL_LOG_USER_PROMPTS=1     # prompt text on user_prompt events + interaction span
+export OTEL_LOG_TOOL_DETAILS=1     # tool_input: file paths, shell commands, real MCP/skill names
+export OTEL_LOG_TOOL_CONTENT=1     # tool output: file contents, stdout, diffs
+export OTEL_LOG_RAW_API_BODIES=file:/var/log/claude-bodies   # full request/response JSON, body_ref on the event`,
+    },
+    {
+      kind: "callout",
+      variant: "pitfall",
+      md: "Exam items here turn on one distinction: which variables *add content* and which only label, filter or structure what is already exported. Resource attributes, `OTEL_METRICS_INCLUDE_*` flags and enhanced tracing change the data's shape. Prompts, tool details, tool content and raw API bodies change what it contains — and raw bodies imply all the others, since they carry the whole conversation.",
     },
 
     { kind: "heading", text: "Manufacturing a quality signal" },
@@ -67,7 +97,7 @@ export const lesson = {
     },
     {
       kind: "prose",
-      md: "**Monitor the inputs, not only the outputs.** Query length distribution, topic or intent mix, language, and the share of requests where retrieval returns nothing are all cheap to track and all explain quality movements that would otherwise look inexplicable. A new product launch, a new market, or a support macro sending users a different phrasing changes the input distribution overnight; the model did not get worse, the job did.\n\n**Alert on symptoms users feel, and give every alert an owner and an action.** A page for a metric that nobody can act on trains the team to dismiss pages, which is a worse failure than the one being monitored. Use fixed thresholds where an SLA exists, relative thresholds against a trailing baseline where the level drifts legitimately, and reserve paging for user-visible breakage — error-rate spikes, p95 past the SLO, a cost-per-day cliff, a refusal-rate jump. Slow quality decay belongs on a review, not a pager.",
+      md: "**Monitor the inputs, not only the outputs.** Query length distribution, topic mix, language, and the share of requests where retrieval returns nothing are cheap to track and explain otherwise inexplicable quality movements. A product launch, a new market, or a support macro that changes how users phrase things shifts the input distribution overnight; the model did not get worse, the job did.\n\n**Alert on symptoms users feel, and give every alert an owner and an action.** A page nobody can act on trains the team to dismiss pages, a worse failure than the one being monitored. Use fixed thresholds where an SLA exists, relative thresholds against a trailing baseline where the level drifts legitimately, and reserve paging for user-visible breakage — error-rate spikes, p95 past the SLO, a cost-per-day cliff, a refusal-rate jump. Slow quality decay belongs on a review, not a pager.",
     },
     {
       kind: "example",
@@ -82,10 +112,21 @@ export const lesson = {
     {
       kind: "callout",
       variant: "exam-distractor",
-      md: "*Add uptime and error-rate alerting* and *collect user thumbs-up and thumbs-down* both read as responsible answers. Neither detects a silent quality regression: the first never fires, and explicit feedback is sparse, heavily biased toward the annoyed, and arrives long after the damage. The keyed option establishes a continuous, sampled quality measurement.",
+      md: "*Add uptime and error-rate alerting* and *collect user thumbs-up and thumbs-down* both read as responsible answers. Neither detects a silent quality regression: the first never fires, and explicit feedback is sparse, biased toward the annoyed, and arrives long after the damage. The keyed option establishes a continuous, sampled quality measurement.",
     },
 
-    { kind: "practice", questionId: "D4-q601" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q601",
+        "D4-q602",
+        "D4-q603",
+        "D4-q604",
+        "D4-q605",
+        "D4-q606",
+        "D4-q607",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -114,6 +155,16 @@ export const lesson = {
       definition:
         "Marking releases, prompt-version changes and index rebuilds directly on the dashboards, so a metric step can be lined up against what changed.",
     },
+    {
+      term: "Structural telemetry",
+      definition:
+        "Durations, token and cost counters, model and tool names, permission decisions and identifiers — what Claude Code exports as soon as telemetry is enabled, with no conversation content.",
+    },
+    {
+      term: "Content opt-in",
+      definition:
+        "A separate variable — OTEL_LOG_USER_PROMPTS, OTEL_LOG_TOOL_DETAILS, OTEL_LOG_TOOL_CONTENT, OTEL_LOG_RAW_API_BODIES — that adds what users typed or the agent did to the exported events. All are off by default.",
+    },
   ],
 
   traps: [
@@ -127,7 +178,7 @@ export const lesson = {
     {
       id: "t2",
       trap: "Thumbs-up and thumbs-down feedback is the primary production quality metric.",
-      why: "Explicit ratings are submitted by a tiny and self-selecting share of users, skewed toward the annoyed, and they arrive well after the affected sessions, so the series is too sparse and too lagged to detect a regression.",
+      why: "Explicit ratings are submitted by a tiny and self-selecting share of users, skewed toward the annoyed, and arrive well after the affected sessions, so the series is too sparse and lagged to detect a regression.",
       instead:
         "Treat explicit feedback as a qualitative input, and rely on implicit proxies plus sampled grading for the trend.",
     },
@@ -154,8 +205,6 @@ export const lesson = {
     },
   ],
 
-  practiceQuestionIds: ["D4-q601", "D4-q604"],
-
   sources: [
     {
       label: "CCAR-P Exam Guide §6, Domain 4",
@@ -165,6 +214,11 @@ export const lesson = {
     {
       label: "Claude Docs",
       url: "https://docs.claude.com/en/home",
+      kind: "anthropic-docs",
+    },
+    {
+      label: "Claude Code Docs — Monitoring",
+      url: "https://code.claude.com/docs/en/monitoring-usage",
       kind: "anthropic-docs",
     },
   ],

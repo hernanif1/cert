@@ -59,6 +59,8 @@ function repairCard(raw: unknown): CardState | null {
     ...(c.fl === 1 ? { fl: 1 as const } : {}),
     ...(c.sp === 1 ? { sp: 1 as const } : {}),
     ...(c.bm === 1 ? { bm: 1 as const } : {}),
+    ...(c.kn === 1 ? { kn: 1 as const } : {}),
+    ...(c.ez === "e" || c.ez === "m" || c.ez === "h" ? { ez: c.ez } : {}),
   };
 }
 
@@ -78,6 +80,18 @@ export function repair(raw: unknown): AppState {
           : null,
       viewedAt: num(l.viewedAt, 0),
     };
+  }
+
+  /**
+   * Checklist ticks. A blob written before the checklist shipped simply has no
+   * `checklist` key, which repairs to {} — that is why adding it needed no
+   * schema bump. Unknown ids are KEPT, like lesson orphans: a content edit that
+   * renames an id should not destroy a tick that a revert would bring back.
+   */
+  const checklist: AppState["checklist"] = {};
+  for (const [id, v] of Object.entries(obj(s.checklist))) {
+    const at = num(v, 0);
+    if (at > 0) checklist[id] = at;
   }
 
   const cards: Record<string, CardState> = {};
@@ -103,6 +117,7 @@ export function repair(raw: unknown): AppState {
     createdAt: num(s.createdAt, Date.now()),
     updatedAt: num(s.updatedAt, 0),
     lessons,
+    checklist,
     drill: {
       cards,
       daily: {

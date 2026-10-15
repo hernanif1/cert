@@ -94,7 +94,19 @@ export const lesson = {
       md: "*Use the most capable model everywhere* and *use the cheapest model everywhere* will both appear, and both are wrong for the same reason: they answer without reference to the cost of being wrong. The keyed option almost always establishes a quality bar first, measures candidates against it, and only then picks.",
     },
 
-    { kind: "practice", questionId: "D2-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D2-q101",
+        "D2-q102",
+        "D2-q103",
+        "D2-q104",
+        "D2-q105",
+        "D2-q106",
+        "D2-q107",
+        "D2-q108",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -150,8 +162,6 @@ export const lesson = {
         "Treat every model change as a release: re-run the evaluation suite and compare against the recorded baseline before rollout.",
     },
   ],
-
-  practiceQuestionIds: ["D2-q101", "D2-q104"],
 
   sources: [
     {

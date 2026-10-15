@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useDict } from "@/lib/i18n/client";
 
 /**
  * ISOLATED LEAF with its own state. This is a hard requirement: if the
@@ -23,12 +24,15 @@ export function ExamTimer({
   const expired = useRef(false);
   const announced = useRef(new Set<number>());
   const onExpireRef = useRef(onExpire);
+  const announce = useDict().tools.exam.minutesRemaining;
+  const announceRef = useRef(announce);
 
   // Keep the callback current without making it a dependency of the timer
   // effect — re-running that effect would restart the countdown every render.
   useEffect(() => {
     onExpireRef.current = onExpire;
-  }, [onExpire]);
+    announceRef.current = announce;
+  }, [onExpire, announce]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -50,7 +54,7 @@ export function ExamTimer({
       const mins = Math.ceil(left / 60_000);
       if ([10, 5, 1].includes(mins) && !announced.current.has(mins)) {
         announced.current.add(mins);
-        setAnnouncement(`${mins} minute${mins === 1 ? "" : "s"} remaining`);
+        setAnnouncement(announceRef.current(mins));
       }
 
       // Re-sync to the wall clock so we do not drift past the second boundary.

@@ -76,7 +76,7 @@ export function matchesFilters(
       return card.r === 0;
     case "mixed":
     case "cram":
-      return !card.sp;
+      return !card.sp && !card.kn;
     case "leeches":
       return isLeech(card);
     case "bookmarked":
@@ -96,7 +96,7 @@ export function isWeak(
   state: AppState,
   bank: DrillBank = defaultDrillBank(),
 ): boolean {
-  if (card.sp) return false;
+  if (card.sp || card.kn) return false;
   if (card.l >= 2) return true;
   if (card.r >= 2 && card.c / card.r < WEAK_CARD_ACCURACY) return true;
 
@@ -120,6 +120,8 @@ export interface QueueStats {
   newCards: number;
   leeches: number;
   suspended: number;
+  /** Rated Easy and retired by the learner. */
+  retired: number;
   available: number;
 }
 
@@ -136,17 +138,22 @@ export function queueStats(
   let newCards = 0;
   let leeches = 0;
   let suspended = 0;
+  let retired = 0;
   for (const q of pool) {
     const card = cardFor(state, q);
     if (card.sp) {
       suspended++;
       continue;
     }
+    if (card.kn) {
+      retired++;
+      continue;
+    }
     if (card.r === 0) newCards++;
     else if (isDue(card)) due++;
     if (isLeech(card)) leeches++;
   }
-  return { due, newCards, leeches, suspended, available: pool.length };
+  return { due, newCards, leeches, suspended, retired, available: pool.length };
 }
 
 /**

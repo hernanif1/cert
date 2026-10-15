@@ -240,4 +240,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q307",
+    domain: 1,
+    objective: "1.3",
+    stem: "A compliance check evaluates one policy document against thirty independent criteria. In a single prompt the model applies the early criteria carefully and grows noticeably less thorough toward the end of the list, and reviewers find the misses concentrated in the final third. Which workflow pattern best addresses this?",
+    choices: [
+      {
+        id: "A",
+        text: "Prompt chaining, so each criterion is evaluated in a step that receives the previous step's output.",
+        rationale:
+          "Chaining imposes an order on checks that do not depend on one another, and it carries every earlier verdict forward for no benefit.",
+      },
+      {
+        id: "B",
+        text: "Parallelization, evaluating independent groups of criteria in separate calls and aggregating the verdicts.",
+      },
+      {
+        id: "C",
+        text: "Routing, classifying the document first and sending it to a prompt specialized for its type.",
+        rationale:
+          "Routing helps when different inputs need different handling, but this one document must face all thirty criteria whatever its type.",
+      },
+      {
+        id: "D",
+        text: "An evaluator-optimizer loop that critiques and revises the verdict against a rubric.",
+        rationale:
+          "That loop improves a draft that exists; it does nothing about criteria the first pass never attended to, which is what the misses are.",
+      },
+    ],
+    explanation:
+      "Parallelization fits work that splits into independent pieces needing nothing from each other. Giving each group of criteria its own call restores the model's full attention to every criterion and makes aggregation an explicit step, while the patterns that impose sequence or specialization answer problems this task does not have.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["patterns", "parallelization"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q308",
+    domain: 1,
+    objective: "1.3",
+    stem: "An analyst tool must answer questions about a regulation by following references: a clause cites another clause, which may cite a third, and how deep any chain runs is not known until it is followed. The team is split between a fixed workflow and an agentic design. Which consideration settles it?",
+    choices: [
+      {
+        id: "A",
+        text: "Whether the regulation is available in machine-readable form, since retrieval quality dominates the result.",
+        rationale:
+          "Grounding governs how accurate the answer is, but it is equally necessary under either design and so cannot choose between them.",
+      },
+      {
+        id: "B",
+        text: "Whether the team can absorb the higher and more variable per-request cost an agentic design carries.",
+        rationale:
+          "Cost decides whether the chosen design is viable to run; it does not establish which design the shape of the task actually calls for.",
+      },
+      {
+        id: "C",
+        text: "Whether the steps can be enumerated before the request arrives, given that the number of lookups depends on what each lookup returns.",
+      },
+      {
+        id: "D",
+        text: "Whether one call with a retrieval tool already answers most questions acceptably.",
+        rationale:
+          "Covering the common case with a single grounded call is worth measuring, but it sets a baseline rather than resolving the question for the rest.",
+      },
+    ],
+    explanation:
+      "Agency is warranted precisely when control flow cannot be written down in advance, which is the case as soon as each step's result decides whether another step is needed. The enumerability test separates a workflow from an agent; cost and grounding are real constraints that apply to whichever design the test selects.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["patterns", "agentic", "enumerability"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

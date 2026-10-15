@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q306",
+    domain: 4,
+    objective: "4.3",
+    stem: "A team wants to replace the retrieval configuration behind a legal assistant. Offline evaluation on the golden set is favorable. The risk is that production questions differ from the golden set in ways nobody has characterized, and a bad answer to a live user is costly. What is the appropriate next rung before an A/B test?",
+    choices: [
+      {
+        id: "A",
+        text: "A shadow run: send production traffic to the new configuration in parallel, serve only the current one, and compare the outputs offline.",
+      },
+      {
+        id: "B",
+        text: "A canary release to 1% of users, monitored for a week.",
+        rationale:
+          "A canary is the right rung after a shadow run, since it is the first that exposes real users to the new configuration's answers.",
+      },
+      {
+        id: "C",
+        text: "Extend the golden set with more cases until it resembles production closely enough.",
+        rationale:
+          "Broadening the set narrows the gap it was drawn from without ever confirming that the remaining difference is small.",
+      },
+      {
+        id: "D",
+        text: "Run the A/B test but restrict it to internal employees.",
+        rationale:
+          "Employee traffic removes customer risk and also removes the production distribution whose unknown shape is the whole concern.",
+      },
+    ],
+    explanation:
+      "Exposure escalates in rungs, and each buys more signal at more risk. A shadow run is the only stage that sees real production inputs at full volume with zero user exposure, which is exactly what is wanted when the worry is distribution mismatch rather than the configuration itself.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["ab-testing", "shadow-run", "rollout"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q307",
+    domain: 4,
+    objective: "4.3",
+    stem: "An experiment on a 3.1% escalation rate is planned to run until the result is significant. After three weeks the arms differ by 0.2 points with a wide interval, and the team debates whether to keep going, call it a tie, or ship the treatment because it is nominally ahead. What should have been decided before the test began?",
+    choices: [
+      {
+        id: "A",
+        text: "The segments to analyze, so a positive result in one of them could be found if the overall test was flat.",
+        rationale:
+          "Pre-specifying segments does prevent a fishing expedition later, but it does not tell the team how long the overall test needs to run.",
+      },
+      {
+        id: "B",
+        text: "A guardrail metric, so a neutral primary result could still be interpreted.",
+        rationale:
+          "A guardrail catches harm alongside a win; it says nothing about whether the experiment could detect the win in the first place.",
+      },
+      {
+        id: "C",
+        text: "The smallest effect worth acting on, and the sample size and duration required to detect it.",
+      },
+      {
+        id: "D",
+        text: "A stopping rule allowing the test to end early once the interval excludes zero.",
+        rationale:
+          "Stopping the moment the interval excludes zero is peeking, which inflates the false-positive rate rather than resolving an underpowered test.",
+      },
+    ],
+    explanation:
+      "Running until something looks significant guarantees an answer eventually and makes it uninterpretable. Fixing the minimum detectable effect in advance converts the design into a duration, so a flat result at the end is informative: the effect the business cared about is not there.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["ab-testing", "sample-size", "experiment-design"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

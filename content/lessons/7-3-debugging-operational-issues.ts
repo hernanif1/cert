@@ -96,7 +96,17 @@ export const lesson = {
       md: "In incident scenarios, options that begin with root-cause analysis — add logging, reproduce locally, review the prompt — are seductive because they sound rigorous. While an outage is live, the keyed answer restores service first. Investigation follows from captured evidence.",
     },
 
-    { kind: "practice", questionId: "D7-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D7-q301",
+        "D7-q302",
+        "D7-q303",
+        "D7-q304",
+        "D7-q305",
+        "D7-q306",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -152,8 +162,6 @@ export const lesson = {
         "Keep the review blameless and require each action item to change the system — a gate, an alert, or a regression test.",
     },
   ],
-
-  practiceQuestionIds: ["D7-q301", "D7-q303"],
 
   sources: [
     {

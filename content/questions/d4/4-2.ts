@@ -244,4 +244,82 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q207",
+    domain: 4,
+    objective: "4.2",
+    stem: "A golden set is built entirely from six months of production traces. It scores well, yet the assistant fails in a pilot on multi-currency invoices, which the business will begin receiving next quarter and which appear nowhere in the traces. How should the set be extended?",
+    choices: [
+      {
+        id: "A",
+        text: "Wait for multi-currency invoices to appear in production and add the traces once volume is sufficient.",
+        rationale:
+          "That delays coverage until after the launch the cases were meant to protect, which is the point at which failures become expensive.",
+      },
+      {
+        id: "B",
+        text: "Add synthetic cases covering multi-currency invoices, with expected outputs written by someone who knows the rules.",
+      },
+      {
+        id: "C",
+        text: "Increase the sampling window from six to eighteen months so rarer inputs are represented.",
+        rationale:
+          "A longer window draws more of the same distribution, and an input the business has never received is not in any amount of history.",
+      },
+      {
+        id: "D",
+        text: "Lower the pass threshold to reflect the uncertainty about inputs the set does not cover.",
+        rationale:
+          "Moving the bar changes what the score reports rather than what it measures, leaving the gap in coverage exactly where it was.",
+      },
+    ],
+    explanation:
+      "Production traces give real inputs and therefore only the inputs the system has already seen. Synthetic variation exists to fill the gaps traces cannot: rare paths, new categories and anything the business is about to start sending, each with an expected output authored deliberately rather than observed.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["eval-dataset", "synthetic-cases", "coverage"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q208",
+    domain: 4,
+    objective: "4.2",
+    stem: "An evaluation suite checks a summarization assistant with deterministic assertions only: word count within range, every numeric figure from the source present, no banned phrase. The suite passes consistently while reviewers keep rejecting summaries as misleading about what the source concluded. What should change?",
+    choices: [
+      {
+        id: "A",
+        text: "Add more deterministic assertions, covering required section headings and sentence count.",
+        rationale:
+          "More assertions of the same kind check more surface properties, none of which can express whether a conclusion was represented fairly.",
+      },
+      {
+        id: "B",
+        text: "Replace the deterministic checks with an LLM judge scoring overall quality.",
+        rationale:
+          "Discarding the cheap exact checks gives up the things they decide perfectly and pays a judge to re-decide them less reliably.",
+      },
+      {
+        id: "C",
+        text: "Send every rejected summary to a human reviewer and track the rejection rate as the metric.",
+        rationale:
+          "Human review is the most accurate grader and the slowest, so making it the only quality signal means learning about defects after release.",
+      },
+      {
+        id: "D",
+        text: "Keep the deterministic checks and add a judged criterion for faithfulness to the source's conclusions.",
+      },
+    ],
+    explanation:
+      "Push every check to the cheapest grader that can actually decide it, and no cheaper. Counting, presence and format are decided exactly by code; whether a summary misrepresents a conclusion is a judgment, so it needs a judge layered on top of the assertions rather than replacing them.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["eval-framework", "graders", "llm-as-judge"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

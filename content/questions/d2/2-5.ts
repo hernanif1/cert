@@ -202,4 +202,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D2-q506",
+    domain: 2,
+    objective: "2.5",
+    stem: "A team caches a 30,000-token instruction prefix and reports a high hit rate. Planning the next quarter, they assume that because the prefix is cached those tokens no longer count against the request, freeing room for a further 20,000 tokens of reference material inside the same context window. Is that assumption correct?",
+    choices: [
+      {
+        id: "A",
+        text: "Yes: cached tokens are billed and counted separately, so the window applies only to the uncached remainder.",
+        rationale:
+          "Caching changes the price of the cached portion, not whether those tokens occupy the window they are still sent in.",
+      },
+      {
+        id: "B",
+        text: "No. Every token is still sent and still occupies the context window; caching only spares the provider from re-processing the prefix.",
+      },
+      {
+        id: "C",
+        text: "Yes, as long as the hit rate stays high enough that the prefix is rarely re-sent.",
+        rationale:
+          "The prefix is sent on every request whatever the hit rate, because a hit describes reused processing rather than omitted text.",
+      },
+      {
+        id: "D",
+        text: "No, but only because appending that material would invalidate the cache entry and reset the hit rate.",
+        rationale:
+          "Appending after the prefix leaves it intact, and the objection is about window capacity rather than about cache validity.",
+      },
+    ],
+    explanation:
+      "Caching is a cost and latency optimization on a prefix that is still transmitted in full on every request. It does not shrink the request, does not extend the context window and does not change tokenization, so headroom has to be found by removing material rather than by caching it.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["prompt-caching", "context-window"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D2-q507",
+    domain: 2,
+    objective: "2.5",
+    stem: "An assistant's system prompt carries eight detailed procedures. Any one conversation uses at most one of them, the full prompt is identical on every request, and two other teams now want to reuse three of those procedures verbatim in their own assistants. Which mechanism addresses the largest problem here?",
+    choices: [
+      {
+        id: "A",
+        text: "Prompt caching on the shared prefix, so the eight procedures cost little after the first request.",
+        rationale:
+          "Caching makes the waste cheap without removing it: all eight procedures still occupy the window and still dilute the one that matters.",
+      },
+      {
+        id: "B",
+        text: "A larger context window, so the procedures and the conversation coexist without pressure.",
+        rationale:
+          "Capacity is not the binding problem, and extra room leaves seven irrelevant procedures competing for attention on every request.",
+      },
+      {
+        id: "C",
+        text: "Modular prompt fragments assembled per request, so each assistant composes the procedures it needs.",
+        rationale:
+          "Fragments handle the duplication across teams, but assembling at request time still hands the model whatever was composed rather than loading on demand.",
+      },
+      {
+        id: "D",
+        text: "Skills, so each procedure is a separately versioned unit the model loads only when the conversation needs it and the other teams depend on that same unit.",
+      },
+    ],
+    explanation:
+      "The three reuse mechanisms answer different problems: caching reuses processing, modular fragments reuse authored text at assembly time, and Skills reuse a capability discovered and loaded on demand. When most of a prompt is irrelevant to most requests and other consumers want the same units, progressive loading addresses both at once.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["skills", "modular-prompts", "prompt-caching"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

@@ -6,6 +6,7 @@ import {
   LESSON_SLUGS_BY_DOMAIN,
   TOTAL_LESSONS,
 } from "@/lib/curriculum";
+import { CHECKLIST_IDS, TOTAL_CHECKS } from "@/lib/checklist";
 import type { DomainNumber } from "@/content/schema";
 import type { AppState } from "@/lib/storage/schema";
 
@@ -67,6 +68,38 @@ export function setLessonComplete(slug: string, complete: boolean): void {
       },
     },
   }));
+}
+
+/* ───────────────────────────── Checklist ───────────────────────────── */
+
+export function useChecklistChecked(id: string): boolean {
+  return Boolean(useAppState().checklist[id]);
+}
+
+/** Overall ticks. The denominator is the blueprint's, never the blob's. */
+export function useChecklistProgress(): Progress {
+  const state = useAppState();
+  let done = 0;
+  for (const id of CHECKLIST_IDS) if (state.checklist[id]) done++;
+  return toProgress(done, TOTAL_CHECKS);
+}
+
+/** Ticks within one group, for its own header count. */
+export function useChecklistGroupProgress(ids: string[]): Progress {
+  const state = useAppState();
+  let done = 0;
+  for (const id of ids) if (state.checklist[id]) done++;
+  return toProgress(done, ids.length);
+}
+
+export function toggleChecklistItem(id: string): void {
+  mutate((s) => {
+    const checklist = { ...s.checklist };
+    // Deleting rather than nulling keeps the stored blob a plain set.
+    if (checklist[id]) delete checklist[id];
+    else checklist[id] = Date.now();
+    return { ...s, checklist };
+  });
 }
 
 export function toggleLessonComplete(slug: string): void {

@@ -240,4 +240,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D6-q307",
+    domain: 6,
+    objective: "6.3",
+    stem: "Six months after launch an assistant's in-product feedback is sparse and its escalation transcripts only cover conversations that failed badly enough to be handed off. The steering group wants a feedback mechanism that reliably surfaces the quality problems neither channel sees. What should the architect add?",
+    choices: [
+      {
+        id: "A",
+        text: "A prompt asking every user to rate the answer before the conversation closes.",
+        rationale:
+          "Mandatory rating raises volume and biases it toward users willing to click, while still only describing conversations users chose to finish.",
+      },
+      {
+        id: "B",
+        text: "An automated judge scoring every production response, with an alert on the weekly average.",
+        rationale:
+          "Scoring everything is useful telemetry but produces a number rather than a forum, so no stakeholder is obliged to look at specific cases.",
+      },
+      {
+        id: "C",
+        text: "A quarterly survey of the business units the assistant serves.",
+        rationale:
+          "A quarterly cycle is far too slow to change a system, and survey responses describe impressions rather than identifiable conversations.",
+      },
+      {
+        id: "D",
+        text: "A standing sampled review at a fixed cadence, where a stratified sample of real conversations is read by the people who own the definition of correct.",
+      },
+    ],
+    explanation:
+      "In-product signal and escalations are both self-selecting, so the failures that never annoy anyone enough to report are invisible in both. A standing review on a fixed cadence samples the traffic nobody complained about and puts it in front of the owner of the ground truth, which is what makes it a loop that changes the system rather than a metric.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["feedback-loops", "sampled-review", "stakeholders"],
+    type: "single",
+    correct: "D",
+  },
+  {
+    schemaVersion: 1,
+    id: "D6-q308",
+    domain: 6,
+    objective: "6.3",
+    stem: "An internal agreement commits an assistant to 93% extraction accuracy, measured on a golden set fixed at launch. Eighteen months later the assistant still scores 94% on that set, while the business reports a clear decline in the quality of what it receives. Both statements are true. What is the flaw in the commitment?",
+    choices: [
+      {
+        id: "A",
+        text: "The threshold was set too low, so a system can satisfy it while performing poorly.",
+        rationale:
+          "A higher bar on the same fixed set would be cleared the same way, because the set no longer resembles what the business sends.",
+      },
+      {
+        id: "B",
+        text: "The commitment is anchored to a frozen population, so it stops describing production as the input distribution moves away from it.",
+      },
+      {
+        id: "C",
+        text: "Accuracy is the wrong measure for an extraction task and should be replaced by a per-field metric.",
+        rationale:
+          "Per-field reporting would localize the problem usefully and would still be computed against the same stale population.",
+      },
+      {
+        id: "D",
+        text: "The agreement lacks a stated consequence for missing the threshold.",
+        rationale:
+          "A consequence matters when the number is breached, and here the number is being met while the experience degrades.",
+      },
+    ],
+    explanation:
+      "A quality commitment is a claim about a population, so its denominator has to track what the system actually receives. Freezing the golden set makes the metric stable and eventually meaningless, which is why an accuracy commitment needs a refresh cadence for the set alongside the threshold itself.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["sla", "expectation-alignment", "drift"],
+    type: "single",
+    correct: "B",
+  },
 ] satisfies Question[];

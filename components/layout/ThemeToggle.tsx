@@ -2,21 +2,20 @@
 
 import { useEffect } from "react";
 import { applyTheme, setTheme, useTheme, type Theme } from "@/lib/theme";
+import { useDict } from "@/lib/i18n/client";
+import { Menu } from "@/components/ui/Menu";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
 const ORDER: Theme[] = ["system", "light", "dark"];
-const LABEL: Record<Theme, string> = {
-  system: "System",
-  light: "Light",
-  dark: "Dark",
-};
-const GLYPH: Record<Theme, string> = {
-  system: "◐",
-  light: "○",
-  dark: "◑",
+const GLYPH: Record<Theme, IconName> = {
+  system: "monitor",
+  light: "sun",
+  dark: "moon",
 };
 
 export function ThemeToggle() {
   const theme = useTheme();
+  const t = useDict().theme;
 
   // Keep "system" honest when the OS preference flips mid-session.
   // Subscribe only — no setState, the class is an external system.
@@ -28,15 +27,21 @@ export function ThemeToggle() {
   }, [theme]);
 
   return (
-    <button
-      type="button"
-      onClick={() => setTheme(ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length])}
-      className="rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:border-accent hover:text-fg"
-      aria-label={`Theme: ${LABEL[theme]}. Click to change.`}
-      title={`Theme: ${LABEL[theme]}`}
-    >
-      <span aria-hidden="true">{GLYPH[theme]}</span>
-      <span className="ml-1.5 hidden sm:inline">{LABEL[theme]}</span>
-    </button>
+    <Menu
+      label={`${t.label}: ${t[theme]}`}
+      trigger={
+        <>
+          <Icon name={GLYPH[theme]} size={15} />
+          <span className="hidden xl:inline">{t[theme]}</span>
+        </>
+      }
+      items={ORDER.map((value) => ({
+        key: value,
+        label: t[value],
+        icon: GLYPH[value],
+        selected: value === theme,
+        onSelect: () => setTheme(value),
+      }))}
+    />
   );
 }

@@ -89,7 +89,19 @@ export const lesson = {
       md: "Items in this objective offer the agentic option as the sophisticated answer, usually dressed in words like *autonomous* or *self-directed*. When the stem states or implies that the steps are known in advance, that option is the distractor. Reach for an agent only when the stem shows the path genuinely varies per request.",
     },
 
-    { kind: "practice", questionId: "D1-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q301",
+        "D1-q302",
+        "D1-q303",
+        "D1-q304",
+        "D1-q305",
+        "D1-q306",
+        "D1-q307",
+        "D1-q308",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -145,8 +157,6 @@ export const lesson = {
         "Size the router to the classification task and reserve capability for the specialized paths.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q301", "D1-q304"],
 
   sources: [
     {

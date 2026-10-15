@@ -83,7 +83,18 @@ export const lesson = {
       md: "*Choose the cheapest option* is offered constantly in this objective and keys correctly only when the stem establishes cost as the governing pillar. When the stem names a service level, a transformation goal or a productivity target, the cheapest design is the distractor.",
     },
 
-    { kind: "practice", questionId: "D1-q601" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q601",
+        "D1-q602",
+        "D1-q603",
+        "D1-q604",
+        "D1-q605",
+        "D1-q606",
+        "D1-q607",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -139,8 +150,6 @@ export const lesson = {
         "Ask whether a step left the process or a person got time back; that answer names the pillar.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q601", "D1-q603"],
 
   sources: [
     {

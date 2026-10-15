@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q506",
+    domain: 1,
+    objective: "1.5",
+    stem: "A single prompt reads a 60-page credit agreement and states whether the borrower complies with its financial covenants. Verdicts differ between runs on the same document, and when reviewers investigate they find the model quoted the right clauses but applied a threshold taken from the wrong section. How should the task be decomposed?",
+    choices: [
+      {
+        id: "A",
+        text: "Split the agreement into sections and ask the same compliance question of each, then combine the verdicts.",
+        rationale:
+          "Sectioning scatters a judgment that needs several clauses at once, and no single section holds enough of the agreement to answer it.",
+      },
+      {
+        id: "B",
+        text: "Extract the covenant definitions and their thresholds into a structured record first, then reason about compliance over that record.",
+      },
+      {
+        id: "C",
+        text: "Ask the model to state its reasoning before the verdict, so a wrong threshold becomes visible.",
+        rationale:
+          "Surfacing the reasoning makes the error easier to spot afterwards, but the verdict is still produced by the conflation it is meant to catch.",
+      },
+      {
+        id: "D",
+        text: "Run the same prompt three times and take the majority verdict.",
+        rationale:
+          "Voting suppresses random variation, while this error is systematic: several runs can pull the same wrong threshold from the same wrong section.",
+      },
+    ],
+    explanation:
+      "Extract, then reason cuts between finding the facts and judging them, because the two failure modes are different and only the first is a reading problem. Once the thresholds are a structured record, the comparison is checkable on its own and a wrong number is visible without anyone rereading sixty pages.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["decomposition", "extract-then-reason"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q507",
+    domain: 1,
+    objective: "1.5",
+    stem: "One call on the largest model tier reads a scanned invoice, pulls out eleven fields, and then decides whether the invoice may be paid automatically under a written policy. Cost per document is the binding constraint. Which TWO arguments most strongly support splitting this into two steps?",
+    choices: [
+      {
+        id: "A",
+        text: "Field extraction is mechanical enough to run on a smaller tier, leaving only the policy judgment on the expensive one.",
+      },
+      {
+        id: "B",
+        text: "Two shorter prompts are easier to maintain than one long prompt.",
+        rationale:
+          "Maintainability is a genuine benefit but a weak one, and it is the argument that most often justifies seams which buy nothing but latency.",
+      },
+      {
+        id: "C",
+        text: "Splitting cuts end-to-end latency because the two steps can then run at the same time.",
+        rationale:
+          "The judgment consumes the extracted fields, so the steps are ordered rather than parallel and the split adds a round trip instead of removing one.",
+      },
+      {
+        id: "D",
+        text: "The extracted fields are an artifact that can be checked on their own before the payment decision depends on them.",
+      },
+      {
+        id: "E",
+        text: "Each step can then be evaluated against its own success criterion, which raises end-to-end accuracy.",
+        rationale:
+          "Per-step evaluation improves what you can see rather than what the chain produces, and strong step scores coexist with a weaker end-to-end result.",
+      },
+    ],
+    explanation:
+      "A seam earns its place when it lets something be checked or lets work move to a cheaper tier, and this cut does both: the fields are verifiable in isolation, and only the judgment needs the larger model. Arguments from tidiness or from per-step scores justify seams that add latency without adding either.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["decomposition", "seams", "cost"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "D"],
+  },
 ] satisfies Question[];

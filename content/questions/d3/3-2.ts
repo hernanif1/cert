@@ -207,4 +207,87 @@ export const questions = [
     type: "single",
     correct: "E",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q206",
+    domain: 3,
+    objective: "3.2",
+    stem: "A knowledge assistant retrieves from one index containing every internal document, including material restricted to certain departments. Each chunk carries a `department` field, and the system prompt instructs the model to use only chunks matching the asking user's department. Occasionally a restricted passage appears in an answer. What closes the gap?",
+    choices: [
+      {
+        id: "A",
+        text: "Add refusal examples to the system prompt showing the assistant declining to use out-of-department material.",
+        rationale:
+          "Examples raise how often the model complies without making compliance certain, and a probabilistic filter is not an access control.",
+      },
+      {
+        id: "B",
+        text: "Pre-filter the query by the user's department at the retrieval layer, so restricted chunks are never returned to the model.",
+      },
+      {
+        id: "C",
+        text: "Post-process the answer to strip any sentence traceable to a restricted chunk.",
+        rationale:
+          "Redaction after generation still exposed the material to the model and leaks through paraphrase, which carries no traceable link to its source.",
+      },
+      {
+        id: "D",
+        text: "Move restricted documents to a second index the assistant queries only when the user's department matches.",
+        rationale:
+          "Two indexes help, but the routing decision is still made after the query is formed and does not itself bind retrieval to the caller's identity.",
+      },
+    ],
+    explanation:
+      "The model is not a security boundary: anything it can see it may reproduce, and an instruction about what to ignore is a request rather than a control. Pre-filtering applies the user's entitlements when the candidate set is built, so material the caller may not see never enters the context in the first place.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["authorization", "pre-filtering", "retrieval"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q207",
+    domain: 3,
+    objective: "3.2",
+    stem: "A procurement agent summarizes supplier emails and can query the vendor database and send messages through a shared mailbox. A supplier sends an email containing instructions that the agent follows, causing it to mail an internal vendor list to an outside address. Which TWO changes actually reduce the risk?",
+    choices: [
+      {
+        id: "A",
+        text: "Restrict the send tool to a fixed set of internal recipients, so no outbound destination can be chosen from message content.",
+      },
+      {
+        id: "B",
+        text: "Add a system-prompt rule that text inside supplier emails must never be treated as instructions.",
+        rationale:
+          "Delimiting and labelling untrusted content measurably reduces injection but does not eliminate it, so it cannot be the control a data leak relies on.",
+      },
+      {
+        id: "C",
+        text: "Add refusal examples showing the assistant declining suspicious requests found inside emails.",
+        rationale:
+          "Examples shift the odds on the patterns they cover and leave the agent's authority untouched, which is what turns a successful injection into a breach.",
+      },
+      {
+        id: "D",
+        text: "Narrow the vendor-database tool so a single request can return only the records relevant to the email being processed.",
+      },
+      {
+        id: "E",
+        text: "Log every tool call the agent makes, with the email that triggered it.",
+        rationale:
+          "Logging is necessary for detection and investigation afterwards, but it records the exfiltration rather than preventing it.",
+      },
+    ],
+    explanation:
+      "Prompt injection is a privilege problem: the interesting question is not whether the model can be persuaded but what it is able to do once it has been. Constraining egress destinations and narrowing what a single read can return both bound the damage regardless of what the model is convinced to attempt, whereas prompt hardening only lowers the probability.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["prompt-injection", "least-privilege", "egress"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "D"],
+  },
 ] satisfies Question[];

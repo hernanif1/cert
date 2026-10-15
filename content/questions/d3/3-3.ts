@@ -207,4 +207,82 @@ export const questions = [
     type: "single",
     correct: "E",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q306",
+    domain: 3,
+    objective: "3.3",
+    stem: "A chat assistant must begin responding within two seconds at p95 and currently misses at 2.6 seconds. Before the main call it runs three checks in sequence: a prompt-injection classifier, a PII detector and a topic filter, each taking roughly 200 milliseconds. The main call begins only after all three return. What is the strongest first move?",
+    choices: [
+      {
+        id: "A",
+        text: "Replace the three classifiers with a single prompt instruction asking the model to self-check for all three conditions.",
+        rationale:
+          "Folding the checks into the model removes the independent enforcement they exist to provide, trading a latency problem for a control problem.",
+      },
+      {
+        id: "B",
+        text: "Move the three checks to run after the main call, on the generated response.",
+        rationale:
+          "Checking afterwards adds its cost to the tail instead of the head and lets a request the filters would have blocked reach the model first.",
+      },
+      {
+        id: "C",
+        text: "Move to a faster model tier so the main call absorbs the 600 milliseconds the checks consume.",
+        rationale:
+          "That spends quality on overhead the design added, and the checks keep their place on the critical path whatever the main call costs.",
+      },
+      {
+        id: "D",
+        text: "Run the three checks concurrently, so the gate costs about 200 milliseconds rather than 600.",
+      },
+    ],
+    explanation:
+      "Guardrails that run serially each add their full latency to the critical path, and three independent checks have no reason to wait for one another. Parallelizing them preserves every control while cutting the gate to the cost of its slowest member, which is the cheapest 400 milliseconds available here.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["latency", "guardrails", "serial-cost"],
+    type: "single",
+    correct: "D",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q307",
+    domain: 3,
+    objective: "3.3",
+    stem: "A team is asked to cut p95 latency on an assistant that retrieves documents, calls a model, and validates the output. Their proposal is to move to a faster model tier. The architect asks for something before approving it. What should that be?",
+    choices: [
+      {
+        id: "A",
+        text: "An estimate of the quality the faster tier would cost, measured on the evaluation set.",
+        rationale:
+          "That measurement is needed before the change ships, but it presumes the model call is where the time goes, which has not been established.",
+      },
+      {
+        id: "B",
+        text: "A projection of the cost saving the smaller tier would deliver at current traffic.",
+        rationale:
+          "Cost is a welcome side effect and a poor basis for a latency decision, and it also assumes the answer before the diagnosis.",
+      },
+      {
+        id: "C",
+        text: "A per-stage latency breakdown at p95, showing how much of the budget retrieval, generation and validation each consume.",
+      },
+      {
+        id: "D",
+        text: "A load test confirming that p95 latency holds at twice the current request rate.",
+        rationale:
+          "Headroom under load is worth knowing separately, but it describes how the current distribution behaves rather than where the current time is spent.",
+      },
+    ],
+    explanation:
+      "Every lever on this objective trades something real, so choosing one before knowing where the time goes risks paying accuracy for a stage that was never the bottleneck. A per-stage breakdown at the percentile in the commitment is what makes the trade explicit and the justification defensible.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["latency", "measurement", "justification"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

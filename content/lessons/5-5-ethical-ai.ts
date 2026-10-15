@@ -102,7 +102,18 @@ export const lesson = {
       md: "Watch for *train on more diverse data* and *add a bias filter to the output*. Both describe work somebody else does to a model, while the item is asking what you will measure, on which population, against which criterion, and who signs the choice off.",
     },
 
-    { kind: "practice", questionId: "D5-q501" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D5-q501",
+        "D5-q502",
+        "D5-q503",
+        "D5-q504",
+        "D5-q505",
+        "D5-q506",
+        "D5-q507",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -163,8 +174,6 @@ export const lesson = {
         "Run task-specific subgroup evaluations on your own data before launch and on a schedule afterward.",
     },
   ],
-
-  practiceQuestionIds: ["D5-q501", "D5-q502"],
 
   sources: [
     {

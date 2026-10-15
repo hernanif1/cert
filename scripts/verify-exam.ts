@@ -63,7 +63,12 @@ const byId = new Map(
 );
 const lookup = (id: string) => byId.get(id);
 
-check("synthetic drill pool is 200", bank.drill.length === 200, String(bank.drill.length));
+/* Derived from the blueprint so authoring more items is not a test failure. */
+const DRILL_TOTAL = DOMAINS.reduce(
+  (a, d) => a + d.objectives.reduce((b, o) => b + o.drillTarget, 0),
+  0,
+);
+check(`synthetic drill pool is ${DRILL_TOTAL}`, bank.drill.length === DRILL_TOTAL, String(bank.drill.length));
 check("synthetic reserved form is 63", bank.reserved.length === 63, String(bank.reserved.length));
 check("blueprint sums to the item count", BLUEPRINT_TOTAL === EXAM.itemCount, String(BLUEPRINT_TOTAL));
 

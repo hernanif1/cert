@@ -85,7 +85,19 @@ export const lesson = {
       md: "A thorough technical walkthrough for an executive audience is written to look rigorous, and it is usually the distractor. The decision disappears into the analysis and the sponsor cannot act on it. Depth belongs in the ADR that the five-slide summary links to, not in the room where approval is being asked for.",
     },
 
-    { kind: "practice", questionId: "D6-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D6-q201",
+        "D6-q202",
+        "D6-q203",
+        "D6-q204",
+        "D6-q205",
+        "D6-q206",
+        "D6-q207",
+        "D6-q208",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -148,8 +160,6 @@ export const lesson = {
         "Present the measured gain per unit of cost and latency, and let the sponsor accept the trade explicitly.",
     },
   ],
-
-  practiceQuestionIds: ["D6-q201", "D6-q203"],
 
   sources: [
     {

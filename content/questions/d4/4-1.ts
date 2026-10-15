@@ -240,4 +240,87 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q107",
+    domain: 4,
+    objective: "4.1",
+    stem: "A launch review lists \"groundedness of generated answers\" as an accuracy metric, with a note that it will be scored by an LLM judge against the retrieved passages. The architect says the metric is still incomplete. What is missing?",
+    choices: [
+      {
+        id: "A",
+        text: "The baseline the current system scores today, so improvement can be shown.",
+        rationale:
+          "A baseline makes progress legible but does not settle what result would be acceptable, which is the judgment a launch decision needs.",
+      },
+      {
+        id: "B",
+        text: "The sample size the score will be computed over, so the figure is statistically meaningful.",
+        rationale:
+          "Sample size governs how precisely the value is known and is part of the method rather than the missing element.",
+      },
+      {
+        id: "C",
+        text: "The threshold: the value at which the system is considered acceptable, and what happens when it is not met.",
+      },
+      {
+        id: "D",
+        text: "A second metric to pair with it, since one number cannot describe a multi-output system.",
+        rationale:
+          "Decomposition matters for a multi-output system, but each of the resulting metrics would still be unusable without a number attached.",
+      },
+    ],
+    explanation:
+      "A metric is three things: what is counted, how the value is produced, and the number at which the answer changes. Measure and method are named here, so the score can be computed and nobody can say whether it is good; a metric with no threshold produces dashboards rather than decisions.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["metrics", "thresholds", "definition"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q108",
+    domain: 4,
+    objective: "4.1",
+    stem: "A team is optimizing a support assistant for one primary metric: the share of conversations resolved without human escalation. Which TWO guardrail metrics most directly protect against the ways that primary metric can be gamed?",
+    choices: [
+      {
+        id: "A",
+        text: "Mean time to first token, tracked per release.",
+        rationale:
+          "Latency is worth watching in its own right, but an assistant does not raise its resolution rate by answering faster.",
+      },
+      {
+        id: "B",
+        text: "The rate at which resolved conversations are reopened within seven days.",
+      },
+      {
+        id: "C",
+        text: "Input token volume per conversation.",
+        rationale:
+          "Token volume tracks cost and prompt growth; it moves for many reasons unconnected to whether resolutions were genuine.",
+      },
+      {
+        id: "D",
+        text: "The rate at which the assistant asserts an answer on questions it has no grounding for.",
+      },
+      {
+        id: "E",
+        text: "The number of distinct intents the assistant handles.",
+        rationale:
+          "Coverage describes scope rather than quality, and it can grow while every added intent is answered badly.",
+      },
+    ],
+    explanation:
+      "A guardrail metric is one you do not optimize but must not let regress, chosen because it moves when the primary metric is achieved the wrong way. Here resolution can be inflated by closing conversations that come back and by answering confidently without grounds, so those two are exactly what has to be watched alongside it.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["metrics", "guardrail-metric", "safety"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["B", "D"],
+  },
 ] satisfies Question[];

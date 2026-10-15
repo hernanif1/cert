@@ -163,4 +163,82 @@ export const questions = [
     type: "single",
     correct: "E",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q705",
+    domain: 3,
+    objective: "3.7",
+    stem: "A team reports that their assistant cannot reliably use an internal inventory service: it calls the endpoint with the wrong field names and misreads the response. An engineer proposes putting an MCP server in front of the service, arguing that MCP will let the model use it correctly. What is the accurate assessment?",
+    choices: [
+      {
+        id: "A",
+        text: "Correct, because MCP standardizes the request and response format in a way models handle more reliably.",
+        rationale:
+          "MCP standardizes how a capability is described and transported, and the field names and response shape remain whatever the server chooses to expose.",
+      },
+      {
+        id: "B",
+        text: "The gain would come from the clear tool descriptions and schemas the server defines, which could equally be written for a direct tool definition.",
+      },
+      {
+        id: "C",
+        text: "Correct, because an MCP server validates arguments before they reach the service and rejects malformed calls.",
+        rationale:
+          "A server can validate, but so can any tool implementation, and validation is a property of what was built rather than of the protocol.",
+      },
+      {
+        id: "D",
+        text: "Incorrect, because MCP is intended for external integrations and this service is internal.",
+        rationale:
+          "MCP is routinely used inside an organization, and where the service sits is not what decides whether the protocol layer is worth maintaining.",
+      },
+    ],
+    explanation:
+      "MCP is a transport and description standard, not a capability: it does not make a model able to do anything a well-described inline tool could not. The reliability here comes from naming, schemas and documentation, so the real question is whether reuse across clients justifies maintaining a server to carry them.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["mcp", "integration-selection"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q706",
+    domain: 3,
+    objective: "3.7",
+    stem: "A coding assistant used by engineers on their workstations needs to run the team's existing build, test and lint commands. Those commands are already a mature, documented command-line tool that engineers run by hand every day, and the assistant runs in the same shell session with the same permissions as the engineer. Which integration mechanism fits?",
+    choices: [
+      {
+        id: "A",
+        text: "An MCP server wrapping each command as a separate tool, so the assistant gets typed schemas.",
+        rationale:
+          "A server adds a component to build, version and deploy in front of an interface the assistant can already reach and engineers already trust.",
+      },
+      {
+        id: "B",
+        text: "A direct API integration against the build system, bypassing the command line.",
+        rationale:
+          "Talking to the build system directly reimplements behaviour the command-line tool already encodes and drifts from what engineers run by hand.",
+      },
+      {
+        id: "C",
+        text: "Agent-to-agent delegation to a dedicated build agent holding its own credentials.",
+        rationale:
+          "Delegation buys context isolation and a separate identity, neither of which is needed when the work runs locally as the engineer already.",
+      },
+      {
+        id: "D",
+        text: "Direct CLI invocation, since the capability already exists as a composable command with the right permissions in scope.",
+      },
+    ],
+    explanation:
+      "The two questions that decide the mechanism are who holds the authority at runtime and how many clients need the capability. Here the engineer's own session supplies the authority and there is one client, so the existing command line is the integration; wrapping it would add a maintained component without changing what the assistant can do.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["integration-selection", "cli", "tool-design"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

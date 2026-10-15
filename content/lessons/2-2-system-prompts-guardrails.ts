@@ -119,7 +119,18 @@ Rules, in order of precedence:
       md: "When an item describes untrusted content changing the assistant's behavior, *strengthen the wording of the system prompt* will be offered and will sound responsible. It treats a class of attack as a wording problem. The keyed answer pairs prompt-level hardening with an enforcement point outside the model.",
     },
 
-    { kind: "practice", questionId: "D2-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D2-q201",
+        "D2-q202",
+        "D2-q203",
+        "D2-q204",
+        "D2-q205",
+        "D2-q206",
+        "D2-q207",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -182,8 +193,6 @@ Rules, in order of precedence:
         "Replace each prohibition with the exact behavior or response you want in that situation.",
     },
   ],
-
-  practiceQuestionIds: ["D2-q201"],
 
   sources: [
     {

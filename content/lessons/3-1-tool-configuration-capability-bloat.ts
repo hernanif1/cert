@@ -97,7 +97,18 @@ export const lesson = {
       md: "When an agent picks the wrong tool, *add system-prompt instructions telling it which tool to use* is almost always offered and almost never keyed. Prompt text competes with tool descriptions instead of overriding them, and the approach scales badly as the set grows. The exam keys the option that changes the tool set itself — removing, merging or disambiguating.",
     },
 
-    { kind: "practice", questionId: "D3-q103" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q101",
+        "D3-q102",
+        "D3-q103",
+        "D3-q104",
+        "D3-q105",
+        "D3-q106",
+        "D3-q107",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -153,8 +164,6 @@ export const lesson = {
         "Encode fixed steps in orchestration code and reserve tools for genuine runtime choices.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q103", "D3-q101"],
 
   sources: [
     {

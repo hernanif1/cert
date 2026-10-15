@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D7-q206",
+    domain: 7,
+    objective: "7.2",
+    stem: "A team lead is deciding which work to delegate to an agentic coding tool. All four candidates are well specified and comparable in size. Which is the poorest fit?",
+    choices: [
+      {
+        id: "A",
+        text: "Tuning the visual spacing and animation timing of a marketing page until it feels right to the design lead.",
+      },
+      {
+        id: "B",
+        text: "Migrating 60 call sites from a deprecated client library to its replacement, with the existing test suite covering the affected paths.",
+        rationale:
+          "Mechanical breadth with a test suite to confirm each step is close to the ideal case for delegation rather than a poor fit.",
+      },
+      {
+        id: "C",
+        text: "Adding input validation and its unit tests to a service whose validation rules are written down in a specification.",
+        rationale:
+          "The rules are documented and the tests are the check, so correctness is verifiable without anyone's judgment being the arbiter.",
+      },
+      {
+        id: "D",
+        text: "Reproducing a reported bug as a failing test, then making it pass.",
+        rationale:
+          "The failing test defines done exactly, which makes this one of the tightest verification loops available.",
+      },
+    ],
+    explanation:
+      "Fit follows from how verifiable the work is, and the value of the tooling scales with the quality of the feedback signal already present. Work whose acceptance criterion is a person's aesthetic judgment has no signal the agent can iterate against, so each round trip needs the design lead and the loop runs at human speed regardless of how fast the code is written.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["task-selection", "verification-loop", "fit"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D7-q207",
+    domain: 7,
+    objective: "7.2",
+    stem: "A twelve-year-old billing module has no tests and behavior nobody can fully describe, including several quirks that downstream systems now depend on. The team wants to delegate its refactor to an agentic tool. What should happen first?",
+    choices: [
+      {
+        id: "A",
+        text: "Write a specification of the intended behavior, then have the agent refactor against it.",
+        rationale:
+          "A specification of intended behavior is exactly what nobody can produce here, and writing one risks codifying the quirks away.",
+      },
+      {
+        id: "B",
+        text: "Have the agent write characterization tests that capture the module's current behavior, quirks included, and get them reviewed before any refactor.",
+      },
+      {
+        id: "C",
+        text: "Refactor in small increments and rely on code review to catch behavior changes.",
+        rationale:
+          "Review catches what a reader notices, and an undocumented quirk that a downstream system depends on is precisely what a reader does not notice.",
+      },
+      {
+        id: "D",
+        text: "Run the refactor behind a feature flag and compare production outcomes for a week.",
+        rationale:
+          "Comparing in production makes customers the test suite and detects only the differences that happen to occur during that week.",
+      },
+    ],
+    explanation:
+      "An agentic tool is only as good as the signal it can check itself against, and untested legacy code supplies none. Characterization tests convert current behavior into a verification loop before anything is changed, which is what makes a refactor safe to delegate and what turns undocumented quirks into reviewed, deliberate decisions.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["characterization-test", "refactoring", "verification-loop"],
+    type: "single",
+    correct: "B",
+  },
 ] satisfies Question[];

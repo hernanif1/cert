@@ -240,4 +240,87 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q107",
+    domain: 1,
+    objective: "1.1",
+    stem: "A sponsor closes a requirements session by saying that whatever the system decides, the firm has to be able to defend that decision to an external auditor eighteen months later. Nothing else about the request changes. What does this statement most directly constrain?",
+    choices: [
+      {
+        id: "A",
+        text: "The accuracy target, which must now be high enough that an auditor would find no errors to question.",
+        rationale:
+          "Auditors examine whether a decision can be evidenced and explained, not whether the system cleared some accuracy threshold.",
+      },
+      {
+        id: "B",
+        text: "The evidence the system must emit and retain: citations on each output, and a durable record of the input, prompt version and model version behind it.",
+      },
+      {
+        id: "C",
+        text: "The model tier, since defending a decision calls for the strongest available reasoning.",
+        rationale:
+          "A more capable model gives better answers but leaves no more trace than a smaller one, so capability and auditability are independent properties.",
+      },
+      {
+        id: "D",
+        text: "The latency budget, because an auditor's review has to be reproducible on demand.",
+        rationale:
+          "Reproducing a past decision is a matter of records that were stored at the time rather than of response speed, and nothing here touches per-request timing.",
+      },
+    ],
+    explanation:
+      "Explainability and evidence are a separate constraint from accuracy: a correct decision nobody can substantiate eighteen months later still fails the requirement. Framing that names an auditor fixes what must be emitted and retained at design time, because a record that was never written cannot be reconstructed afterwards.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["translation", "explainability", "audit"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q108",
+    domain: 1,
+    objective: "1.1",
+    stem: "A team is scoping an assistant that drafts replies to customer complaints, and the architect refuses to start design work until the error budget is written down. Which TWO questions establish that error budget?",
+    choices: [
+      {
+        id: "A",
+        text: "What does a wrong reply cost once it reaches the customer?",
+      },
+      {
+        id: "B",
+        text: "How often does the model produce a wrong reply on the evaluation set?",
+        rationale:
+          "That measures a system that does not exist yet, while the budget describes what the surrounding process can absorb and has to be known first.",
+      },
+      {
+        id: "C",
+        text: "Who or what catches a wrong reply before it reaches the customer?",
+      },
+      {
+        id: "D",
+        text: "Which model tier produces the fewest wrong replies for the price?",
+        rationale:
+          "Tier selection is a design response to a budget that has already been set, so asking it here inverts the order of the two decisions.",
+      },
+      {
+        id: "E",
+        text: "How many complaints does the team receive in a month?",
+        rationale:
+          "Volume sizes the opportunity and the running cost, but it says nothing about what one wrong reply costs or about who would notice it.",
+      },
+    ],
+    explanation:
+      "An error budget is two things: what wrongness costs, and what stands between a wrong output and that cost. Both are properties of the business process rather than of the model, which is why they can and must be written down before any architecture exists to be measured.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["translation", "error-budget"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "C"],
+  },
 ] satisfies Question[];

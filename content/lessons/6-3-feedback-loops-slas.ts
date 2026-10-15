@@ -104,7 +104,19 @@ export const lesson = {
       md: "Accepting the stakeholder's figure and then engineering toward it reads as responsive and cooperative, which is exactly why it is offered. The keyed option interrogates the metric first — population, method, window and the cost of the error — because a target nobody can falsify can be neither met nor missed, and it will be disputed the first time a customer disagrees about a single answer.",
     },
 
-    { kind: "practice", questionId: "D6-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D6-q301",
+        "D6-q302",
+        "D6-q303",
+        "D6-q304",
+        "D6-q305",
+        "D6-q306",
+        "D6-q307",
+        "D6-q308",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -160,8 +172,6 @@ export const lesson = {
         "Add every accepted defect to the golden set so the regression suite blocks it permanently.",
     },
   ],
-
-  practiceQuestionIds: ["D6-q301", "D6-q303"],
 
   sources: [
     {

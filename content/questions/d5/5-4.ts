@@ -207,4 +207,87 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D5-q406",
+    domain: 5,
+    objective: "5.4",
+    stem: "A German subsidiary will use an assistant that processes customer correspondence. Legal asks the architect to confirm where personal data is processed. The team's answer is that all databases are hosted in Frankfurt and all traffic is encrypted. What has been left out?",
+    choices: [
+      {
+        id: "A",
+        text: "Where model inference runs and where any prompt or completion logging is retained, since both process the same personal data.",
+      },
+      {
+        id: "B",
+        text: "Whether the encryption keys are held in the same region as the databases.",
+        rationale:
+          "Key residency is worth settling for completeness, but it concerns how stored data is protected rather than where processing takes place.",
+      },
+      {
+        id: "C",
+        text: "Whether the subsidiary or the parent company is the controller for this processing.",
+        rationale:
+          "Controller identity determines who carries the obligation and does not itself answer where the data is processed.",
+      },
+      {
+        id: "D",
+        text: "Whether customers consented to their correspondence being used by an assistant.",
+        rationale:
+          "Lawful basis is a separate requirement, and satisfying it would not change where the processing physically happens.",
+      },
+    ],
+    explanation:
+      "Every hop that sees personal data is processing, and a prompt carries whatever it contains to wherever the model runs and wherever the request is logged. Residency is an architecture property fixed by region selection, retention configuration and the provider terms confirmed in writing for that account, not by where the primary database happens to sit.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["gdpr", "data-residency", "transfers"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D5-q407",
+    domain: 5,
+    objective: "5.4",
+    stem: "A vendor holds the certifications a health plan requires and has signed a business associate agreement. A project lead concludes that the plan's compliance obligations for a new clinical assistant are therefore satisfied. Which TWO controls remain the architect's responsibility regardless?",
+    choices: [
+      {
+        id: "A",
+        text: "Encryption of data in transit and at rest between the application and the model service.",
+        rationale:
+          "Transport and storage encryption is a baseline the platform and the provider already supply, and it is true of every design rather than specific to this one.",
+      },
+      {
+        id: "B",
+        text: "Limiting each prompt to the minimum patient data the task actually requires.",
+      },
+      {
+        id: "C",
+        text: "Maintaining the provider's own certification status over time.",
+        rationale:
+          "Keeping a certification current is the provider's obligation, and the plan's role is to confirm it rather than to maintain it.",
+      },
+      {
+        id: "D",
+        text: "Producing an audit record showing which clinician accessed which record through the assistant, and when.",
+      },
+      {
+        id: "E",
+        text: "Ensuring the provider does not train on the plan's data.",
+        rationale:
+          "That is a term to confirm in writing for the account rather than a control the architect builds, and it is settled by the agreement already signed.",
+      },
+    ],
+    explanation:
+      "Certifications and an agreement establish that a provider may be used; they say nothing about how a system uses it. Minimum necessary and an access audit trail are properties of the application's own design, which is why compliance items that offer encryption or vendor certification as the answer are true statements that discharge none of the architect's work.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["compliance", "shared-responsibility", "controls"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["B", "D"],
+  },
 ] satisfies Question[];

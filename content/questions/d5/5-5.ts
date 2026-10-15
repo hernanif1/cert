@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "D",
   },
+  {
+    schemaVersion: 1,
+    id: "D5-q506",
+    domain: 5,
+    objective: "5.5",
+    stem: "A benefits-eligibility assistant reports 94% accuracy on a 4,000-case evaluation set and is approved for launch on that basis. An advocacy group later shows it performs markedly worse for applicants whose income comes from several part-time jobs, a pattern concentrated in one demographic group. What should the evaluation have done?",
+    choices: [
+      {
+        id: "A",
+        text: "Used a larger evaluation set, so the affected applicants were represented in sufficient numbers.",
+        rationale:
+          "More cases drawn the same way raises the count in every slice while still reporting one aggregate number that hides the difference.",
+      },
+      {
+        id: "B",
+        text: "Removed demographic attributes from the cases so the score could not be influenced by them.",
+        rationale:
+          "Stripping attributes prevents the analysis that would have found the gap and leaves the proxy, income structure, doing the same work.",
+      },
+      {
+        id: "C",
+        text: "Reported accuracy sliced by applicant circumstance and demographic group, not only in aggregate.",
+      },
+      {
+        id: "D",
+        text: "Set a higher accuracy threshold before launch, since 94% leaves substantial room for error.",
+        rationale:
+          "A stricter aggregate bar can be cleared by improving the majority slice further while the affected group stays exactly where it was.",
+      },
+    ],
+    explanation:
+      "An aggregate score is a weighted average that a large well-served majority can carry on its own, so a group-level failure is invisible in it by construction. Slicing every evaluation is what turns fairness from an adjective into a measurement, and the slices have to include the circumstances that act as proxies as well as the protected attributes themselves.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["fairness", "slicing", "evaluation"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D5-q507",
+    domain: 5,
+    objective: "5.5",
+    stem: "A recruiting assistant ranks applicants, and recruiters interview from the top of the list. Interview outcomes are fed back monthly as training signal for the ranker. After a year the assistant's rankings correlate more strongly with one university's graduates than they did at launch, though nothing in the code or prompt changed. What happened?",
+    choices: [
+      {
+        id: "A",
+        text: "Input drift: the applicant pool shifted toward that university over the year.",
+        rationale:
+          "A changing pool would move who applies, while the effect here is that the same kind of applicant is ranked progressively higher over time.",
+      },
+      {
+        id: "B",
+        text: "A feedback loop: the assistant's own output determined who was interviewed, and those outcomes became the signal that reinforced the pattern.",
+      },
+      {
+        id: "C",
+        text: "The model version was upgraded by the provider, changing how it weighs education.",
+        rationale:
+          "A provider change would shift behavior at a point in time rather than producing a pattern that strengthens month over month.",
+      },
+      {
+        id: "D",
+        text: "Recruiters developed automation bias and stopped scrutinizing the rankings.",
+        rationale:
+          "Reduced scrutiny would let a bias persist unchallenged without explaining why the correlation grew stronger than it was at launch.",
+      },
+    ],
+    explanation:
+      "When a system's outputs become the inputs it later learns from, an initial tilt is amplified rather than corrected: candidates the ranker buried are never interviewed, so they generate no evidence to the contrary. Breaking the loop means sampling outside the ranking and measuring on that sample, because no amount of data from the loop itself can contradict it.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["fairness", "feedback-loops", "bias"],
+    type: "single",
+    correct: "B",
+  },
 ] satisfies Question[];

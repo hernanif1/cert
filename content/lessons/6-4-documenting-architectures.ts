@@ -94,7 +94,18 @@ export const lesson = {
       variant: "exam-distractor",
       md: "Documentation items reliably offer *generate the documentation from the code* and *write the full specification before implementation starts*. Both sound rigorous. The first yields an accurate description of what exists while discarding every reason it exists — precisely the part a future maintainer cannot reconstruct. The second fixes decisions before the evaluation evidence that should drive them has been gathered.",
     },
-    { kind: "practice", questionId: "D6-q401" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D6-q401",
+        "D6-q402",
+        "D6-q403",
+        "D6-q404",
+        "D6-q405",
+        "D6-q406",
+        "D6-q407",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -150,8 +161,6 @@ export const lesson = {
         "Specify fallback behavior for each known failure mode as part of the design, then extend the runbook as production teaches you more.",
     },
   ],
-
-  practiceQuestionIds: ["D6-q401", "D6-q402"],
 
   sources: [
     {

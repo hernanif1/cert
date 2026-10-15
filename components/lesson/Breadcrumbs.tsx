@@ -1,26 +1,32 @@
-import Link from "next/link";
 import type { LessonRef } from "@/lib/curriculum";
+import type { Dict } from "@/lib/i18n";
+import { LocaleLink } from "@/components/i18n/LocaleLink";
+import { Icon } from "@/components/ui/Icon";
 
-export function Breadcrumbs({ lesson }: { lesson: LessonRef }) {
+export function Breadcrumbs({ lesson, t }: { lesson: LessonRef; t: Dict }) {
   return (
-    <nav aria-label="Breadcrumb" className="text-sm text-fg-muted">
-      <ol className="flex flex-wrap items-center gap-1.5">
+    <nav aria-label={t.lesson.breadcrumb} className="text-[0.8125rem] text-fg-muted">
+      <ol className="flex flex-wrap items-center gap-1">
         <li>
-          <Link href="/learn" className="transition-colors hover:text-accent">
-            Learn
-          </Link>
+          <LocaleLink href="/learn" className="transition-colors hover:text-fg">
+            {t.lesson.learn}
+          </LocaleLink>
         </li>
-        <li aria-hidden="true">/</li>
+        <li aria-hidden="true" className="opacity-50">
+          <Icon name="chevron-right" size={13} />
+        </li>
         <li>
-          <Link
+          <LocaleLink
             href={`/learn/${lesson.domainSlug}`}
-            className="transition-colors hover:text-accent"
+            className="transition-colors hover:text-domain"
           >
             {lesson.domainTitle}
-          </Link>
+          </LocaleLink>
         </li>
-        <li aria-hidden="true">/</li>
-        <li className="tnum text-fg" aria-current="page">
+        <li aria-hidden="true" className="opacity-50">
+          <Icon name="chevron-right" size={13} />
+        </li>
+        <li className="tnum font-medium text-fg" aria-current="page">
           {lesson.id}
         </li>
       </ol>

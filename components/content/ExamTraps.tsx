@@ -1,38 +1,47 @@
 import { mdInline } from "@/lib/markdown";
 import type { ExamTrap } from "@/content/schema";
 import { SectionHeading } from "@/components/content/SectionHeading";
+import { Icon } from "@/components/ui/Icon";
 
 /**
  * Each trap states the tempting wrong answer, why it is wrong, and what is
  * correct instead. Rendered as a definition-style list rather than prose so
  * the three parts stay visually distinct while skimming.
  */
-export function ExamTraps({ traps }: { traps: ExamTrap[] }) {
+export function ExamTraps({
+  traps,
+  id,
+  title,
+  anchorLabel,
+}: {
+  traps: ExamTrap[];
+  id: string;
+  title: string;
+  anchorLabel: string;
+}) {
   if (traps.length === 0) return null;
   return (
     <section>
-      <SectionHeading>Exam Traps</SectionHeading>
-      <ul className="mt-4 space-y-3.5">
+      <SectionHeading id={id} anchorLabel={anchorLabel}>
+        {title}
+      </SectionHeading>
+      <ul className="mt-5 space-y-4">
         {traps.map((t) => (
           <li
             key={t.id}
-            className="rounded-card border border-border bg-surface p-4.5"
+            className="prose-reading rounded-2xl border border-border bg-surface p-5 text-aux"
           >
-            <p className="flex gap-2 text-aux font-medium">
-              <span aria-hidden="true" className="text-danger">
-                ✗
-              </span>
+            <p className="!my-0 flex gap-3 font-medium">
+              <Icon name="x-circle" size={18} className="mt-[0.22em] text-danger" />
               <span dangerouslySetInnerHTML={{ __html: mdInline(t.trap) }} />
             </p>
             <p
-              className="mt-2 pl-6 text-aux text-fg-muted"
+              className="!mb-0 !mt-2.5 pl-[1.875rem] text-fg-muted"
               dangerouslySetInnerHTML={{ __html: mdInline(t.why) }}
             />
             {t.instead && (
-              <p className="mt-2 flex gap-2 pl-6 text-aux">
-                <span aria-hidden="true" className="text-success">
-                  ✓
-                </span>
+              <p className="!mb-0 !mt-3 flex gap-3">
+                <Icon name="check-circle" size={18} className="mt-[0.22em] text-success" />
                 <span
                   dangerouslySetInnerHTML={{ __html: mdInline(t.instead) }}
                 />

@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D6-q406",
+    domain: 6,
+    objective: "6.4",
+    stem: "An architect is writing the prompt contract for an extraction prompt an implementation team will maintain. Which TWO items make it a contract rather than a description?",
+    choices: [
+      {
+        id: "A",
+        text: "The exact output structure the caller depends on, and what the caller does when it is not met.",
+      },
+      {
+        id: "B",
+        text: "The wording of the current instruction block, reproduced in full.",
+        rationale:
+          "Copying the text creates a second copy to fall out of date with the versioned original and states no obligation either side must hold.",
+      },
+      {
+        id: "C",
+        text: "The inputs the prompt requires, including which are optional and what happens when one is absent.",
+      },
+      {
+        id: "D",
+        text: "The model tier the prompt was authored against and its benchmark scores.",
+        rationale:
+          "Recording the tier is useful provenance, while benchmark figures describe the model rather than anything this prompt guarantees.",
+      },
+      {
+        id: "E",
+        text: "The history of edits made to the prompt since launch.",
+        rationale:
+          "Change history lives in version control, and it tells a maintainer what happened rather than what they must not break.",
+      },
+    ],
+    explanation:
+      "A contract states obligations in both directions: what the prompt may be given, what it will return, and the behavior at the edges where either side fails to hold up its end. Text, provenance and history are documentation about the prompt, none of which tells a maintainer which change would break a caller.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["documentation", "prompt-contract", "handoff"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "C"],
+  },
+  {
+    schemaVersion: 1,
+    id: "D6-q407",
+    domain: 6,
+    objective: "6.4",
+    stem: "An assistant is handed to an operations team that will carry the pager. The package contains an architecture overview, a prompt contract, decision records and a diagram marking trust boundaries. On the first incident the on-call engineer has no idea what to do. Which document is missing?",
+    choices: [
+      {
+        id: "A",
+        text: "A deeper architecture overview covering each component's internals.",
+        rationale:
+          "More architectural depth helps someone redesign the system and does not tell an engineer at 3 a.m. which lever to pull first.",
+      },
+      {
+        id: "B",
+        text: "A test plan the operations team can run to confirm the system is healthy.",
+        rationale:
+          "A health check confirms whether something is wrong and stops short of saying what to do once the answer is yes.",
+      },
+      {
+        id: "C",
+        text: "A runbook: the known failure signals, the first check for each, and how to mitigate or roll back before diagnosing.",
+      },
+      {
+        id: "D",
+        text: "An on-call rotation schedule with escalation contacts.",
+        rationale:
+          "A rotation establishes who responds, which is an organizational gap rather than the missing operational knowledge.",
+      },
+    ],
+    explanation:
+      "The documentation set is defined by the questions each document answers, and no amount of design material answers what to do right now. A runbook maps signals to first checks and to mitigations, which is what lets an operator act before understanding the cause, and it is the document most often left out of a handoff.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["documentation", "runbook", "operations"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

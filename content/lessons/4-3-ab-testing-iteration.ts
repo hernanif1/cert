@@ -84,7 +84,18 @@ export const lesson = {
       md: "*Roll out to 100% and compare this week against last week* is offered as a pragmatic shortcut. A before-and-after comparison has no concurrent control, so seasonality, a marketing campaign or an unrelated deploy are all confounded with the change. Randomized concurrent arms exist precisely to remove that.",
     },
 
-    { kind: "practice", questionId: "D4-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q301",
+        "D4-q302",
+        "D4-q303",
+        "D4-q304",
+        "D4-q305",
+        "D4-q306",
+        "D4-q307",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -152,8 +163,6 @@ export const lesson = {
         "Use offline eval as the gate that prevents bad variants reaching users, then measure the outcome online.",
     },
   ],
-
-  practiceQuestionIds: ["D4-q301", "D4-q304"],
 
   sources: [
     {
