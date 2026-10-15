@@ -2,8 +2,8 @@
 
 import type { QuestionId } from "@/content/schema";
 import { mutate } from "@/lib/storage/store";
-import { localDayKey } from "@/lib/storage/schema";
-import { grade, newCard, type GradeResult } from "@/lib/drill/leitner";
+import { localDayKey, type CardState } from "@/lib/storage/schema";
+import { grade, newCard, type Ease, type GradeResult } from "@/lib/drill/leitner";
 
 /**
  * Record an answer against a question's drill card.
@@ -15,7 +15,7 @@ import { grade, newCard, type GradeResult } from "@/lib/drill/leitner";
 export function recordAnswer(
   questionId: QuestionId,
   correct: boolean,
-  options: { cram?: boolean } = {},
+  options: { cram?: boolean; ease?: Ease } = {},
 ): GradeResult {
   const now = Date.now();
   let result!: GradeResult;
@@ -23,7 +23,7 @@ export function recordAnswer(
   mutate((s) => {
     const existing = s.drill.cards[questionId] ?? newCard();
     const wasNew = existing.r === 0;
-    result = grade(existing, correct, { cram: options.cram, now });
+    result = grade(existing, correct, { cram: options.cram, ease: options.ease, now });
 
     const today = localDayKey(now);
     const daily =
@@ -81,6 +81,14 @@ export function setBookmarked(questionId: QuestionId, bookmarked: boolean): void
     else delete next.bm;
     return { ...s, drill: { ...s.drill, cards: { ...s.drill.cards, [questionId]: next } } };
   });
+}
+
+/** Put a card back exactly as it was — the undo for an accidental Easy. */
+export function restoreCard(questionId: QuestionId, card: CardState): void {
+  mutate((s) => ({
+    ...s,
+    drill: { ...s.drill, cards: { ...s.drill.cards, [questionId]: card } },
+  }));
 }
 
 export function setSuspended(questionId: QuestionId, suspended: boolean): void {

@@ -102,7 +102,19 @@ export const lesson = {
       md: "*Have a human review every output* reads as the conservative answer and is usually wrong: it is unaffordable at volume, it degrades into rubber-stamping, and it discards the latency benefit that justified automation. The keyed answer tiers by risk and then proves the unreviewed path is safe by sampling it.",
     },
 
-    { kind: "practice", questionId: "D5-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D5-q301",
+        "D5-q302",
+        "D5-q303",
+        "D5-q304",
+        "D5-q305",
+        "D5-q306",
+        "D5-q307",
+        "D5-q308",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -163,8 +175,6 @@ export const lesson = {
         "Measure override rate against seeded gold cases and audit a sample of approved items independently.",
     },
   ],
-
-  practiceQuestionIds: ["D5-q301", "D5-q302"],
 
   sources: [
     {

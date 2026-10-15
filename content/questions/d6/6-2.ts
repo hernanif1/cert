@@ -240,4 +240,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D6-q207",
+    domain: 6,
+    objective: "6.2",
+    stem: "A recommendation reads: \"Route routine tickets to the small model and escalate the rest, saving an estimated $31,000 a month at an accepted 1.5-point drop in first-contact resolution.\" A reviewer says the recommendation is nearly complete but is missing the one element that makes it revisitable. What is it?",
+    choices: [
+      {
+        id: "A",
+        text: "The alternatives that were considered and why each was rejected.",
+        rationale:
+          "Recording rejected alternatives explains the choice to a future reader and does not say what would make the choice wrong later.",
+      },
+      {
+        id: "B",
+        text: "The name of the person accountable for the decision.",
+        rationale:
+          "An owner is worth capturing and tells nobody when the decision should be reopened, only whom to ask about it.",
+      },
+      {
+        id: "C",
+        text: "A reversal condition: the observable that would make this the wrong decision, stated now so it can be monitored.",
+      },
+      {
+        id: "D",
+        text: "A confidence interval on the $31,000 estimate.",
+        rationale:
+          "Bounding the estimate improves how the saving is reported and still leaves the decision without a trigger for reconsidering it.",
+      },
+    ],
+    explanation:
+      "Every recommendation is made under assumptions that can stop holding, and the one that ages worst is the distribution of routine versus complex tickets. Naming in advance what would falsify the decision turns a defence of a past choice into a monitorable condition, which is what lets a team revisit it without anyone having to have been wrong.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["communication", "reversal-condition", "adr"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D6-q208",
+    domain: 6,
+    objective: "6.2",
+    stem: "The same routing decision has been approved by the steering committee. The architect must now write it up for the engineers who will build it. Compared with the executive version, what should the engineering rendering add?",
+    choices: [
+      {
+        id: "A",
+        text: "The routing rule itself, the escalation trigger, the failure behavior when the classifier is unavailable, and the constraints that must not be changed without review.",
+      },
+      {
+        id: "B",
+        text: "A fuller account of the business case, so the team understands why the saving matters.",
+        rationale:
+          "Motivation is worth a paragraph, but an implementer who understands the rationale and not the constraints will still make the wrong call at the first ambiguity.",
+      },
+      {
+        id: "C",
+        text: "The alternatives the committee rejected, so the team does not revisit settled ground.",
+        rationale:
+          "Rejected alternatives belong in the decision record; repeating them in build guidance mostly adds reading between the team and the instructions.",
+      },
+      {
+        id: "D",
+        text: "The projected cost saving broken down by ticket category.",
+        rationale:
+          "A finer cost breakdown serves whoever owns the budget and gives an implementer nothing they act on.",
+      },
+    ],
+    explanation:
+      "Each audience needs a different rendering of one decision, and the implementer's version is the only one that has to be executable. It carries the mechanism, the behavior at the edges, and an explicit statement of which constraints are fixed, because guidance that omits the reasons behind a constraint invites a reasonable engineer to optimize it away.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["communication", "audience", "implementation"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

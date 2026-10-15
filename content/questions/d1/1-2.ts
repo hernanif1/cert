@@ -240,4 +240,82 @@ export const questions = [
     type: "single",
     correct: "D",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q207",
+    domain: 1,
+    objective: "1.2",
+    stem: "A document-extraction service has been live for five months. After a model version upgrade, reviewers report that quality dropped, but the team cannot establish which stored outputs predate the upgrade or which prompt revision produced them, because the service records only the extracted fields. What should have been designed into the pipeline before launch?",
+    choices: [
+      {
+        id: "A",
+        text: "A staged rollout sending a fraction of traffic to the new model version before a full cutover.",
+        rationale:
+          "A canary limits the blast radius of a bad upgrade, but with no record tying outputs to versions nobody could read the canary's result either.",
+      },
+      {
+        id: "B",
+        text: "An evaluation set large enough to detect a quality regression between two model versions.",
+        rationale:
+          "An eval set compares versions on fixed inputs offline; it cannot account for production outputs that were never attributed to a version.",
+      },
+      {
+        id: "C",
+        text: "Output schema validation, so malformed extractions are rejected rather than stored.",
+        rationale:
+          "Schema enforcement catches outputs of the wrong shape, while these outputs are the right shape and it is their provenance that is missing.",
+      },
+      {
+        id: "D",
+        text: "A durable record correlating each output with the exact input, prompt version and model version that produced it.",
+      },
+    ],
+    explanation:
+      "What gets logged has to be decided before launch, because provenance cannot be reconstructed after the fact. Correlating an output with its input, prompt version and model version is what turns a quality complaint into a question somebody can answer, and it is the stage teams most often discover they skipped.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["architecture", "observability", "versioning"],
+    type: "single",
+    correct: "D",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q208",
+    domain: 1,
+    objective: "1.2",
+    stem: "An intake pipeline accepts supplier documents as PDFs, DOCX files, scanned images and pasted email text. The extraction prompt has grown a branch per format, and each new source format adds branches both there and in the downstream validation step. What does this design most clearly lack?",
+    choices: [
+      {
+        id: "A",
+        text: "A normalization stage that converts every source format into one internal representation before the model sees it.",
+      },
+      {
+        id: "B",
+        text: "A validation stage that rejects formats the system cannot process.",
+        rationale:
+          "Rejection keeps unusable input out, but every format here is processable; the cost is that each is carried separately all the way through.",
+      },
+      {
+        id: "C",
+        text: "A routing step sending each format to the model tier best suited to it.",
+        rationale:
+          "Routing by format multiplies the branches it is meant to remove, and format is not what determines how hard a given extraction is.",
+      },
+      {
+        id: "D",
+        text: "A trust boundary marking which documents originated outside the organization.",
+        rationale:
+          "Provenance labelling is a real obligation at this stage, but it is orthogonal to branching that is driven by format rather than by origin.",
+      },
+    ],
+    explanation:
+      "The input stage exists so that everything downstream faces one representation: ingestion is where formats arrive and normalization is where they stop being different. When that stage is missing, format variety leaks into the prompt and into every step after it, so each new source multiplies branches instead of adding one.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["architecture", "input-stage", "normalization"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

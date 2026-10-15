@@ -13,13 +13,13 @@ export const lesson = {
   body: [
     {
       kind: "prose",
-      md: "A guardrail is a control that runs **outside** the model. That distinction carries most of this objective. Instructions inside a prompt shape behavior and are worth writing carefully, but they are advisory: they can be out-reasoned, overridden by text hidden in retrieved content, or missed on an unlucky sample, and nothing outside the model notices. A check implemented in code around the model either runs or it does not.\n\nSo the architecture question is never *what should the prompt say*. It is *which layer enforces this, what does that layer do when it is unavailable, and what happens after it fires*.",
+      md: "A guardrail is a control that runs **outside** the model. That distinction carries most of this objective. Prompt instructions shape behavior but are advisory: they can be out-reasoned, overridden by text hidden in retrieved content, or missed on an unlucky sample, and nothing outside the model notices. A check implemented in code either runs or it does not.\n\nSo the architecture question is never *what should the prompt say*. It is *which layer enforces this, what does that layer do when it is unavailable, and what happens after it fires*.",
     },
 
     { kind: "heading", text: "Layered defense" },
     {
       kind: "prose",
-      md: "Controls sit at distinct points in the request path, and each point catches a different class of problem. A system with controls at only one point has a single point of failure.",
+      md: "Controls sit at distinct points in the request path, and each catches a different class of problem. Controls at only one point are a single point of failure.",
     },
     {
       kind: "table",
@@ -67,7 +67,7 @@ export const lesson = {
     { kind: "heading", text: "Blocklists and classifiers do different jobs" },
     {
       kind: "prose",
-      md: "A blocklist is deterministic, cheap, auditable, and trivially bypassed by paraphrase, translation, spacing or encoding. A classifier generalizes across phrasing but costs a call, adds latency, and returns a score rather than a fact — so it has a threshold, and a false-positive against false-negative trade-off somebody must choose deliberately.\n\nUse both, for what each is good at. Deterministic rules belong on exact forms: account numbers, internal hostnames, key prefixes. Classifiers belong on intent: harassment, self-harm, unauthorized advice, an attempt to extract the system prompt. An answer that adopts one and discards the other is usually the distractor.",
+      md: "A blocklist is deterministic, cheap, auditable, and trivially bypassed by paraphrase, translation, spacing or encoding. A classifier generalizes across phrasing but costs a call, adds latency, and returns a score rather than a fact — so it has a threshold, and a false-positive versus false-negative trade-off somebody must choose.\n\nUse both. Deterministic rules belong on exact forms: account numbers, internal hostnames, key prefixes. Classifiers belong on intent: harassment, self-harm, unauthorized advice, an attempt to extract the system prompt. An answer that adopts one and discards the other is usually the distractor.",
     },
     {
       kind: "code",
@@ -78,17 +78,58 @@ export const lesson = {
     { kind: "heading", text: "Fail-closed or fail-open is a per-action decision" },
     {
       kind: "prose",
-      md: "Every guardrail has an unavailable state: the classifier times out, the policy service is down, the scanner throws. Decide the behavior per action severity rather than globally. Fail **closed** where the action is irreversible or the content is high-risk; fail **open**, degraded and loudly alerted, only where blocking a legitimate low-risk answer costs more than the residual risk.\n\nWhat you cannot do is leave it undecided. An undecided guardrail fails open under load, and load is the cheapest thing an adversary can manufacture.",
+      md: "Every guardrail has an unavailable state: the classifier times out, the policy service is down, the scanner throws. Decide the behavior per action severity rather than globally.",
+    },
+    {
+      kind: "table",
+      caption: "The two failure modes and where each belongs",
+      headers: ["Mode", "What happens", "When to use it", "Example"],
+      rows: [
+        [
+          "**Fail closed**",
+          "The action is blocked until the guardrail is back.",
+          "Irreversible action or high-risk content.",
+          "The secret scanner goes down. `send_email` returns an error rather than risk leaking a key.",
+        ],
+        [
+          "**Fail open**",
+          "The action proceeds in degraded mode, loudly alerted.",
+          "Legitimate low-risk answer, where blocking costs more than the residual risk.",
+          "The tone classifier times out. The assistant answers an FAQ question anyway, logs it, and fires an alert.",
+        ],
+      ],
+    },
+    {
+      kind: "prose",
+      md: "What you cannot do is leave it undecided. An undecided guardrail fails open under load, and load is the cheapest thing an adversary can manufacture.",
     },
 
     { kind: "heading", text: "What has to happen when a control fires" },
+    {
+      kind: "prose",
+      md: "A control **fires** when its condition is met: a rule matches, a score crosses the threshold, a check fails. What it does next must be decided in code beforehand, not improvised by the model. For example:",
+    },
+    {
+      kind: "table",
+      headers: ["Control", "When it fires", "Possible action"],
+      rows: [
+        ["Blocklist", "The response contains a forbidden hostname", "Block the response"],
+        ["Secret scanner", "Detects an API key in the response", "Stop delivery"],
+        ["Classifier", "The harmful-content score crosses the configured threshold", "Block and route to review"],
+        ["Refund tool check", "The requested amount exceeds the allowed limit without approval", "Suspend the operation and require approval"],
+      ],
+    },
+    {
+      kind: "prose",
+      md: "Whatever fired, the next steps are the same:",
+    },
     {
       kind: "list",
       items: [
         "**Return a deterministic response the model did not write.** A refusal generated by the model that produced the blocked content is not a control.",
         "**Log the event** with the trace id, the rule that fired, its score and a hash of the input — not the raw content, unless retention policy permits it.",
         "**Increment a counter.** A spike in firing rate is either an attack or a regression, and both deserve an alert.",
-        "**Route to review** where a false positive is expensive, so a wrongly blocked request reaches a person rather than a bin.",
+        "**Route to review** where a false positive is expensive, so a wrongly blocked request reaches a person, not a bin.",
         "**Tune on confirmed false positives.** A guardrail nobody tunes gets switched off within a quarter.",
       ],
     },
@@ -99,18 +140,30 @@ export const lesson = {
       scenario:
         "A partner-facing sales assistant retrieves from the CRM and an internal pricing workbook. The system prompt tells it never to disclose internal discount floors. Asked persistently enough, it discloses them anyway, and has begun generating quotes below the approved floor.",
       walkthrough:
-        "1. **Name the layer.** The content leaves through the response, so the enforcing layer is output screening. The prompt was doing work a prompt cannot do.\n2. **Split the detection problem.** Floor codes have an exact form, so a deterministic scan catches them. *Quoting unpublished pricing* is intent-shaped and needs a classifier.\n3. **Remove the data instead.** The partner-facing agent has no business retrieving the internal workbook: content that is never in context cannot leak.\n4. **Authorize the action.** The quote tool validates the discount against the entitlement service before writing, and rejects out-of-policy values whatever the model asked for.\n5. **Define firing behavior.** Blocked responses return a fixed message, log a scored event, increment a counter, and open a ticket for sales ops.",
+        "1. **Name the layer.** The content leaves through the response, so the enforcing layer is output screening.\n2. **Split the detection problem.** Floor codes have an exact form, so a deterministic scan catches them. *Quoting unpublished pricing* is intent-shaped and needs a classifier.\n3. **Remove the data instead.** The partner-facing agent has no business retrieving the internal workbook: what is never in context cannot leak.\n4. **Authorize the action.** The quote tool validates the discount against the entitlement service before writing, and rejects out-of-policy values whatever the model asked for.\n5. **Define firing behavior.** Blocked responses return a fixed message, log a scored event, increment a counter, and open a ticket for sales ops.",
       takeaway:
-        "Four independent layers now have to fail together. Before the review, the weakest layer was also the only one.",
+        "Four independent layers now have to fail together. Before the review, the weakest layer was the only one.",
     },
 
     {
       kind: "callout",
       variant: "exam-distractor",
-      md: "*Add an instruction to the system prompt* appears on nearly every guardrail item and is almost never the key at this level. Prompts are one probabilistic layer; the exam is asking which control still holds when the model is wrong, confused, or being manipulated by content it was asked to read.",
+      md: "*Add an instruction to the system prompt* appears on nearly every guardrail item and is almost never the key. Prompts are one probabilistic layer; the exam asks which control still holds when the model is wrong, confused, or manipulated by content it was asked to read.",
     },
 
-    { kind: "practice", questionId: "D5-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D5-q101",
+        "D5-q102",
+        "D5-q103",
+        "D5-q104",
+        "D5-q105",
+        "D5-q106",
+        "D5-q107",
+        "D5-q108",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -145,39 +198,37 @@ export const lesson = {
     {
       id: "t1",
       trap: "A carefully written system prompt is sufficient to stop an agent taking a prohibited action.",
-      why: "Prompt instructions are advisory and probabilistic: they can be overridden by text hidden in a retrieved document, argued around, or missed on a single sample, and nothing outside the model detects that it happened.",
+      why: "Prompt instructions are advisory: they can be overridden by text hidden in a retrieved document, argued around, or missed on a single sample, and nothing outside the model notices.",
       instead:
         "Enforce prohibited operations inside the tool, where a failed check returns an error instead of an opinion.",
     },
     {
       id: "t2",
       trap: "Once a safety classifier is in place, pattern-based blocklists are obsolete.",
-      why: "Classifiers return probabilities and generalize over phrasing, but they are unreliable on exact-form strings such as account numbers and key prefixes, where a deterministic rule never misses and costs almost nothing.",
+      why: "Classifiers generalize over phrasing but are unreliable on exact-form strings such as account numbers and key prefixes, where a deterministic rule never misses and costs almost nothing.",
       instead: "Pair them: rules for exact forms, classifiers for intent.",
     },
     {
       id: "t3",
       trap: "A guardrail that times out should let the request through, so an availability problem is not a user-facing outage.",
-      why: "Failing open globally converts any load spike or dependency incident into a window with no safety controls at all, and generating load is the cheapest move available to an adversary.",
+      why: "Failing open globally turns any load spike or dependency incident into a window with no controls, and load is the cheapest thing an adversary can generate.",
       instead:
         "Fail closed on irreversible or high-risk paths; fail open with paging only where residual risk is genuinely lower than the cost of blocking.",
     },
     {
       id: "t4",
       trap: "Screening the model's output is enough, since everything the user sees passes through it.",
-      why: "Output screening runs after the turn's tool calls have executed, so it can stop the user reading about a transfer but cannot stop the transfer, the deletion or the email that already happened.",
+      why: "Output screening runs after the turn's tool calls, so it can stop the user reading about a transfer but cannot undo the transfer, deletion or email that already happened.",
       instead: "Authorize side effects in the tool; screen output for the reader.",
     },
     {
       id: "t5",
       trap: "Asking the model to review its own response adds a second layer of defense.",
-      why: "A self-check shares the weights, the context and any injected instructions that produced the problem, so its failures correlate with the failures it is meant to catch — the one property a second layer must not have.",
+      why: "A self-check shares the weights, context and injected instructions that produced the problem, so its failures correlate with the ones it should catch — the one property a second layer must not have.",
       instead:
         "Use a separate classifier, or at minimum a separate call with a narrow prompt and no access to the untrusted content.",
     },
   ],
-
-  practiceQuestionIds: ["D5-q101", "D5-q103"],
 
   sources: [
     {

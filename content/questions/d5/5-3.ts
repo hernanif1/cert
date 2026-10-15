@@ -240,4 +240,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D5-q307",
+    domain: 5,
+    objective: "5.3",
+    stem: "Adjusters reviewing an assistant's claim recommendations see only a decision and a confidence score. They approve almost everything, and when asked they say they have no practical way to tell a good recommendation from a bad one in the time available. What change most improves the quality of review?",
+    choices: [
+      {
+        id: "A",
+        text: "Display the confidence score more prominently and sort the queue so low-confidence items come first.",
+        rationale:
+          "Ordering by confidence puts weak items first while still giving the reviewer nothing to check any of them against.",
+      },
+      {
+        id: "B",
+        text: "Require the adjuster to type a short justification before approving.",
+        rationale:
+          "Forced justification slows approval and produces boilerplate, because the reviewer still lacks the material a real justification would cite.",
+      },
+      {
+        id: "C",
+        text: "Show the evidence behind each recommendation: the policy clauses retrieved, the claim fields used, and what would change the outcome.",
+      },
+      {
+        id: "D",
+        text: "Add a second model that reviews each recommendation and flags disagreement for the adjuster.",
+        rationale:
+          "A second model gives a second opinion on the same basis and does not turn the human into an independent check on either of them.",
+      },
+    ],
+    explanation:
+      "Review is real only when the reviewer can reach a different conclusion, which requires the evidence rather than the conclusion. A decision plus a confidence number gives nothing to verify against, so the rational response under time pressure is to approve, and the review layer becomes a record of approvals rather than a control.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["human-in-the-loop", "review-design", "evidence"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D5-q308",
+    domain: 5,
+    objective: "5.3",
+    stem: "An assistant that drafts regulatory filings is wrong in some material way on roughly 30% of outputs. The team proposes shipping it with mandatory human review of every filing, arguing that review makes the error rate irrelevant. Volume is 800 filings a day and the review team has six people. What is the strongest objection?",
+    choices: [
+      {
+        id: "A",
+        text: "Human review cannot be relied upon because reviewers are subject to automation bias.",
+        rationale:
+          "Automation bias is real and worsens with volume, but it is a consequence here rather than the first thing that breaks.",
+      },
+      {
+        id: "B",
+        text: "Regulators may not accept human review as a substitute for a validated system.",
+        rationale:
+          "Acceptability is worth confirming and is a compliance question, while the design fails on its own terms before anyone rules on it.",
+      },
+      {
+        id: "C",
+        text: "The 30% figure will drift over time, so the review burden is not stable.",
+        rationale:
+          "Drift would make a workable arrangement gradually worse, whereas this one does not work at the rate quoted today.",
+      },
+      {
+        id: "D",
+        text: "Review at that error rate and volume is not a control but a second production line: six people cannot meaningfully check 800 filings, so the queue clears by approving.",
+      },
+    ],
+    explanation:
+      "Human review is a control only when the queue can actually be cleared at the quality the design assumes. Mandatory review is the reflexively conservative answer and is usually the wrong one: it is unaffordable at volume, it degrades into rubber-stamping, and it is offered here in place of making the system accurate enough to review selectively.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["human-in-the-loop", "review-capacity", "design"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

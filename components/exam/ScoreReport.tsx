@@ -1,21 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { EXAM } from "@/content/exam-facts";
-import { DOMAINS } from "@/content/domains";
 import { useAppState, useHydrated } from "@/lib/storage/store";
 import { domainResults, minimumCorrectToPass } from "@/lib/exam/scoring";
 import { ProgressBar } from "@/components/progress/ProgressBar";
-import { weightPercent } from "@/lib/curriculum";
+import { domainsFor, weightPercent } from "@/lib/curriculum";
+import { useDict, useLocale } from "@/lib/i18n/client";
+import { LocaleLink as Link } from "@/components/i18n/LocaleLink";
 
 export function ScoreReport() {
   const hydrated = useHydrated();
   const params = useSearchParams();
   const state = useAppState();
   const id = params.get("a");
+  const locale = useLocale();
+  const dict = useDict();
+  const t = dict.tools.result;
+  const domains = domainsFor(locale);
 
-  if (!hydrated) return <p className="text-sm text-fg-muted">Loading…</p>;
+  if (!hydrated) return <p className="text-sm text-fg-muted">{dict.tools.loading}</p>;
 
   // Read from history by id, so the results page survives a refresh.
   const attempt =
@@ -25,12 +29,12 @@ export function ScoreReport() {
   if (!attempt) {
     return (
       <div className="max-w-xl">
-        <h1 className="font-display text-3xl">No attempt to report</h1>
+        <h1 className="font-display text-3xl">{t.none}</h1>
         <Link
           href="/mock-exam"
-          className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg"
+          className="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg"
         >
-          Take a mock exam
+          {t.take}
         </Link>
       </div>
     );
@@ -49,18 +53,18 @@ export function ScoreReport() {
 
   return (
     <div className="max-w-3xl">
-      <p className="text-sm font-medium text-accent">Mock exam result</p>
+      <p className="text-sm font-medium text-accent">{t.eyebrow}</p>
       <h1
         className={`mt-2 font-display text-5xl ${attempt.passed ? "text-success" : "text-danger"}`}
       >
-        {attempt.passed ? "Pass" : "Fail"}
+        {attempt.passed ? t.pass : t.fail}
       </h1>
 
-      <div className="mt-6 rounded-card border border-border bg-surface p-6">
+      <div className="mt-6 rounded-2xl border border-border bg-surface p-6">
         <div className="flex items-baseline gap-3">
           <span className="tnum font-display text-5xl">{attempt.scaled}</span>
           <span className="text-sm text-fg-muted">
-            estimated scaled score · cut at {EXAM.passScaled}
+            {t.scaledNote(EXAM.passScaled)}
           </span>
         </div>
 
@@ -68,7 +72,7 @@ export function ScoreReport() {
           <ProgressBar
             value={scorePct}
             tone={attempt.passed ? "success" : "danger"}
-            label={`Scaled score ${attempt.scaled}`}
+            label={t.scaledAria(attempt.scaled)}
           />
           <span
             aria-hidden="true"
@@ -78,37 +82,40 @@ export function ScoreReport() {
         </div>
 
         <p className="tnum mt-4 text-sm text-fg-muted">
-          {attempt.raw} of {attempt.total} correct · you needed {needed} ·{" "}
-          {minutes} min used
-          {attempt.timedOut && " · time expired"}
+          {t.summary(attempt.raw, attempt.total, needed, minutes)}
+          {attempt.timedOut && ` · ${t.timeExpired}`}
         </p>
 
         {!attempt.passed && weakest && weakest.percent < 100 && (
           <p className="mt-3 text-sm leading-relaxed">
-            Your largest gap was {weakest.code} {weakest.title} at{" "}
-            {weakest.percent}% on {weakest.itemsPresented} items — that is{" "}
-            {weightPercent(weakest.blueprintWeight)} of the exam.
+            {t.gap(
+              `${weakest.code} ${domains.find((d) => d.id === weakest.domain)?.title ?? weakest.title}`,
+              weakest.percent,
+              weakest.itemsPresented,
+              weightPercent(weakest.blueprintWeight),
+            )}
           </p>
         )}
       </div>
 
       <section className="mt-8">
-        <h2 className="font-display text-2xl">By domain</h2>
+        <h2 className="font-display text-2xl">{t.byDomain}</h2>
         <p className="mt-1 text-sm text-fg-muted">
-          Weakest first. Domain percentages are diagnostic — the real exam bases
-          pass or fail on the total scaled score alone.
+          {t.byDomainNote}
         </p>
         <ul className="mt-4 space-y-4">
           {results.map((r) => {
-            const domain = DOMAINS.find((d) => d.id === r.domain);
+            const domain = domains.find((d) => d.id === r.domain);
+            const title = domain?.title ?? r.title;
             return (
-              <li key={r.domain}>
+              <li key={r.domain} data-domain={r.domain}>
                 <div className="flex items-baseline justify-between gap-3 text-sm">
                   <Link
                     href={`/learn/${domain?.slug ?? ""}`}
-                    className="font-medium transition-colors hover:text-accent"
+                    className="font-medium transition-colors hover:text-domain"
                   >
-                    {r.code} {r.title}
+                    <span className="tnum mr-1.5 text-domain">{r.code}</span>
+                    {title}
                   </Link>
                   <span className="tnum shrink-0 text-fg-muted">
                     {r.correct}/{r.itemsPresented} · {r.percent}%
@@ -118,13 +125,12 @@ export function ScoreReport() {
                   <ProgressBar
                     value={r.percent}
                     tone={r.percent >= 70 ? "success" : r.percent >= 50 ? "accent" : "danger"}
-                    label={`${r.title} ${r.percent}%`}
+                    label={`${title} ${r.percent}%`}
                   />
                 </div>
                 <p className="tnum mt-1 text-[11px] text-fg-muted">
-                  {weightPercent(r.blueprintWeight)} of the exam
-                  {r.lowConfidence &&
-                    ` · only ${r.itemsPresented} items, so treat this percentage as indicative only`}
+                  {t.ofExam(weightPercent(r.blueprintWeight))}
+                  {r.lowConfidence && ` · ${t.lowConfidence(r.itemsPresented)}`}
                 </p>
               </li>
             );
@@ -135,21 +141,21 @@ export function ScoreReport() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href="/mock-exam"
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
         >
-          Take another
+          {t.another}
         </Link>
         <Link
           href="/learn/drill"
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:border-accent"
+          className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:border-accent"
         >
-          Drill your weak areas
+          {t.drillWeak}
         </Link>
         <Link
           href="/learn/progress"
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:border-accent"
+          className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:border-accent"
         >
-          Progress dashboard
+          {t.dashboard}
         </Link>
       </div>
 
@@ -157,16 +163,9 @@ export function ScoreReport() {
           risk in the project and it belongs on the results page. */}
       <p className="mt-10 border-t border-border pt-5 text-xs leading-relaxed text-fg-muted">
         <strong className="font-semibold text-fg">
-          This score is an estimate, not a Pearson VUE score.
+          {t.estimateLead}
         </strong>{" "}
-        The real exam is equated with item-response-theory difficulty parameters
-        we do not have, and its guide describes the blueprint weights as the
-        proportion of <em>scored</em> items — implying unscored pretest items we
-        cannot model, so we score all {attempt.total}. Our scale assumes the
-        minimally qualified candidate answers 70% correctly and anchors the{" "}
-        {EXAM.passScaled} cut there. A {attempt.scaled} here is not a{" "}
-        {attempt.scaled} there. What it is good for is tracking your own
-        trajectory across attempts.
+        {t.estimateBody(attempt.total, EXAM.passScaled, attempt.scaled)}
       </p>
     </div>
   );

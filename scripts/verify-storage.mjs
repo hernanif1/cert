@@ -277,11 +277,15 @@ async function main() {
     await page.goto(`${BASE}/learn/`, { waitUntil: "networkidle" });
     const ALL_SLUGS = [];
     for (const d of await page.$$eval('nav a[href^="/learn/"]', (as) =>
-      as.map((a) => a.getAttribute("href")).filter((h) => /^\/learn\/\d-/.test(h)))) {
+      // Domain links only: the sidebar also lists the open domain's lessons now.
+      [...new Set(as.map((a) => a.getAttribute("href")).filter((h) => /^\/learn\/\d-[^/]+\/$/.test(h)))])) {
       await page.goto(`${BASE}${d}`, { waitUntil: "domcontentloaded" });
       ALL_SLUGS.push(...(await allLessonSlugs(page)));
     }
     await page.goto(`${BASE}/learn/progress/`, { waitUntil: "networkidle" });
+    const UNIQUE = [...new Set(ALL_SLUGS)];
+    ALL_SLUGS.length = 0;
+    ALL_SLUGS.push(...UNIQUE);
     check("collected all 38 lesson slugs", ALL_SLUGS.length === 38, String(ALL_SLUGS.length));
     check("dashboard: no hydration warnings", hydrationNoise(msgs).length === 0,
       hydrationNoise(msgs)[0] ?? "");
@@ -367,6 +371,89 @@ async function main() {
     await page.waitForTimeout(400);
     check("import restores 2/38",
       (await page.locator("main").innerText()).includes("2/38"));
+    await ctx.close();
+  }
+
+  /* 11 — checklist: ticks persist, orphans ignored, and survive export/import */
+  {
+    const ctx = await browser.newContext({ acceptDownloads: true });
+    const page = await ctx.newPage();
+    const msgs = watchConsole(page);
+    await page.goto(`${BASE}/learn/checklist/`, { waitUntil: "networkidle" });
+    check("checklist: no hydration warnings", hydrationNoise(msgs).length === 0,
+      hydrationNoise(msgs)[0] ?? "");
+
+    // The denominator is derived, not hardcoded: adding an item must not
+    // silently turn this test into a lie.
+    const boxes = page.locator('main input[type="checkbox"]');
+    const TOTAL = await boxes.count();
+    const counter = page.locator('nav a[href="/learn/checklist/"] .tnum').first();
+    check("checklist: sidebar starts at 0/N", 
+      (await counter.innerText()).replace(/\s/g, "") === `0/${TOTAL}`,
+      await counter.innerText());
+
+    for (const i of [0, 1, 2]) await boxes.nth(i).check();
+    await page.waitForTimeout(400);
+    check("checklist: sidebar counts 3 ticks",
+      (await counter.innerText()).replace(/\s/g, "") === `3/${TOTAL}`,
+      await counter.innerText());
+
+    await page.reload({ waitUntil: "networkidle" });
+    const stillChecked = await page
+      .locator('main input[type="checkbox"]')
+      .evaluateAll((els) => els.filter((el) => el.checked).length);
+    check("checklist: ticks survive reload", stillChecked === 3, `${stillChecked} ticked`);
+
+    const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).checklist, KEY);
+    check("checklist: stored as a set of ids with timestamps",
+      Object.keys(stored).length === 3 && Object.values(stored).every((v) => typeof v === "number" && v > 0),
+      JSON.stringify(stored));
+
+    // Unticking must DELETE the key, not leave a null behind.
+    await boxes.nth(0).uncheck();
+    await page.waitForTimeout(400);
+    const afterUntick = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).checklist, KEY);
+    check("checklist: untick deletes the key", Object.keys(afterUntick).length === 2,
+      JSON.stringify(afterUntick));
+
+    // Export, wipe, re-import: the ticks must come back.
+    await page.goto(`${BASE}/learn/progress/`, { waitUntil: "networkidle" });
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByRole("button", { name: /export progress/i }).click(),
+    ]);
+    await page.getByRole("button", { name: /^reset progress$/i }).click();
+    await page.getByRole("button", { name: /delete all progress/i }).click();
+    await page.waitForTimeout(400);
+    check("checklist: reset clears the ticks",
+      (await page.locator('nav a[href="/learn/checklist/"] .tnum').first().innerText())
+        .replace(/\s/g, "") === `0/${TOTAL}`);
+
+    await page.locator('input[type="file"]').setInputFiles(await download.path());
+    await page.getByRole("button", { name: /^replace everything$/i }).click();
+    await page.waitForTimeout(400);
+    check("checklist: import restores 2 ticks",
+      (await page.locator('nav a[href="/learn/checklist/"] .tnum').first().innerText())
+        .replace(/\s/g, "") === `2/${TOTAL}`,
+      await page.locator('nav a[href="/learn/checklist/"] .tnum').first().innerText());
+
+    // A retired id must not inflate the numerator past what the page can show.
+    await page.evaluate(([key, total]) => {
+      localStorage.setItem(key, JSON.stringify({
+        schemaVersion: 1,
+        checklist: { "d1-multi-agent": 1, "retired-item-xyz": 2 },
+      }));
+      return total;
+    }, [KEY, TOTAL]);
+    await page.reload({ waitUntil: "networkidle" });
+    check("checklist: orphan id ignored (1/N, never 2/N+1)",
+      (await page.locator('nav a[href="/learn/checklist/"] .tnum').first().innerText())
+        .replace(/\s/g, "") === `1/${TOTAL}`,
+      await page.locator('nav a[href="/learn/checklist/"] .tnum').first().innerText());
+    // ...and it must still be in storage, not garbage-collected.
+    const kept = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).checklist, KEY);
+    check("checklist: orphan id is kept, not dropped",
+      Object.keys(kept).includes("retired-item-xyz"), JSON.stringify(kept));
     await ctx.close();
   }
 

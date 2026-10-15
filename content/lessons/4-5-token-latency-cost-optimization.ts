@@ -86,7 +86,18 @@ export const lesson = {
       md: "*Reduce the maximum output token limit* is offered as a cost lever. Generation is billed on tokens actually produced, so lowering a cap that is never reached saves nothing — and lowering one that is reached truncates answers mid-sentence, which turns a cost problem into a correctness problem. Shorten output by changing the requested format, not by clipping it.",
     },
 
-    { kind: "practice", questionId: "D4-q501" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q501",
+        "D4-q502",
+        "D4-q503",
+        "D4-q504",
+        "D4-q505",
+        "D4-q506",
+        "D4-q507",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -154,8 +165,6 @@ export const lesson = {
         "Request a more compact output format, and keep the cap as a runaway-generation safeguard.",
     },
   ],
-
-  practiceQuestionIds: ["D4-q501", "D4-q504"],
 
   sources: [
     {

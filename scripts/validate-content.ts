@@ -20,6 +20,7 @@ import {
   type ChoiceId,
   type Lesson,
   type Question,
+  type QuestionId,
 } from "../content/schema";
 
 const errors: string[] = [];
@@ -59,6 +60,7 @@ const QUESTIONS: Question[] = BANK;
 const SOURCE_ALLOWLIST = new Set([
   "/exam-guide.pdf",
   "https://docs.claude.com/en/home",
+  "https://code.claude.com/docs/en/monitoring-usage",
   "https://www.anthropic.com/engineering/building-effective-agents",
   "https://www.anthropic.com/news/contextual-retrieval",
   "https://modelcontextprotocol.io",
@@ -69,6 +71,14 @@ const LESSON_MIN_WORDS = 750;
 const LESSON_MAX_WORDS = 1300;
 const MIN_TRAPS = 3;
 const MAX_TRAPS = 5;
+/* One practice item per concept a lesson teaches, walked as a sequence. */
+const MIN_PRACTICE = 4;
+const MAX_PRACTICE = 10;
+
+/** The lesson's featured items, which now live on the practice block itself. */
+function practiceIdsOf(l: Lesson): QuestionId[] {
+  return l.body.flatMap((b) => (b.kind === "practice" ? b.questionIds : []));
+}
 
 /* ───────────────────────────── Blueprint ───────────────────────────── */
 
@@ -211,10 +221,6 @@ function checkLessons(): void {
       }
     }
 
-    if (l.practiceQuestionIds.length < 1 || l.practiceQuestionIds.length > 2) {
-      err(where, `${l.practiceQuestionIds.length} practice questions, expected 1-2`);
-    }
-
     /**
      * Structural consistency across 38 independently-authored lessons is the
      * entire reason this content is typed rather than MDX. Every lesson owes
@@ -236,11 +242,14 @@ function checkLessons(): void {
     const practiceBlocks = l.body.filter((b) => b.kind === "practice");
     if (practiceBlocks.length !== 1) {
       shortfall(where, `${practiceBlocks.length} practice blocks in body, expected 1`);
-    } else if (practiceBlocks[0].questionId !== l.practiceQuestionIds[0]) {
-      err(
-        where,
-        `practice block renders ${practiceBlocks[0].questionId} but practiceQuestionIds[0] is ${l.practiceQuestionIds[0]}`,
-      );
+    } else {
+      const n = practiceBlocks[0].questionIds.length;
+      if (n < MIN_PRACTICE || n > MAX_PRACTICE) {
+        err(where, `${n} practice questions, expected ${MIN_PRACTICE}-${MAX_PRACTICE}`);
+      }
+      if (new Set(practiceBlocks[0].questionIds).size !== n) {
+        err(where, "duplicate id in the practice block");
+      }
     }
   }
 
@@ -327,7 +336,7 @@ function checkQuestions(): void {
   // Every featured practice question must exist, be drill-pool, share the
   // lesson's objective, and be featured by at most one lesson.
   for (const l of LESSONS) {
-    for (const qid of l.practiceQuestionIds) {
+    for (const qid of practiceIdsOf(l)) {
       const q = byId.get(qid);
       if (!q) {
         // Transient while a domain's questions are still being authored; the
@@ -506,7 +515,7 @@ function report(): void {
   });
   console.table(rows);
   console.log(
-    `Totals: lessons ${LESSONS.length}/38 · questions ${QUESTIONS.length}/263`,
+    `Totals: lessons ${LESSONS.length}/38 · questions ${QUESTIONS.length}/339`,
   );
 }
 
@@ -524,7 +533,7 @@ function main(): void {
     for (const e of errors) console.error(`  error  ${e}`);
     process.exit(1);
   }
-  const complete = LESSONS.length === 38 && QUESTIONS.length === 263;
+  const complete = LESSONS.length === 38 && QUESTIONS.length === 339;
   console.log(
     warnings.length > 0
       ? `\nvalidate-content: ok with ${warnings.length} warning(s)${STRICT ? "" : " (authoring in progress)"}`

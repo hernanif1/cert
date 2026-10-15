@@ -90,7 +90,17 @@ export const lesson = {
       md: "*Move to a model with a larger context window* is the standing distractor on this objective. It answers a capacity question the scenario has usually already told you is not binding — the material fits, and the agent is still choosing badly among it. The keyed option almost always narrows what reaches the model rather than widening the space it arrives in.",
     },
 
-    { kind: "practice", questionId: "D3-q801" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q801",
+        "D3-q802",
+        "D3-q803",
+        "D3-q804",
+        "D3-q805",
+        "D3-q806",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -146,8 +156,6 @@ export const lesson = {
         "Narrow what reaches the model so the relevant material faces less competition, and verify with evaluation rather than assuming coverage.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q801", "D3-q803"],
 
   sources: [
     {

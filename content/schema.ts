@@ -1,7 +1,7 @@
 /**
  * The content contract.
  *
- * All 38 lessons and 263 questions are authored as typed TS objects and
+ * All 38 lessons and 339 questions are authored as typed TS objects and
  * declared with `satisfies`, which makes `tsc --noEmit` a free, hard schema
  * gate. That is the whole reason this is TypeScript rather than MDX or JSON:
  * MDX enforces nothing, and JSON is miserable to author 1000 words of prose in.
@@ -100,7 +100,14 @@ export type LessonBlock =
       walkthrough: string;
       takeaway: string;
     }
-  | { kind: "practice"; questionId: QuestionId };
+  /**
+   * The lesson's Practice Scenario, in presentation order — one item per
+   * concept the lesson teaches, walked through as a sequence.
+   *
+   * The ids live on the block rather than on the Lesson so there is exactly
+   * one source of truth, and so BlockRenderer stays a pure function of `body`.
+   */
+  | { kind: "practice"; questionIds: QuestionId[] };
 
 export interface ExamTrap {
   /** Stable within the lesson: "t1". */
@@ -137,8 +144,6 @@ export interface Lesson {
   body: LessonBlock[];
   keyTerms?: KeyTerm[];
   traps: ExamTrap[];
-  /** 1–2 drill-pool questions featured inline on the lesson page. */
-  practiceQuestionIds: QuestionId[];
   sources: Source[];
   relatedLessons?: ObjectiveId[];
 }

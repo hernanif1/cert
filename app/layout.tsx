@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeScript } from "@/components/providers/ThemeScript";
+import { LocaleScript } from "@/components/providers/LocaleScript";
 import { AppChrome } from "@/components/providers/AppChrome";
 import { TopBar } from "@/components/layout/TopBar";
 import { Footer } from "@/components/layout/Footer";
@@ -40,20 +41,29 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // suppressHydrationWarning on <html> ONLY: ThemeScript mutates its class
-    // list before React sees it. Do not spread this elsewhere — it masks real bugs.
+    // list, and LocaleScript its `lang`, before React sees them. Do not spread
+    // this elsewhere — it masks real bugs.
     <html
       lang="en"
+      // globals.css sets scroll-behavior:smooth for in-page anchors; this tells
+      // Next to suspend it during route changes so a new page opens at its top
+      // instead of animating up from wherever the last one was left.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${serif.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
         <ThemeScript />
+        <LocaleScript />
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <AppChrome>
           <StorageBanner />
           <TopBar />
-          {children}
+          {/* Skip-link target. Pages own their <main>; this only anchors it. */}
+          <div id="content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+            {children}
+          </div>
           <Footer />
         </AppChrome>
       </body>

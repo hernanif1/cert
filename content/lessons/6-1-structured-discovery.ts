@@ -90,7 +90,19 @@ export const lesson = {
       md: "Options that open the project by selecting a model, drafting prompts or booking a two-week proof of concept always look like momentum, and discovery questions look slow beside them. The exam keys the option that first secures real data and a measurable definition of success — a prototype built on unstated criteria cannot be shown to work, only demonstrated.",
     },
 
-    { kind: "practice", questionId: "D6-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D6-q101",
+        "D6-q102",
+        "D6-q103",
+        "D6-q104",
+        "D6-q105",
+        "D6-q106",
+        "D6-q107",
+        "D6-q108",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -151,8 +163,6 @@ export const lesson = {
         "Capture volume, typical document size and turns per task during discovery, and model spend per completed task from those.",
     },
   ],
-
-  practiceQuestionIds: ["D6-q101", "D6-q104"],
 
   sources: [
     {

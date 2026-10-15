@@ -91,7 +91,18 @@ export const lesson = {
       md: "Compliance items reliably offer *encrypt everything* and *the vendor is certified*. Both are true statements that settle nothing: encryption is one safeguard among many, and an authorization or a BAA attaches to a named party, never to your system as a whole.",
     },
 
-    { kind: "practice", questionId: "D5-q401" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D5-q401",
+        "D5-q402",
+        "D5-q403",
+        "D5-q404",
+        "D5-q405",
+        "D5-q406",
+        "D5-q407",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -159,8 +170,6 @@ export const lesson = {
         "Confirm retention, residency and contract terms for your account, and minimize what is sent regardless.",
     },
   ],
-
-  practiceQuestionIds: ["D5-q401", "D5-q402"],
 
   sources: [
     {

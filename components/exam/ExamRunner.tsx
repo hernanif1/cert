@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { EXAM } from "@/content/exam-facts";
 import { getQuestion, QUESTIONS } from "@/content/questions";
@@ -22,6 +21,10 @@ import { previouslySeenCount } from "@/lib/exam/sampler";
 import { QuestionCard } from "@/components/question/QuestionCard";
 import { ExamTimer } from "@/components/exam/ExamTimer";
 import { QuestionNavigator } from "@/components/exam/QuestionNavigator";
+import { useDict, useLocale } from "@/lib/i18n/client";
+import { HTML_LANG, localizeHref } from "@/lib/i18n";
+import { LocaleLink as Link } from "@/components/i18n/LocaleLink";
+import { Icon } from "@/components/ui/Icon";
 
 export function ExamRunner() {
   const router = useRouter();
@@ -30,13 +33,16 @@ export function ExamRunner() {
   const state = useAppState();
   const attempt = useActiveAttempt();
   const [confirmSubmit, setConfirmSubmit] = useState(false);
+  const locale = useLocale();
+  const dict = useDict();
+  const t = dict.tools.exam;
 
   const finish = useCallback(
     (timedOut: boolean) => {
       const id = submitAttempt(timedOut);
-      if (id) router.push(`/mock-exam/results/?a=${id}`);
+      if (id) router.push(localizeHref(`/mock-exam/results/?a=${id}`, locale));
     },
-    [router],
+    [router, locale],
   );
 
   // If the deadline has already passed when we mount — the tab was closed, the
@@ -85,7 +91,7 @@ export function ExamRunner() {
   }, [onKey]);
 
   if (!hydrated || !loaded) {
-    return <p className="text-sm text-fg-muted">Loading…</p>;
+    return <p className="text-sm text-fg-muted">{dict.tools.loading}</p>;
   }
 
   /* No attempt in flight — start screen */
@@ -93,20 +99,20 @@ export function ExamRunner() {
     const bankReady = QUESTIONS.length > 0;
     return (
       <div className="max-w-2xl">
-        <p className="text-sm font-medium text-accent">Practice</p>
-        <h1 className="mt-2 font-display text-4xl">Mock Exam</h1>
-        <p className="mt-4 leading-relaxed text-fg-muted">
-          {EXAM.itemCount} items, {EXAM.minutes} minutes, scored on an estimated{" "}
-          {EXAM.scaleMin}–{EXAM.scaleMax} scale with the cut at {EXAM.passScaled}
-          . The timer runs on wall-clock time: closing the tab does not pause it.
+        <p className="text-sm font-medium text-accent">{dict.tools.eyebrowPractice}</p>
+        <h1 className="mt-3 font-display text-[2.25rem] leading-[1.12] tracking-[-0.022em] sm:text-[2.75rem]">
+          {t.title}
+        </h1>
+        <p className="mt-5 text-reading text-fg-muted">
+          {t.intro(EXAM.itemCount, EXAM.minutes, EXAM.scaleMin, EXAM.scaleMax, EXAM.passScaled)}
         </p>
 
-        <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-border bg-border sm:grid-cols-4">
+        <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
           {[
-            ["Items", EXAM.itemCount],
-            ["Minutes", EXAM.minutes],
-            ["Pass", EXAM.passScaled],
-            ["Attempts", state.examHistory.length],
+            [t.facts.items, EXAM.itemCount],
+            [t.facts.minutes, EXAM.minutes],
+            [t.facts.pass, EXAM.passScaled],
+            [t.facts.attempts, state.examHistory.length],
           ].map(([k, v]) => (
             <div key={String(k)} className="bg-surface px-4 py-4">
               <dt className="text-[11px] uppercase tracking-wide text-fg-muted">{k}</dt>
@@ -121,16 +127,17 @@ export function ExamRunner() {
             if (!startAttempt(state)) return;
           }}
           disabled={!bankReady}
-          className="mt-6 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40"
+          className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40"
         >
-          Start the exam
+          <Icon name="target" size={16} />
+          {t.start}
         </button>
 
         <BankWarning />
 
         {state.examHistory.length > 0 && (
           <section className="mt-10">
-            <h2 className="font-display text-lg">Past attempts</h2>
+            <h2 className="font-display text-lg">{t.past}</h2>
             <ul className="mt-3 divide-y divide-border border-y border-border">
               {[...state.examHistory].reverse().map((a) => (
                 <li key={a.id} className="flex items-center gap-4 py-3 text-sm">
@@ -140,15 +147,15 @@ export function ExamRunner() {
                     {a.scaled}
                   </span>
                   <span className="tnum flex-1 text-fg-muted">
-                    {a.raw}/{a.total} correct ·{" "}
-                    {new Date(a.submittedAt).toLocaleDateString()}
-                    {a.timedOut && " · timed out"}
+                    {t.correct(a.raw, a.total)} ·{" "}
+                    {new Date(a.submittedAt).toLocaleDateString(HTML_LANG[locale])}
+                    {a.timedOut && ` · ${t.timedOut}`}
                   </span>
                   <Link
                     href={`/mock-exam/results/?a=${a.id}`}
-                    className="text-accent underline underline-offset-2"
+                    className="link"
                   >
-                    Report
+                    {t.report}
                   </Link>
                 </li>
               ))}
@@ -165,16 +172,16 @@ export function ExamRunner() {
   if (!question) {
     return (
       <div className="max-w-xl">
-        <h1 className="font-display text-3xl">Attempt in progress</h1>
+        <h1 className="font-display text-3xl">{t.inProgress}</h1>
         <p className="mt-3 text-fg-muted">
-          This attempt references questions that are no longer in the bank.
+          {t.orphaned}
         </p>
         <button
           type="button"
           onClick={abandonAttempt}
-          className="mt-4 rounded-md border border-border px-4 py-2 text-sm"
+          className="mt-4 rounded-lg border border-border px-4 py-2 text-sm"
         >
-          Discard it
+          {t.discard}
         </button>
       </div>
     );
@@ -190,14 +197,14 @@ export function ExamRunner() {
       <div className="min-w-0">
         <div className="mb-4 flex items-center gap-4 border-b border-border pb-3">
           <span className="text-[11px] uppercase tracking-wide text-fg-muted">
-            Time remaining
+            {t.timeRemaining}
           </span>
           <ExamTimer
             deadlineAt={attempt.deadlineAt}
             onExpire={() => finish(true)}
           />
           <span className="tnum ml-auto text-xs text-fg-muted">
-            {answered}/{attempt.questionIds.length} answered
+            {t.answered(answered, attempt.questionIds.length)}
           </span>
         </div>
 
@@ -218,57 +225,58 @@ export function ExamRunner() {
             type="button"
             onClick={() => goTo(attempt.cursor - 1)}
             disabled={attempt.cursor === 0}
-            className="rounded-md border border-border px-3 py-1.5 text-sm disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            ← Previous
+            <Icon name="arrow-left" size={14} />
+            {t.previous}
           </button>
           <button
             type="button"
             onClick={() => goTo(attempt.cursor + 1)}
             disabled={attempt.cursor === attempt.questionIds.length - 1}
-            className="rounded-md border border-border px-3 py-1.5 text-sm disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            Next →
+            {t.next}
+            <Icon name="arrow-right" size={14} />
           </button>
           <button
             type="button"
             onClick={() => setConfirmSubmit(true)}
-            className="ml-auto rounded-md bg-accent px-4 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+            className="ml-auto rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
           >
-            Submit exam
+            {t.submitExam}
           </button>
         </div>
 
         <p className="mt-3 text-[11px] text-fg-muted">
-          Keys: 1–6 select · ← → navigate · F flag
+          {t.keys}
         </p>
 
         {confirmSubmit && (
-          <div className="mt-4 rounded-card border border-border bg-surface p-4">
-            <p className="text-sm font-medium">Submit for scoring?</p>
+          <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+            <p className="text-sm font-medium">{t.submitQuestion}</p>
             <p className="tnum mt-1 text-sm text-fg-muted">
-              {answered} answered · {unanswered} unanswered ·{" "}
-              {attempt.flagged.length} flagged
+              {t.submitSummary(answered, unanswered, attempt.flagged.length)}
             </p>
             {unanswered > 0 && (
               <p className="mt-2 text-sm text-danger">
-                Unanswered items are scored as incorrect.
+                {t.unansweredWarning}
               </p>
             )}
             <div className="mt-4 flex gap-2">
               <button
                 type="button"
                 onClick={() => finish(false)}
-                className="rounded-md bg-accent px-4 py-1.5 text-sm font-medium text-accent-fg"
+                className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-accent-fg"
               >
-                Submit
+                {t.submit}
               </button>
               <button
                 type="button"
                 onClick={() => setConfirmSubmit(false)}
-                className="rounded-md border border-border px-4 py-1.5 text-sm"
+                className="rounded-lg border border-border px-4 py-1.5 text-sm"
               >
-                Keep working
+                {t.keepWorking}
               </button>
             </div>
           </div>
@@ -285,19 +293,19 @@ export function ExamRunner() {
         />
         <p className="mt-4 text-[11px] leading-relaxed text-fg-muted">
           {attempt.isFormA
-            ? "Form A — none of these items appear in drill, so this is a clean reading."
-            : `${seen} of ${attempt.questionIds.length} items you have seen before in drill.`}
+            ? t.formA
+            : t.seenBefore(seen, attempt.questionIds.length)}
         </p>
         <button
           type="button"
           onClick={() => {
-            if (confirm("Abandon this attempt? It will not be scored.")) {
+            if (confirm(t.abandonConfirm)) {
               abandonAttempt();
             }
           }}
           className="mt-4 text-xs text-fg-muted underline underline-offset-2 hover:text-danger"
         >
-          Abandon attempt
+          {t.abandon}
         </button>
       </aside>
     </div>
@@ -305,11 +313,11 @@ export function ExamRunner() {
 }
 
 function BankWarning() {
+  const t = useDict().tools.exam;
   if (QUESTIONS.length > 0) return null;
   return (
-    <p className="mt-4 rounded-card border border-dashed border-border p-4 text-sm text-fg-muted">
-      The question bank is still being authored, so an exam cannot be assembled
-      yet.
+    <p className="mt-4 rounded-2xl border border-dashed border-border p-4 text-sm text-fg-muted">
+      {t.bankPending}
     </p>
   );
 }

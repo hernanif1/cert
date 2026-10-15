@@ -207,4 +207,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D2-q306",
+    domain: 2,
+    objective: "2.3",
+    stem: "A model extracts action items from meeting notes. The items it finds are correct and complete, but the shape of each entry varies between runs: sometimes an owner field, sometimes an owner buried in the text, sometimes a due date written three different ways. The instruction describes the desired structure in prose. Which technique fits?",
+    choices: [
+      {
+        id: "A",
+        text: "Chain-of-thought, so the model reasons about each action item before writing it out.",
+        rationale:
+          "Reasoning would help if the items themselves were wrong, but they are right; the defect is in how a correct answer is rendered.",
+      },
+      {
+        id: "B",
+        text: "Retrieval, supplying past meeting notes so the model can follow the house conventions.",
+        rationale:
+          "Retrieval grounds facts the model lacks, whereas the conventions here are already stated and simply not applied consistently.",
+      },
+      {
+        id: "C",
+        text: "Few-shot examples showing several fully formed entries, because the target shape is easier to demonstrate than to describe.",
+      },
+      {
+        id: "D",
+        text: "A longer and more precise prose description of every field and its permitted formats.",
+        rationale:
+          "Prose is what has already failed, and each added clause competes with the rest of the prompt for attention without pinning the shape down.",
+      },
+    ],
+    explanation:
+      "Diagnose the defect before choosing the technique, because content errors and format errors call for different moves. Few-shot earns its token cost when the target is a shape: a handful of worked examples settles conventions that prose specifies ambiguously however carefully it is written.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["few-shot", "output-format", "technique-selection"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D2-q307",
+    domain: 2,
+    objective: "2.3",
+    stem: "One prompt asks the model to read a support transcript, decide whether the customer is entitled to a refund under policy, and draft the reply. The entitlement decisions are about as accurate as reviewers expect, but the replies frequently restate internal policy reasoning the customer should not see, and tightening the wording about tone has not helped. What should the team do?",
+    choices: [
+      {
+        id: "A",
+        text: "Add a few-shot example of a well-written reply so the tone is demonstrated rather than described.",
+        rationale:
+          "An example may improve the phrasing, but the reasoning still sits in the same context the reply is drafted from and keeps surfacing in it.",
+      },
+      {
+        id: "B",
+        text: "Instruct the model to keep its reasoning internal and output only the customer-facing reply.",
+        rationale:
+          "That is the instruction already being tightened, and it asks one call both to use the reasoning and to suppress it in its only output.",
+      },
+      {
+        id: "C",
+        text: "Move the tone rules to the top of the system prompt so they take precedence.",
+        rationale:
+          "Precedence resolves rules that conflict, while the problem is one call doing two jobs whose outputs have different audiences.",
+      },
+      {
+        id: "D",
+        text: "Chain two prompts: one that decides entitlement and emits a structured verdict, and a second that drafts the reply from that verdict alone.",
+      },
+    ],
+    explanation:
+      "Prompt chaining separates steps whose outputs serve different purposes, and here the seam doubles as a disclosure boundary: the drafting call cannot leak reasoning it was never given. Asking one call for an internal judgment and an external message at once turns a structural problem into a wording problem that no instruction fixes.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["prompt-chaining", "decomposition", "output-contract"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

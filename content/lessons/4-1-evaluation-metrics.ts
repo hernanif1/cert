@@ -94,7 +94,19 @@ export const lesson = {
       md: "Options offering *a single overall quality score* or *average user satisfaction* as the primary accuracy metric are written to look mature. They are aggregate and lagging: when the number drops you cannot attribute the move to any component. The keyed option defines per-capability measures with explicit thresholds.",
     },
 
-    { kind: "practice", questionId: "D4-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q101",
+        "D4-q102",
+        "D4-q103",
+        "D4-q104",
+        "D4-q105",
+        "D4-q106",
+        "D4-q107",
+        "D4-q108",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -162,8 +174,6 @@ export const lesson = {
         "Measure against a maintained adversarial suite that grows with every new finding.",
     },
   ],
-
-  practiceQuestionIds: ["D4-q101", "D4-q104"],
 
   sources: [
     {

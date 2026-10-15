@@ -94,7 +94,18 @@ export const lesson = {
       md: "The tempting option on this objective is the one that buys headroom at the point of failure — *truncate the oldest turns once requests start being rejected*, *raise the output limit*, *drop to a cheaper tier to absorb the cost*. Each treats a symptom without naming the component that is growing. The keyed option identifies that component, usually conversation history or unprojected tool results, and applies the lever that belongs to it.",
     },
 
-    { kind: "practice", questionId: "D2-q405" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D2-q401",
+        "D2-q402",
+        "D2-q403",
+        "D2-q404",
+        "D2-q405",
+        "D2-q406",
+        "D2-q407",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -150,8 +161,6 @@ export const lesson = {
         "Compact deliberately — pin identifiers, decisions and constraints in a structured summary and discard the raw exchange.",
     },
   ],
-
-  practiceQuestionIds: ["D2-q405", "D2-q401"],
 
   sources: [
     {

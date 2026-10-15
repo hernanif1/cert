@@ -157,4 +157,82 @@ export const questions = [
     type: "single",
     correct: "D",
   },
+  {
+    schemaVersion: 1,
+    id: "D7-q305",
+    domain: 7,
+    objective: "7.3",
+    stem: "A customer quotes a wrong answer the assistant gave them. The team can find the gateway access log entry, and separately a retrieval service log, and separately a model call record, but nothing links the three and each service timestamps independently. Reconstructing one conversation takes hours. What is the fix?",
+    choices: [
+      {
+        id: "A",
+        text: "Synchronize clocks across the services so entries can be matched by timestamp.",
+        rationale:
+          "Aligned clocks narrow the search window and still leave concurrent requests indistinguishable at any realistic traffic level.",
+      },
+      {
+        id: "B",
+        text: "Centralize all three logs into one searchable store with a common retention policy.",
+        rationale:
+          "One store makes the records easier to search and does not give them a shared key, so the correlation work is unchanged.",
+      },
+      {
+        id: "C",
+        text: "Issue a correlation identifier at the edge and thread it through every stage, so one id retrieves the whole request.",
+      },
+      {
+        id: "D",
+        text: "Increase log verbosity in the retrieval and model services so each entry carries more context.",
+        rationale:
+          "Richer entries describe each stage better while still leaving a human to guess which entries belong to the same conversation.",
+      },
+    ],
+    explanation:
+      "A correlation identifier is what converts \"the assistant is broken\" into a specific request whose every stage can be read in order. Without a shared key, each service's logs are individually correct and collectively unusable, and no amount of centralization or verbosity supplies the join.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["correlation-identifier", "debugging", "tracing"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D7-q306",
+    domain: 7,
+    objective: "7.3",
+    stem: "Users report that an assistant \"got slow this month\". Traces record the total duration of each request and nothing else. The pipeline runs a guardrail classifier, a retrieval call, the model call and an output validation step. What should be added so the next complaint is answerable?",
+    choices: [
+      {
+        id: "A",
+        text: "A p99 latency alert on total request duration, so the shift is detected earlier.",
+        rationale:
+          "Earlier detection is worth having and still leaves the responder with one number that cannot say which stage moved.",
+      },
+      {
+        id: "B",
+        text: "Client-side timing, so the measurement includes network time the server does not see.",
+        rationale:
+          "End-user timing captures what the user experienced and still treats the server as a single opaque span.",
+      },
+      {
+        id: "C",
+        text: "A load test reproducing the reported slowdown in staging.",
+        rationale:
+          "A reproduction confirms the slowdown exists under synthetic load and does not attribute it without per-stage figures either.",
+      },
+      {
+        id: "D",
+        text: "Per-stage timing on every trace, so the guardrail, retrieval, generation and validation durations are attributable.",
+      },
+    ],
+    explanation:
+      "A latency complaint is only actionable when the total can be decomposed, because each stage has different causes and different remedies. Capturing timing per stage on every request is part of the standard trace payload precisely so that a report like this becomes a query rather than an investigation.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["debugging", "latency", "instrumentation"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

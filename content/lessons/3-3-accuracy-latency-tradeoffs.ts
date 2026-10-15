@@ -93,7 +93,18 @@ export const lesson = {
       md: "*Use the most capable model available* is offered whenever accuracy is discussed and is rarely the keyed answer on a latency-constrained item. Model capability is one lever among several, and it is the one that most directly spends the budget the scenario says is already exhausted. Look for the option that removes work the workflow does not need.",
     },
 
-    { kind: "practice", questionId: "D3-q301" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q301",
+        "D3-q302",
+        "D3-q303",
+        "D3-q304",
+        "D3-q305",
+        "D3-q306",
+        "D3-q307",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -149,8 +160,6 @@ export const lesson = {
         "Set and monitor targets on p95 or p99, and check both when evaluating a configuration change.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q301", "D3-q303"],
 
   sources: [
     {

@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D2-q406",
+    domain: 2,
+    objective: "2.4",
+    stem: "An assistant answers questions from an internal knowledge base. A team raised the number of retrieved chunks from five to twenty-five, expecting better coverage. Accuracy fell, and answers now frequently cite a passage related to the question that does not actually address it. Which TWO changes most directly address the cause?",
+    choices: [
+      {
+        id: "A",
+        text: "Rerank the retrieved chunks and pass only the highest-scoring few to the model.",
+      },
+      {
+        id: "B",
+        text: "Move to a model with a larger context window so all twenty-five chunks fit comfortably.",
+        rationale:
+          "The chunks already fit; the loss comes from relevant material competing with irrelevant material rather than from a capacity limit.",
+      },
+      {
+        id: "C",
+        text: "Raise the relevance threshold so weakly matching chunks are dropped before the call rather than ranked into it.",
+      },
+      {
+        id: "D",
+        text: "Add a chain-of-thought instruction so the model reasons about which chunk is most relevant.",
+        rationale:
+          "Reasoning over a diluted context spends output tokens and latency on a selection problem retrieval should have settled before the call.",
+      },
+      {
+        id: "E",
+        text: "Increase the chunk size so each retrieved passage carries more surrounding context.",
+        rationale:
+          "Larger chunks add more competing text per result, pushing the ratio of relevant to irrelevant material further in the wrong direction.",
+      },
+    ],
+    explanation:
+      "Context is not free real estate: relevant material competes for attention with everything else in the window, so once coverage is adequate precision matters more than recall. Dilution is fixed before the call by ranking and thresholding, not after it by a bigger window or more reasoning.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["context-window", "dilution", "retrieval"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "C"],
+  },
+  {
+    schemaVersion: 1,
+    id: "D2-q407",
+    domain: 2,
+    objective: "2.4",
+    stem: "A conversational assistant grows slower and more expensive the longer a session runs, and by the thirtieth turn it starts answering from a detail the user corrected twenty turns earlier. An engineer proposes moving to a model with a four-times-larger context window. What is the strongest objection?",
+    choices: [
+      {
+        id: "A",
+        text: "A larger window postpones the limit without touching the cause: the whole history is still re-sent and re-read every turn, so cost, latency and the stale detail all persist.",
+      },
+      {
+        id: "B",
+        text: "Larger-context models are priced higher per token, so the change would raise cost further.",
+        rationale:
+          "Per-token price is secondary to the fact that the token count itself keeps growing every turn whatever the window size.",
+      },
+      {
+        id: "C",
+        text: "The assistant would then exceed the provider's request size limit on long sessions.",
+        rationale:
+          "Raising that ceiling is precisely what a bigger window does, so it is the one problem the proposal genuinely solves.",
+      },
+      {
+        id: "D",
+        text: "Model quality varies between tiers, so answers might get worse after the switch.",
+        rationale:
+          "A tier change carries quality risk in general, but it says nothing about why this assistant degrades as a session lengthens.",
+      },
+    ],
+    explanation:
+      "Buying headroom at the point of failure is the standard wrong answer on this objective. Growing history is a design problem addressed by compaction, summarization and dropping superseded turns; until that exists, a larger window moves the same curve to the right while the corrected detail stays in the context being re-read.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["context-window", "compaction", "long-conversations"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

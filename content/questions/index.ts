@@ -52,11 +52,12 @@ import { questions as r_d4_d7 } from "@/content/questions/reserved/d4-d7";
  * The question bank: one central pool, referenced by id.
  *
  * Questions deliberately do NOT live inside lesson files. A lesson's Practice
- * Scenario is a render of `practiceQuestionIds[0]`, so an item has exactly one
- * identity and exactly one drill card. Colocating would give the same question
- * two identities and make its review history ambiguous.
+ * Scenario renders the ids listed on its `practice` block, so an item has
+ * exactly one identity and exactly one drill card wherever it is met.
+ * Colocating would give the same question two identities and make its review
+ * history ambiguous.
  *
- * `pool: "drill"` is the 200-item practice pool; `pool: "reserved"` is the
+ * `pool: "drill"` is the 276-item practice pool; `pool: "reserved"` is the
  * 63-item Mock Form A, which drill never touches until a first mock is taken.
  *
  * Question ids are IMMUTABLE once shipped — drill state is keyed by them. A bad

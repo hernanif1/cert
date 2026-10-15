@@ -48,6 +48,8 @@ export interface ImportPreview {
   state: AppState;
   lessonsInFile: number;
   lessonsNow: number;
+  checksInFile: number;
+  checksNow: number;
   cardsInFile: number;
   cardsNow: number;
   attemptsInFile: number;
@@ -80,6 +82,8 @@ export function parseImport(text: string): ImportPreview {
     state,
     lessonsInFile: countCompleted(state),
     lessonsNow: countCompleted(now),
+    checksInFile: Object.keys(state.checklist).length,
+    checksNow: Object.keys(now.checklist).length,
     cardsInFile: Object.keys(state.drill.cards).length,
     cardsNow: Object.keys(now.drill.cards).length,
     attemptsInFile: state.examHistory.length,
@@ -112,6 +116,13 @@ export function applyImportMerge(incoming: AppState): void {
     };
   }
 
+  // Union of ticks, keeping the EARLIER timestamp — same rule as lessons.
+  const checklist = { ...current.checklist };
+  for (const [id, at] of Object.entries(incoming.checklist)) {
+    const mine = checklist[id];
+    checklist[id] = mine ? Math.min(mine, at) : at;
+  }
+
   // Keep whichever card is further along; ties go to the more recent answer.
   const cards = { ...current.drill.cards };
   for (const [id, incomingCard] of Object.entries(incoming.drill.cards)) {
@@ -129,6 +140,7 @@ export function applyImportMerge(incoming: AppState): void {
   replaceState({
     ...current,
     lessons,
+    checklist,
     drill: { ...current.drill, cards },
     examHistory: attempts,
     readOnly: undefined,

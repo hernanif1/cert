@@ -93,7 +93,18 @@ export const lesson = {
       md: "Options that scale a successful pilot to full traffic at once, or that reach for a newer model to close a quality gap, are written to sound decisive. The keyed option almost always gates on measured evidence instead: expand segment by segment as each meets its threshold, and evaluate a model change before it ships rather than after users report the regression.",
     },
 
-    { kind: "practice", questionId: "D6-q501" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D6-q501",
+        "D6-q502",
+        "D6-q503",
+        "D6-q504",
+        "D6-q505",
+        "D6-q506",
+        "D6-q507",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -156,8 +167,6 @@ export const lesson = {
         "Stay accountable for the regression gate, the budgets and the review cadence through the iteration phase.",
     },
   ],
-
-  practiceQuestionIds: ["D6-q501", "D6-q503"],
 
   sources: [
     {

@@ -20,7 +20,20 @@ export const lesson = {
     { kind: "heading", text: "Input: everything before the model sees anything" },
     {
       kind: "prose",
-      md: "The input stage owns ingestion, normalization, validation and trust. Ingestion is where formats converge — PDFs, email bodies, webhooks and form submissions become one internal representation. Validation rejects what the system cannot process before tokens are spent on it.\n\nTrust is the least obvious responsibility and the one reviewers ask about. Content that arrives from outside the organization is data, never instruction. That boundary is enforced structurally: delimit external content, keep it separate from the instructions, and never let text that came from a supplier, a customer or a web page decide what a tool is allowed to do.",
+      md: "The input stage owns four responsibilities, and they run in that order — each one narrowing what is allowed to reach the model:",
+    },
+    {
+      kind: "list",
+      items: [
+        "**Ingestion.** Where the formats converge. PDFs, email bodies, webhooks and form submissions become one internal representation, so nothing downstream has to know which channel a record arrived on.",
+        "**Normalization.** Where that representation is made uniform. Encodings, dates, units, currencies and field names are resolved once, in code, rather than left for the prompt to interpret.",
+        "**Validation.** Where the unprocessable is rejected before tokens are spent on it — a missing required field, a file too large for the context window, a type no extractor handles.",
+        "**Trust.** Where every record is labelled with its origin, because origin is what decides whether its content may act on the system.",
+      ],
+    },
+    {
+      kind: "prose",
+      md: "Trust is the least obvious of the four and the one reviewers ask about. Content that arrives from outside the organization is data, never instruction. That boundary is enforced structurally: delimit external content, keep it separate from the instructions, and never let text that came from a supplier, a customer or a web page decide what a tool is allowed to do.",
     },
 
     { kind: "heading", text: "Processing: the part people draw" },
@@ -90,7 +103,19 @@ export const lesson = {
       md: "When a stem says quality has not improved since launch, the tempting options are all interventions — a larger model, a retrieval layer, a verifier pass. Each is a single change with no way to tell whether it helped. The keyed answer is the mechanism: captured outcomes linked to the inputs and versions that produced them.",
     },
 
-    { kind: "practice", questionId: "D1-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q201",
+        "D1-q202",
+        "D1-q203",
+        "D1-q204",
+        "D1-q205",
+        "D1-q206",
+        "D1-q207",
+        "D1-q208",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -146,8 +171,6 @@ export const lesson = {
         "Treat the logging schema as a design-time deliverable alongside the prompt and the tool definitions.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q201"],
 
   sources: [
     {

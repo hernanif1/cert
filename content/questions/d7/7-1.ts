@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D7-q106",
+    domain: 7,
+    objective: "7.1",
+    stem: "A platform team is deciding what belongs in the repository's committed agent configuration and what stays in each developer's personal settings. Which TWO belong in the committed project configuration?",
+    choices: [
+      {
+        id: "A",
+        text: "A developer's preferred output verbosity and colour theme.",
+        rationale:
+          "Presentation preferences affect one person's experience and would impose one engineer's taste on everyone if committed.",
+      },
+      {
+        id: "B",
+        text: "The project's build, test and lint commands, and the conventions the agent must follow when editing code.",
+      },
+      {
+        id: "C",
+        text: "Each developer's personal credentials for the observability MCP server.",
+        rationale:
+          "Credentials are per-person by design, and committing any of them turns a shared repository into a secret store.",
+      },
+      {
+        id: "D",
+        text: "A developer's locally allowlisted commands for experiments on a scratch branch.",
+        rationale:
+          "Individual experiments should not widen what the agent may do for the whole team without review.",
+      },
+      {
+        id: "E",
+        text: "A hook that runs the formatter after every file edit.",
+      },
+    ],
+    explanation:
+      "The committed layer carries whatever should produce the same behavior for everyone and change through review: project conventions, commands and enforcement. Anything that identifies a person or reflects a personal preference belongs in their own settings, because committing it either leaks a secret or silently makes one developer's choice the team's policy.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["claude-code", "configuration-layers", "shared-vs-personal"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["B", "E"],
+  },
+  {
+    schemaVersion: 1,
+    id: "D7-q107",
+    domain: 7,
+    objective: "7.1",
+    stem: "A team has two requirements for its agent configuration: no production database command may run without a person approving it first, and every commit must carry the current ticket number in its message. Which mechanism serves each?",
+    choices: [
+      {
+        id: "A",
+        text: "Both are permission rules: one gates the database command, the other gates the commit until the message is correct.",
+        rationale:
+          "A permission decides whether an operation may proceed and has no way to compose the commit message that would make it acceptable.",
+      },
+      {
+        id: "B",
+        text: "Both are hooks: one prompts for approval before the database command, the other rewrites the commit message.",
+        rationale:
+          "A hook runs automatically and is the wrong instrument for a human decision, which is what an approval on a production command is.",
+      },
+      {
+        id: "C",
+        text: "The database command is a permission rule requiring approval; the ticket number is a hook that runs on commit.",
+      },
+      {
+        id: "D",
+        text: "The database command is a permission rule; the ticket number belongs in the project instructions.",
+        rationale:
+          "Instructions are advisory context the model weighs against everything else, so a requirement stated there holds most of the time rather than every time.",
+      },
+    ],
+    explanation:
+      "Permissions decide whether an operation is allowed to happen, optionally by asking a person; hooks are executed by the harness around an operation whether the model wants them or not. Matching each requirement to the mechanism that enforces it is what keeps must-happen behavior out of the project instructions, where it would be advisory.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["permissions", "hooks", "enforcement"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

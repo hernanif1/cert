@@ -183,4 +183,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q506",
+    domain: 3,
+    objective: "3.5",
+    stem: "A RAG assistant over 12,000 scanned policy PDFs returns chunks that are on topic but frequently contain a page header, a footer with a document control number, and text from an adjacent column interleaved mid-sentence. Retrieval scores look reasonable and the team is considering a larger model. Where does the fix belong?",
+    choices: [
+      {
+        id: "A",
+        text: "In chunking: use smaller chunks so the stray header and footer text is isolated in its own chunk.",
+        rationale:
+          "Smaller chunks distribute the same noise across more of them and shrink the coherent text each one carries.",
+      },
+      {
+        id: "B",
+        text: "In the model call: instruct the model to ignore headers, footers and control numbers when reading a chunk.",
+        rationale:
+          "The model can be told to disregard obvious furniture, but the interleaved columns have already corrupted the sentences it must rely on.",
+      },
+      {
+        id: "C",
+        text: "In re-ranking: score candidates so the cleanest chunks are preferred.",
+        rationale:
+          "Re-ranking chooses among what the pipeline produced, and here every candidate carries the same defect because all of them came through the same parser.",
+      },
+      {
+        id: "D",
+        text: "In parsing: extract clean, correctly ordered text with layout handled before anything is chunked or embedded.",
+      },
+    ],
+    explanation:
+      "Parse is the first stage for a reason: every later stage inherits whatever it produces. Embeddings computed over interleaved columns encode noise, and no chunk size, re-ranker or model recovers text that was never read in the right order.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["rag", "parsing", "pipeline"],
+    type: "single",
+    correct: "D",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q507",
+    domain: 3,
+    objective: "3.5",
+    stem: "A parts assistant is indexed with dense vectors over a catalogue of components. Questions phrased in prose work well. Questions naming an exact part number such as \"what is the lead time on BRK-4471-A\" often return a chunk about a similar but different part. What should the team change?",
+    choices: [
+      {
+        id: "A",
+        text: "Re-embed the catalogue with a model trained on technical text so identifiers are represented better.",
+        rationale:
+          "A better embedding shifts which near neighbors win, while an identifier needs an exact match rather than a closer approximation.",
+      },
+      {
+        id: "B",
+        text: "Increase the number of retrieved chunks so the correct part appears somewhere in the set.",
+        rationale:
+          "A longer candidate list buries the right chunk among lookalikes and leaves the model to pick between part numbers it cannot distinguish.",
+      },
+      {
+        id: "C",
+        text: "Add lexical search alongside the vector index and combine the two, so exact identifier matches are retrieved on their own merits.",
+      },
+      {
+        id: "D",
+        text: "Chunk at one component per chunk so each part number sits in its own passage.",
+        rationale:
+          "One part per chunk is sound design and is likely already the case, but it does nothing about a retriever that ranks by semantic similarity.",
+      },
+    ],
+    explanation:
+      "Indexing is not only vectors. Embeddings capture meaning, which is exactly wrong for tokens whose value is their exactness: BRK-4471-A and BRK-4471-B mean nearly the same thing to a similarity search and completely different things to a customer. Hybrid retrieval keeps the semantic behaviour while letting lexical matching handle identifiers.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["rag", "hybrid-retrieval", "indexing"],
+    type: "single",
+    correct: "C",
+  },
 ] satisfies Question[];

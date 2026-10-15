@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "D",
   },
+  {
+    schemaVersion: 1,
+    id: "D6-q506",
+    domain: 6,
+    objective: "6.5",
+    stem: "A proof of concept for a claims assistant handled thirty curated examples convincingly in a demo, and the sponsor asks to go straight to production. The architect proposes a pilot first. Which of the following can only be established by a pilot and not by the proof of concept?",
+    choices: [
+      {
+        id: "A",
+        text: "How the assistant behaves on the real distribution of inputs, what a wrong answer costs when someone acts on it, and what the work costs per case at volume.",
+      },
+      {
+        id: "B",
+        text: "Whether the chosen model tier clears the quality floor on the evaluation set.",
+        rationale:
+          "That is measurable offline on a golden set and is exactly the kind of question a proof of concept and its evaluation already answer.",
+      },
+      {
+        id: "C",
+        text: "Whether the retrieval index covers the document types the business holds.",
+        rationale:
+          "Coverage of the corpus can be checked directly against the index without exposing any live traffic to the system.",
+      },
+      {
+        id: "D",
+        text: "Whether the output contract parses reliably in the downstream system.",
+        rationale:
+          "Integration correctness is verifiable in staging with synthetic volume, so it does not require real users or real consequences.",
+      },
+    ],
+    explanation:
+      "A proof of concept answers whether the approach can work on material you chose; a pilot answers whether it works on the material you get. Real traffic is longer and stranger than curated examples, a wrong answer acquires a cost once someone relies on it, and thirty free examples say nothing about the economics of thirty thousand.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["pilot", "proof-of-concept", "lifecycle"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D6-q507",
+    domain: 6,
+    objective: "6.5",
+    stem: "Four months into production, monitoring shows that 18% of questions concern a request type nobody identified during discovery, and the assistant answers them poorly because no evaluation case covers them. The team's instinct is to patch the system prompt this week. What should the architect advise?",
+    choices: [
+      {
+        id: "A",
+        text: "Add the new request type to the regression suite and iterate on the prompt until those cases pass.",
+        rationale:
+          "A regression gate is needed and still presumes the request type belongs in scope, which nobody has decided and no owner has defined correctness for.",
+      },
+      {
+        id: "B",
+        text: "Route the new request type to human handling and leave the assistant's scope unchanged.",
+        rationale:
+          "Deflection is a reasonable interim mitigation, but treating 18% of real demand as permanently out of scope is a decision the sponsor has to make.",
+      },
+      {
+        id: "C",
+        text: "Escalate to a more capable model tier, since the failures concentrate on questions the current tier was never good at.",
+        rationale:
+          "A tier change is an answer to a capability gap, whereas the defect here is that nobody has said what a correct answer to these questions looks like.",
+      },
+      {
+        id: "D",
+        text: "Take the finding back through discovery for that request type: a representative sample, an owner for correctness, and a decision on whether it is in scope.",
+      },
+    ],
+    explanation:
+      "The lifecycle phases are not a one-way sequence; monitoring exists partly to reveal that discovery was incomplete. An input class with no ground-truth owner and no evaluation cases cannot be fixed by iteration, because there is nothing to iterate against and no agreement that the system should serve it at all.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["lifecycle", "iteration", "discovery"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

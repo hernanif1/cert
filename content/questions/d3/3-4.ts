@@ -211,4 +211,82 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q406",
+    domain: 3,
+    objective: "3.4",
+    stem: "An assistant serves 400,000 requests a day. Operational dashboards are healthy and a nightly offline evaluation on 500 fixed cases scores steadily. Support nonetheless reports a rise in complaints about answers that are fluent but wrong. What should the team add?",
+    choices: [
+      {
+        id: "A",
+        text: "A larger offline evaluation set, so more question types are represented in the nightly run.",
+        rationale:
+          "A bigger fixed set widens coverage of anticipated cases, while the complaints concern live traffic that the set was never built to resemble.",
+      },
+      {
+        id: "B",
+        text: "Online evaluation: score a continuous sample of production responses with an automated judge and track the result over time.",
+      },
+      {
+        id: "C",
+        text: "A thumbs-up and thumbs-down control on every answer, and an alert on the negative rate.",
+        rationale:
+          "Explicit feedback is valuable but sparse and biased toward users who bother, so it detects a quality shift late and under-reports it.",
+      },
+      {
+        id: "D",
+        text: "Alerts on p99 latency and token spend, which move when the model behaves unusually.",
+        rationale:
+          "Those are operational signals, and the reported failure is fluent, well-formed and fast: exactly the kind that leaves the operational layer untouched.",
+      },
+    ],
+    explanation:
+      "Offline evaluation answers whether a known set still passes; it cannot answer whether live traffic is being served well, because production questions drift away from the fixed set. Scoring a sample of real responses continuously is the only layer that observes quality on the distribution users actually send.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["observability", "online-evaluation", "quality"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q407",
+    domain: 3,
+    objective: "3.4",
+    stem: "To hold down log volume, a platform team samples traces uniformly at 1% and stores them for 30 days. After an incident in which a tool failure affected roughly one request in four thousand for nine days, the investigation finds only two examples in the store. How should sampling be changed?",
+    choices: [
+      {
+        id: "A",
+        text: "Keep every failed, errored and refused request, and sample successful ones at a low uniform rate.",
+      },
+      {
+        id: "B",
+        text: "Raise the uniform sampling rate until rare failures appear in usable numbers.",
+        rationale:
+          "Catching a one-in-four-thousand event reliably at a uniform rate means keeping most traffic, which reinstates the volume the sampling exists to control.",
+      },
+      {
+        id: "C",
+        text: "Extend retention from 30 to 180 days so more examples accumulate before anyone looks.",
+        rationale:
+          "Longer retention keeps the same 1% for longer, so a rare event stays rare in the store while storage cost rises.",
+      },
+      {
+        id: "D",
+        text: "Sample by tenant, keeping all traffic for a rotating subset of customers.",
+        rationale:
+          "Tenant sampling gives a complete picture for a few customers and still misses a failure mode spread thinly across all of them.",
+      },
+    ],
+    explanation:
+      "Uniform sampling optimizes for describing the typical request, which is the request nobody investigates. Deciding what to keep after the outcome is known lets failures, tool errors and refusals be retained in full while successes are thinned, giving complete coverage of the rare events at a fraction of the volume.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["observability", "sampling", "tail-based"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

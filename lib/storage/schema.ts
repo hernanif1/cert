@@ -34,6 +34,11 @@ export interface CardState {
   sp?: 1;
   /** Bookmarked. */
   bm?: 1;
+  /** Known: retired by the learner (rated Easy). Never scheduled again, but
+   *  unlike `sp` it still counts as mastered. */
+  kn?: 1;
+  /** Last self-rating from drill: easy / medium / hard. */
+  ez?: "e" | "m" | "h";
 }
 
 export interface MockAttempt {
@@ -65,6 +70,15 @@ export interface AppState {
   createdAt: number;
   updatedAt: number;
   lessons: Record<string, LessonProgress>;
+  /**
+   * Pre-exam self-assessment ticks: checklist item id → checkedAt (epoch ms).
+   *
+   * A set, not a map of nullables like `lessons`: unticking DELETES the key.
+   * Lesson progress keeps a null so `viewedAt` survives an untick; a checklist
+   * item has nothing else to remember, so keeping `{id: null}` around would
+   * only grow the blob. Denominators come from lib/checklist.ts.
+   */
+  checklist: Record<string, number>;
   drill: {
     cards: Record<string, CardState>;
     /** Resets when `date` (YYYY-MM-DD, local) rolls over. */
@@ -98,6 +112,7 @@ export const EMPTY_STATE: AppState = Object.freeze({
   createdAt: 0,
   updatedAt: 0,
   lessons: {},
+  checklist: {},
   drill: {
     cards: {},
     daily: { date: "", newIntroduced: 0, reviewsDone: 0 },

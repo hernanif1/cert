@@ -202,4 +202,82 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D3-q106",
+    domain: 3,
+    objective: "3.1",
+    stem: "An agent has a single `manage_ticket` tool that reads a ticket, updates its fields, and closes it, selected by an `action` argument. Support leads want the agent to look up tickets freely but want a person to approve any change. What is the cleanest configuration change?",
+    choices: [
+      {
+        id: "A",
+        text: "Keep the one tool and add a system-prompt rule that the agent must ask before using the update or close actions.",
+        rationale:
+          "The rule is advisory, so approval depends on the model choosing to ask; nothing prevents a write on the run where it does not.",
+      },
+      {
+        id: "B",
+        text: "Keep the one tool and have it prompt the user for confirmation inside its own implementation.",
+        rationale:
+          "That gates every call including the reads, which is the traffic the leads wanted to stay frictionless, and still exposes writes on one surface.",
+      },
+      {
+        id: "C",
+        text: "Split it into a read tool and separate write tools, and require approval only on the write tools.",
+      },
+      {
+        id: "D",
+        text: "Remove the tool and have the agent call the ticketing API directly with a scoped token.",
+        rationale:
+          "A scoped token narrows authority usefully, but a raw API surface gives the agent more operations to choose from rather than fewer.",
+      },
+    ],
+    explanation:
+      "Separating read from write makes the dangerous operations a distinct, small surface that can be gated, audited and granted independently. While both live behind one tool, every permission decision has to be made by the model at call time, and a configuration that depends on the model's discretion is not a control.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["tool-design", "least-privilege", "read-write"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D3-q107",
+    domain: 3,
+    objective: "3.1",
+    stem: "One operations assistant carries 47 tools spanning deployment, on-call paging, billing adjustments and HR lookups, because four teams each asked for their capabilities to be added. Wrong-tool selections are frequent and cost per request is high. Trimming has stalled because every tool has a team that needs it. How should the architect proceed?",
+    choices: [
+      {
+        id: "A",
+        text: "Split it into role-scoped agents, each carrying only the tools its workflow uses, rather than trimming one shared catalog.",
+      },
+      {
+        id: "B",
+        text: "Keep one agent and group the tools by team in the system prompt so selection is easier.",
+        rationale:
+          "Grouping in prose leaves all 47 definitions in context and still asks the model to choose among them, so both the context and selection costs remain.",
+      },
+      {
+        id: "C",
+        text: "Keep one agent and load tool definitions on demand once the user's first message reveals the team.",
+        rationale:
+          "On-demand loading helps when a catalog is genuinely large, but here the capabilities also differ in blast radius, which deferring the load does not address.",
+      },
+      {
+        id: "D",
+        text: "Keep one agent and add an approval step before any tool that changes state.",
+        rationale:
+          "Approval limits damage from a wrong write, but it does nothing about selection errors among reads or about the context every definition consumes.",
+      },
+    ],
+    explanation:
+      "Trimming stalls whenever the catalog is the union of several workflows, because no single tool is unnecessary to everyone. Scoping agents to roles makes each catalog small by construction, which cuts context cost, narrows selection, and shrinks blast radius at the same time.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["capability-bloat", "role-scoped-agent", "tool-design"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

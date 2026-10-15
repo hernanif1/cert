@@ -240,4 +240,82 @@ export const questions = [
     selectCount: 2,
     correct: ["A", "B"],
   },
+  {
+    schemaVersion: 1,
+    id: "D2-q107",
+    domain: 2,
+    objective: "2.1",
+    stem: "A document service runs a small model on every request and escalates some to a larger one, with the rule \"escalate documents longer than ten pages\". Review shows most failures are short documents with unusual layouts, while long standard forms are handled correctly. How should the escalation trigger be redefined?",
+    choices: [
+      {
+        id: "A",
+        text: "Escalate every document, using the small model only to pre-extract fields for the larger one.",
+        rationale:
+          "That sends all traffic to the expensive tier and adds the small model's cost on top, which is the outcome tiering exists to avoid.",
+      },
+      {
+        id: "B",
+        text: "Escalate on a signal that correlates with the small model's failures, such as low confidence or a failed output validation, rather than on length.",
+      },
+      {
+        id: "C",
+        text: "Lower the page threshold until the short problem documents fall inside it.",
+        rationale:
+          "No page threshold separates short unusual layouts from short standard ones, because length is not what the failing documents have in common.",
+      },
+      {
+        id: "D",
+        text: "Run both models on every request and prefer the larger model's answer when they disagree.",
+        rationale:
+          "Shadow-running pays for the expensive tier on every request and adds its latency, surrendering the saving that motivated the split.",
+      },
+    ],
+    explanation:
+      "An escalation trigger is only worth having if it fires on the cases the cheap tier actually gets wrong. Picking a proxy because it is easy to compute leaves the expensive tier handling requests the small model already managed, while the genuinely hard cases never reach it.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["model-selection", "routing", "escalation"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D2-q108",
+    domain: 2,
+    objective: "2.1",
+    stem: "Before comparing model tiers for a claims-summarization feature, an architect insists on writing down a quality floor. A product manager objects that the team should simply pick whichever tier scores highest on their evaluation set. What does the floor add?",
+    choices: [
+      {
+        id: "A",
+        text: "It guarantees the chosen tier will keep performing at that level as traffic grows.",
+        rationale:
+          "A floor is a requirement rather than a guarantee, and holding it under load is what monitoring and regression evaluation are for.",
+      },
+      {
+        id: "B",
+        text: "It replaces the evaluation set with a single number that is easier to report to stakeholders.",
+        rationale:
+          "The floor is read off the evaluation set rather than replacing it, and reducing quality to one reportable figure is not its purpose.",
+      },
+      {
+        id: "C",
+        text: "It rules out the smallest tiers early, so fewer candidates have to be evaluated.",
+        rationale:
+          "Which tiers clear the floor is an output of the comparison rather than an input, so it cannot narrow the field before the comparison runs.",
+      },
+      {
+        id: "D",
+        text: "It states the accuracy the task's error budget actually requires, so the cheapest tier that clears it can be chosen instead of the highest-scoring one.",
+      },
+    ],
+    explanation:
+      "Highest-scoring and good enough are different questions, and only the second is answerable from the business problem. A floor derived from the error budget turns selection into finding the cheapest tier above a line, which is what lets cost and latency be traded deliberately rather than surrendered to whichever tier tops the table.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["model-selection", "quality-floor", "evaluation"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

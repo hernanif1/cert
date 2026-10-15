@@ -95,7 +95,18 @@ export const lesson = {
       md: "On security items, options that *tighten the prompt* — add refusal examples, restate the rule, list forbidden phrasings — are written to look like the diligent answer. They are almost never keyed. So is *rotate the credential more often*, which is real hygiene aimed at the wrong failure. The keyed option moves the decision to code: identity propagation, a scoped token, or a check inside the tool implementation.",
     },
 
-    { kind: "practice", questionId: "D3-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q201",
+        "D3-q202",
+        "D3-q203",
+        "D3-q204",
+        "D3-q205",
+        "D3-q206",
+        "D3-q207",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -158,8 +169,6 @@ export const lesson = {
         "Record the human principal, session identifier and arguments alongside the tool call.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q201", "D3-q204"],
 
   sources: [
     {

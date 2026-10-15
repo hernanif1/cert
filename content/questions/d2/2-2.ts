@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D2-q206",
+    domain: 2,
+    objective: "2.2",
+    stem: "A policy assistant answers employee questions from a handbook. When a question is not covered, it produces a confident answer assembled from adjacent sections. The system prompt already states its role, its scope, its output format, and that it must answer only from the handbook. What is missing?",
+    choices: [
+      {
+        id: "A",
+        text: "An escape hatch: an explicit instruction for what to do when the handbook does not cover the question, and what that response looks like.",
+      },
+      {
+        id: "B",
+        text: "A stronger prohibition stating that the assistant must never answer from outside the handbook.",
+        rationale:
+          "The prompt already forbids that, and repeating a prohibition still leaves the model with no defined behavior for the case it is improvising through.",
+      },
+      {
+        id: "C",
+        text: "A retrieval step, so the handbook sections supplied are the ones relevant to the question.",
+        rationale:
+          "Better retrieval narrows what the model reads but leaves it without an instruction for questions the handbook simply does not answer.",
+      },
+      {
+        id: "D",
+        text: "A lower temperature, so the assistant is less inclined to generate speculative content.",
+        rationale:
+          "Sampling settings change how varied the wording is, not whether declining has been established as a permitted outcome.",
+      },
+    ],
+    explanation:
+      "A prompt that says what is forbidden without saying what to do instead leaves the model to invent a fallback, and the invented fallback is usually to answer anyway. An escape hatch names the permitted alternative and the shape it takes, which is what makes declining a specified behavior rather than a hoped-for one.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["system-prompt", "escape-hatch", "guardrails"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D2-q207",
+    domain: 2,
+    objective: "2.2",
+    stem: "A team lists the controls it wants for a customer-facing assistant and plans to implement all of them in the system prompt. Which TWO of these cannot be made reliable at the prompt level?",
+    choices: [
+      {
+        id: "A",
+        text: "Keeping replies within a stated tone and reading level.",
+        rationale:
+          "Tone and register are exactly what instructions govern well, and the residual variation is cosmetic rather than a control failure.",
+      },
+      {
+        id: "B",
+        text: "Guaranteeing that no reply ever contains a customer's full account number.",
+      },
+      {
+        id: "C",
+        text: "Citing the policy section behind each answer.",
+        rationale:
+          "Citing a source is an instruction the model follows readily, and whether a citation is correct can then be checked downstream.",
+      },
+      {
+        id: "D",
+        text: "Enforcing a per-customer ceiling on how much the assistant may spend calling tools.",
+      },
+      {
+        id: "E",
+        text: "Declining questions that fall outside the product's scope.",
+        rationale:
+          "Scope adherence is a prompt-level control with a defined escape hatch, and the cost of an occasional miss is a deflected question.",
+      },
+    ],
+    explanation:
+      "A prompt biases a probabilistic system, so it is the right home for anything whose occasional failure is tolerable. Anything that must hold every time, such as redaction of an identifier or a spend limit, belongs in code the model cannot talk its way past, with the prompt as a first line rather than the guarantee.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["guardrails", "enforcement", "system-prompt"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["B", "D"],
+  },
 ] satisfies Question[];

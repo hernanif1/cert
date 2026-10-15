@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useDict } from "@/lib/i18n/client";
 
 /**
  * Answered and flagged are ORTHOGONAL states, so they get independent visual
@@ -20,6 +21,7 @@ export function QuestionNavigator({
   cursor: number;
   onJump: (index: number) => void;
 }) {
+  const t = useDict().tools.exam;
   return (
     <div>
       <ul className="grid grid-cols-9 gap-1.5">
@@ -33,7 +35,7 @@ export function QuestionNavigator({
                 type="button"
                 onClick={() => onJump(i)}
                 aria-current={current ? "true" : undefined}
-                aria-label={`Question ${i + 1}, ${answered ? "answered" : "unanswered"}${isFlagged ? ", flagged for review" : ""}`}
+                aria-label={t.navItem(i + 1, answered, isFlagged)}
                 className={cn(
                   "tnum relative flex aspect-square w-full items-center justify-center rounded border text-[11px] transition-colors",
                   answered
@@ -61,7 +63,7 @@ export function QuestionNavigator({
         </span>
         <span className="flex items-center gap-1.5">
           <span aria-hidden="true" className="size-2.5 rounded-full bg-warning" />
-          flagged
+          {t.legendFlagged}
         </span>
       </p>
     </div>

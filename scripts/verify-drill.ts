@@ -41,6 +41,26 @@ check(
   grade({ ...newCard(), b: 2 }, false, { now: NOW }).card.b === 1,
 );
 check("box caps at 6", grade(card, true, { now: NOW }).card.b === 6);
+
+/* Self-rated ease: easy retires, hard repeats, medium is the ladder. */
+const retired = grade({ ...newCard(), b: 2, fl: 1 }, true, { now: NOW, ease: "easy" });
+check("easy retires the card to the top box", retired.card.b === 6 && retired.retired);
+check("a retired card is marked known", retired.card.kn === 1);
+check("a retired card is never due", !isDue(retired.card, NOW + 365 * DAY));
+check("a retired card still counts as mastered", isMastered(retired.card));
+check("retiring clears the leech flag", retired.card.fl === undefined);
+check("retiring is reversible by restoring the old card", !isMastered({ ...newCard(), b: 2 }));
+const hard = grade({ ...newCard(), b: 3 }, true, { now: NOW, ease: "hard" });
+check("hard drops one box", hard.card.b === 2);
+check("hard comes back next round", hard.card.due === NOW && isDue(hard.card, NOW));
+check("hard on a new card goes to relearning", grade(newCard(), true, { now: NOW, ease: "hard" }).card.b === 1);
+check("hard still counts as correct", grade({ ...newCard(), b: 3 }, true, { now: NOW, ease: "hard" }).card.c === 1);
+const medium = grade({ ...newCard(), b: 2 }, true, { now: NOW, ease: "medium" });
+check("medium climbs one box", medium.card.b === 3);
+check("medium comes back tomorrow, whatever the box", medium.intervalDays === 1 && medium.card.due === startOfLocalDay(NOW + DAY));
+check("unrated answers keep the spaced ladder", grade({ ...newCard(), b: 2 }, true, { now: NOW }).intervalDays === INTERVAL_DAYS[3]);
+check("a wrong answer ignores the rating", grade({ ...newCard(), b: 4 }, false, { now: NOW, ease: "easy" }).card.b === 2);
+check("cram ignores the rating", grade({ ...newCard(), b: 2 }, true, { cram: true, now: NOW, ease: "easy" }).card.b === 2);
 check("box 4 is mastered", isMastered({ ...newCard(), b: 4 }));
 check("box 3 is not mastered", !isMastered({ ...newCard(), b: 3 }));
 check(

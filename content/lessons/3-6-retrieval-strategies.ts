@@ -100,7 +100,18 @@ export const lesson = {
       md: "*Increase the number of retrieved results* is the most frequently offered distractor on this objective. It is correct only when the diagnosis is a recall miss. When the question demands completeness, an ordering change, or a traversal, more results move the answer closer to right without ever making it right — which is worse, because it looks like progress.",
     },
 
-    { kind: "practice", questionId: "D3-q601" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q601",
+        "D3-q602",
+        "D3-q603",
+        "D3-q604",
+        "D3-q605",
+        "D3-q606",
+        "D3-q607",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -163,8 +174,6 @@ export const lesson = {
         "Read volatile state through a live API call at request time and reserve indexing for durable content.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q601", "D3-q603"],
 
   sources: [
     {

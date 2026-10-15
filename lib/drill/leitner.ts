@@ -47,7 +47,7 @@ export function newCard(): CardState {
 }
 
 export function isDue(card: CardState, at: number = Date.now()): boolean {
-  return !card.sp && card.due <= endOfLocalDay(at);
+  return !card.sp && !card.kn && card.due <= endOfLocalDay(at);
 }
 
 export function isMastered(card: CardState): boolean {
@@ -62,6 +62,16 @@ export function accuracy(card: CardState): number {
   return card.r === 0 ? 0 : card.c / card.r;
 }
 
+/**
+ * Self-rated ease of a CORRECT answer, given after the reveal.
+ *   easy    — RETIRES the card: top box, marked known, never scheduled again.
+ *   medium  — climbs one box but comes back TOMORROW, whatever the box.
+ *   hard    — drops one box and comes back in the NEXT ROUND (due now).
+ * Left undefined (lesson practice, mock review) the plain Leitner ladder runs.
+ * A wrong answer is a lapse whatever the rating says.
+ */
+export type Ease = "easy" | "medium" | "hard";
+
 export interface GradeResult {
   card: CardState;
   /** For the UI: "Box 3 → Box 4 · next review in 7 days". */
@@ -70,6 +80,8 @@ export interface GradeResult {
   intervalDays: number;
   becameLeech: boolean;
   becameSuspended: boolean;
+  /** Rated Easy while correct: the card left the deck for good. */
+  retired: boolean;
 }
 
 /**
@@ -80,10 +92,30 @@ export interface GradeResult {
  * crams the night before an exam and silently pushes their entire deck out
  * thirty days. In cram we count the rep and nothing else.
  */
+const EASE_KEY: Record<Ease, NonNullable<CardState["ez"]>> = { easy: "e", medium: "m", hard: "h" };
+const EASE_OF_KEY: Record<NonNullable<CardState["ez"]>, Ease> = { e: "easy", m: "medium", h: "hard" };
+
+/** The learner's last self-rating, if the drill has ever graded this card. */
+export function easeOf(card: CardState | undefined): Ease | undefined {
+  return card?.ez ? EASE_OF_KEY[card.ez] : undefined;
+}
+
 export function grade(
   card: CardState,
   correct: boolean,
-  options: { cram?: boolean; now?: number } = {},
+  options: { cram?: boolean; now?: number; ease?: Ease } = {},
+): GradeResult {
+  const result = gradeSchedule(card, correct, options);
+  // The rating is remembered on every path, cram included: it is metadata
+  // about the learner, not about the schedule.
+  if (options.ease) result.card = { ...result.card, ez: EASE_KEY[options.ease] };
+  return result;
+}
+
+function gradeSchedule(
+  card: CardState,
+  correct: boolean,
+  options: { cram?: boolean; now?: number; ease?: Ease },
 ): GradeResult {
   const now = options.now ?? Date.now();
   const fromBox = card.b;
@@ -101,6 +133,7 @@ export function grade(
       intervalDays: INTERVAL_DAYS[fromBox],
       becameLeech: false,
       becameSuspended: false,
+      retired: false,
     };
   }
 
@@ -127,12 +160,54 @@ export function grade(
       intervalDays: 0,
       becameLeech,
       becameSuspended,
+      retired: false,
+    };
+  }
+
+  if (options.ease === "easy") {
+    // "I know this cold": retire it. Top box so every mastery count and the
+    // readiness score treat it as learned, `kn` so no mode ever deals it
+    // again, and the leech flag cleared since the learner just overruled it.
+    const { fl: _fl, ...rest } = card;
+    void _fl;
+    return {
+      card: {
+        ...rest,
+        b: MAX_BOX,
+        due: startOfLocalDay(now + INTERVAL_DAYS[MAX_BOX] * 86_400_000),
+        r: card.r + 1,
+        c: card.c + 1,
+        st: card.st + 1,
+        last: now,
+        kn: 1,
+      },
+      fromBox,
+      toBox: MAX_BOX,
+      intervalDays: INTERVAL_DAYS[MAX_BOX],
+      becameLeech: false,
+      becameSuspended: false,
+      retired: true,
+    };
+  }
+
+  if (options.ease === "hard") {
+    // Right, but shaky: one rung down and straight back into the next round.
+    const toBox = Math.max(1, card.b - 1) as CardState["b"];
+    return {
+      card: { ...card, b: toBox, due: now, r: card.r + 1, c: card.c + 1, st: 0, last: now },
+      fromBox,
+      toBox,
+      intervalDays: 0,
+      becameLeech: false,
+      becameSuspended: false,
+      retired: false,
     };
   }
 
   // max(1, b) skips box 1 for new cards: box 1 means relearning, not "seen once".
   const toBox = Math.min(MAX_BOX, Math.max(1, card.b) + 1) as CardState["b"];
-  const days = INTERVAL_DAYS[toBox];
+  // Medium is a flat "see it again tomorrow"; only the unrated ladder spaces out.
+  const days = options.ease === "medium" ? 1 : INTERVAL_DAYS[toBox];
 
   return {
     card: {
@@ -151,6 +226,7 @@ export function grade(
     intervalDays: days,
     becameLeech: false,
     becameSuspended: false,
+    retired: false,
   };
 }
 

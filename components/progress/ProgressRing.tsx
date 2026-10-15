@@ -40,7 +40,7 @@ export function ProgressRing({
         cy={size / 2}
         r={r}
         fill="none"
-        stroke="var(--ui-accent)"
+        stroke="var(--domain)"
         strokeWidth={stroke}
         strokeLinecap="round"
         strokeDasharray={c}

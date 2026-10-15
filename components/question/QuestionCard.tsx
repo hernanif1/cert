@@ -3,6 +3,8 @@
 import type { ChoiceId, Question } from "@/content/schema";
 import { correctIdsOf, selectCountOf } from "@/content/schema";
 import { cn } from "@/lib/cn";
+import { useDict } from "@/lib/i18n/client";
+import { Icon } from "@/components/ui/Icon";
 
 /**
  * One card, three consumers — lesson practice, drill, and the mock exam.
@@ -16,11 +18,6 @@ import { cn } from "@/lib/cn";
  *   DrillRunner       drill reducer           reveal after Submit, feeds Leitner
  *   ExamRunner        persisted attempt       never reveals until submission
  */
-
-const NUMBER_WORD: Record<number, string> = {
-  2: "TWO",
-  3: "THREE",
-};
 
 export interface QuestionCardProps {
   question: Question;
@@ -52,6 +49,7 @@ export function QuestionCard({
   const multi = question.type === "multi";
   const needed = selectCountOf(question);
   const correct = correctIdsOf(question);
+  const t = useDict().question;
 
   function toggle(id: ChoiceId) {
     if (disabled || revealed) return;
@@ -67,19 +65,22 @@ export function QuestionCard({
   }
 
   return (
-    <div className="rounded-card border border-border bg-surface p-5">
+    <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           {index !== undefined && total !== undefined && (
             <p className="tnum text-[11px] uppercase tracking-wide text-fg-muted">
-              Question {index + 1} of {total}
+              {t.counter(index + 1, total)}
             </p>
           )}
-          <p className="mt-1 text-reading">{question.stem}</p>
+          {/* Items stay in English in every locale: the real exam is in English. */}
+          <p className="mt-1 text-reading" lang="en">
+            {question.stem}
+          </p>
           {/* Generated from the answer key, so it can never desync from it. */}
           {multi && (
             <p className="mt-2 text-aux font-medium">
-              Select {NUMBER_WORD[needed] ?? needed}.
+              {t.select(t.numberWord[needed] ?? String(needed))}
             </p>
           )}
         </div>
@@ -88,23 +89,25 @@ export function QuestionCard({
             type="button"
             onClick={onToggleFlag}
             aria-pressed={flagged}
-            aria-label={flagged ? "Remove review flag" : "Flag for review"}
+            aria-label={flagged ? t.unflagAria : t.flagAria}
             className={cn(
-              "shrink-0 rounded-md border px-2 py-1 text-xs transition-colors",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-2 py-1 text-xs transition-colors",
               flagged
                 ? "border-warning/50 bg-warning/10 text-warning"
                 : "border-border text-fg-muted hover:border-accent",
             )}
           >
-            {flagged ? "⚑ Flagged" : "⚑ Flag"}
+            <Icon name="flag" size={13} />
+            {flagged ? t.flagged : t.flag}
           </button>
         )}
       </div>
 
       <ul
-        className="mt-4 space-y-2"
+        className="mt-5 space-y-2.5"
+        lang="en"
         role={multi ? "group" : "radiogroup"}
-        aria-label="Answer choices"
+        aria-label={t.choices}
       >
         {question.choices.map((choice) => {
           const isSelected = selected.includes(choice.id);
@@ -129,7 +132,7 @@ export function QuestionCard({
                 disabled={disabled || revealed}
                 onClick={() => toggle(choice.id)}
                 className={cn(
-                  "flex w-full gap-3 rounded-md border p-3 text-left text-aux transition-colors",
+                  "flex w-full gap-3 rounded-xl border p-3.5 text-left text-aux transition-colors",
                   state === "idle" &&
                     (isSelected
                       ? "border-accent bg-accent-soft"
@@ -158,7 +161,13 @@ export function QuestionCard({
                   )}
                   aria-hidden="true"
                 >
-                  {revealed && isCorrect ? "✓" : revealed && isSelected ? "✗" : choice.id}
+                  {revealed && isCorrect ? (
+                    <Icon name="check" size={13} strokeWidth={2.4} />
+                  ) : revealed && isSelected ? (
+                    <Icon name="x" size={13} strokeWidth={2.4} />
+                  ) : (
+                    choice.id
+                  )}
                 </span>
 
                 <span className="min-w-0 flex-1">
@@ -174,7 +183,7 @@ export function QuestionCard({
                   )}
                   {revealed && state === "correct-missed" && (
                     <span className="mt-1.5 block text-[0.8125rem] font-medium text-success">
-                      You missed this one.
+                      {t.missed}
                     </span>
                   )}
                 </span>
@@ -187,9 +196,11 @@ export function QuestionCard({
       {revealed && (
         <div className="mt-4 rounded-md border-l-2 border-accent/50 bg-accent-soft px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
-            {isAnswerCorrect(question, selected) ? "Correct" : "Not quite"}
+            {isAnswerCorrect(question, selected) ? t.correct : t.notQuite}
           </p>
-          <p className="mt-2 text-aux">{question.explanation}</p>
+          <p className="mt-2 text-aux" lang="en">
+            {question.explanation}
+          </p>
         </div>
       )}
 

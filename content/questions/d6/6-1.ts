@@ -240,4 +240,87 @@ export const questions = [
     type: "single",
     correct: "A",
   },
+  {
+    schemaVersion: 1,
+    id: "D6-q107",
+    domain: 6,
+    objective: "6.1",
+    stem: "Discovery for an invoice-coding assistant has produced a representative sample, a named owner for the definition of correct, and a list of non-goals. The sponsor wants to move to design. The architect says one artifact is still missing before any target can be agreed. Which is it?",
+    choices: [
+      {
+        id: "A",
+        text: "The volume forecast, so the design can be sized for peak load.",
+        rationale:
+          "Throughput shapes the architecture once a target exists, but it says nothing about what result would count as an improvement.",
+      },
+      {
+        id: "B",
+        text: "A baseline: what the current manual process achieves today, measured the same way the assistant will be.",
+      },
+      {
+        id: "C",
+        text: "The list of source systems the assistant will need to read from.",
+        rationale:
+          "Integration scope is design input and is discoverable later, whereas the absence of a baseline is what makes a target unnegotiable.",
+      },
+      {
+        id: "D",
+        text: "A budget ceiling, so the model tier can be chosen against it.",
+        rationale:
+          "A ceiling constrains the solution space and still leaves the team unable to say whether any point inside it is worth building.",
+      },
+    ],
+    explanation:
+      "Without a baseline every proposed target is arbitrary, and the project has no way to tell success from motion. Measuring the existing process the same way the system will be measured is what turns a number like 92% into a claim about whether anything improved, and it frequently reveals that the current process is worse than anyone assumed.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["discovery", "baseline"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D6-q108",
+    domain: 6,
+    objective: "6.1",
+    stem: "An architect is writing the non-goal list for a customer-support assistant. Which TWO entries genuinely belong on it?",
+    choices: [
+      {
+        id: "A",
+        text: "The assistant will not issue refunds or credits; it drafts a request a human approves.",
+      },
+      {
+        id: "B",
+        text: "The assistant will not be built on a fine-tuned model.",
+        rationale:
+          "That is an implementation choice the design phase should be free to revisit, and freezing it during discovery constrains work nobody has scoped yet.",
+      },
+      {
+        id: "C",
+        text: "The assistant will not exceed a 2-second p95 response time.",
+        rationale:
+          "A performance commitment is a requirement with a threshold rather than something the system will not do.",
+      },
+      {
+        id: "D",
+        text: "The assistant will not handle correspondence in languages other than English and Portuguese at launch.",
+      },
+      {
+        id: "E",
+        text: "The assistant will not be allowed to hallucinate.",
+        rationale:
+          "Every system aspires to that, so it excludes nothing and gives no one a basis for saying a request is out of scope.",
+      },
+    ],
+    explanation:
+      "A non-goal is a capability a reasonable stakeholder might otherwise expect, written down so its absence is a decision rather than a disappointment. Entries that name a technology, restate a requirement or forbid a defect do no scoping work; entries that bound authority and coverage are what prevent the project growing quietly after sign-off.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["discovery", "non-goals", "scope"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "D"],
+  },
 ] satisfies Question[];

@@ -240,4 +240,87 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D5-q207",
+    domain: 5,
+    objective: "5.2",
+    stem: "A ten-step agent completes an onboarding task end to end about 60% of the time, with each step measuring roughly 95% in isolation. Which TWO changes address the actual cause?",
+    choices: [
+      {
+        id: "A",
+        text: "Collapse steps that do not need to be separate, so fewer probabilistic calls sit in the chain.",
+      },
+      {
+        id: "B",
+        text: "Move the whole chain to a more capable model tier.",
+        rationale:
+          "A better tier lifts each step's rate a little and leaves ten of them multiplying, so the end-to-end figure improves far less than it appears it should.",
+      },
+      {
+        id: "C",
+        text: "Add deterministic validation on the artifacts crossing the remaining steps, so an error is caught rather than carried forward.",
+      },
+      {
+        id: "D",
+        text: "Retry any step that fails, up to three attempts.",
+        rationale:
+          "Retries help where failures are transient, while a step that is wrong in a way nothing detects is retried on an error nobody noticed.",
+      },
+      {
+        id: "E",
+        text: "Run the steps concurrently where their inputs allow it.",
+        rationale:
+          "Parallelism shortens wall-clock time without changing how many probabilistic results the final answer depends on.",
+      },
+    ],
+    explanation:
+      "Accuracies multiply along a chain rather than averaging, so chain length is itself a risk factor and shortening the chain is a safety control. The other lever is interrupting the product: a check on the artifact crossing a seam stops an error propagating, which is what neither a better model nor a retry provides.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["failure-modes", "compounding-error", "chain-length"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "C"],
+  },
+  {
+    schemaVersion: 1,
+    id: "D5-q208",
+    domain: 5,
+    objective: "5.2",
+    stem: "A support assistant is praised in testing for \"remembering\" a customer's earlier complaint within a conversation. In production, customers who return the next day find it has no idea what was agreed, and the team files a bug against the model. How should the architect characterize this?",
+    choices: [
+      {
+        id: "A",
+        text: "Not a defect: context is not memory, so anything that must survive a session has to be stored and retrieved deliberately.",
+      },
+      {
+        id: "B",
+        text: "A model limitation to be resolved by moving to a tier with a larger context window.",
+        rationale:
+          "A larger window holds more of one conversation and still starts empty on the next, because nothing carries between requests on its own.",
+      },
+      {
+        id: "C",
+        text: "A regression introduced by conversation compaction discarding the earlier turns.",
+        rationale:
+          "Compaction can lose detail inside a long session, whereas here a new session begins with no prior turns to discard.",
+      },
+      {
+        id: "D",
+        text: "A retrieval failure, since the earlier complaint was not returned by the knowledge base.",
+        rationale:
+          "Retrieval can only return what was written somewhere, and the conversation was never persisted to a store it could search.",
+      },
+    ],
+    explanation:
+      "Within a request the model sees exactly what is in the context window and nothing else; across requests it sees nothing at all. Persistence is an architecture decision, so continuity between sessions comes from writing the relevant facts down and retrieving them, never from the model retaining anything.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["failure-modes", "context-is-not-memory", "limitations"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

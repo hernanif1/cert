@@ -244,4 +244,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q407",
+    domain: 1,
+    objective: "1.4",
+    stem: "A platform team builds an assistant that drafts infrastructure configuration changes. Any change reaching the cluster must first be examined by something that did not write it, and whatever examines it must have no ability to apply anything itself. Which orchestration strategy fits?",
+    choices: [
+      {
+        id: "A",
+        text: "A shared workspace in which a drafting subagent and a reviewing subagent both read and write the change set.",
+        rationale:
+          "A shared workspace lets the reviewer edit the very artifact it is meant to judge, which removes the independence the requirement asks for.",
+      },
+      {
+        id: "B",
+        text: "Sequential handoff, each subagent completing its stage and passing the result to the next.",
+        rationale:
+          "Handoff describes the order accurately enough, but it says nothing about withholding apply authority, which is the part of the requirement that bites.",
+      },
+      {
+        id: "C",
+        text: "An orchestrator that decomposes the change into parts and assigns each part to a subagent.",
+        rationale:
+          "Decomposition parallelizes the drafting and leaves the result unexamined, so no part of that arrangement supplies an independent check.",
+      },
+      {
+        id: "D",
+        text: "Generator and critic, where one subagent proposes the change and a separate critic evaluates it with no authority to apply.",
+      },
+    ],
+    explanation:
+      "Generator and critic exists for this shape: the value comes from the critic being a different context, under a different instruction, holding narrower permissions than the generator. Separating who proposes from who may approve is an authorization decision, so it belongs in the orchestration strategy rather than in a prompt.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["multi-agent", "orchestration", "generator-critic"],
+    type: "single",
+    correct: "D",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q408",
+    domain: 1,
+    objective: "1.4",
+    stem: "An incident-investigation subagent is given a log-search tool and told to find the cause of an outage. On most incidents it returns within about a minute. On three occasions it ran for over forty minutes, consumed the entire context window and returned nothing usable, and on review the searches it issued each time were reasonable. What is the root cause?",
+    choices: [
+      {
+        id: "A",
+        text: "The subagent has no stopping condition, so nothing tells it when the investigation is complete or futile.",
+      },
+      {
+        id: "B",
+        text: "The log-search tool returns too much data per call, exhausting context faster than the subagent can summarize it.",
+        rationale:
+          "A tool that noisy would shorten every run rather than three of them, and the same searches complete normally on most incidents.",
+      },
+      {
+        id: "C",
+        text: "The task is too broad and should be divided among several specialized subagents.",
+        rationale:
+          "More subagents divide the same unbounded search across more contexts, and every one of them inherits the missing termination rule.",
+      },
+      {
+        id: "D",
+        text: "The orchestrator should pass the subagent more context about the incident up front.",
+        rationale:
+          "Richer starting context may shorten the common case, but a run with no defined end still does not end on the incidents where the answer is absent.",
+      },
+    ],
+    explanation:
+      "Every subagent needs a clear task, the context that task requires, and a condition that ends it. The third is the one most often left implicit, and its absence presents exactly this way: acceptable behavior wherever the work happens to terminate on its own, and unbounded cost wherever it does not.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["multi-agent", "stopping-condition"],
+    type: "single",
+    correct: "A",
+  },
 ] satisfies Question[];

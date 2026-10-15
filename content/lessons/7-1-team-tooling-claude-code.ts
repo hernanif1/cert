@@ -97,7 +97,18 @@ export const lesson = {
       md: "*Add it to the project instructions* is offered as the answer to every team-configuration problem, and it is right for conventions and orientation. When the scenario says something must happen **every time** — a formatter, a policy check, a blocked operation — the keyed answer is a hook or a permission rule, not a sentence in a document.",
     },
 
-    { kind: "practice", questionId: "D7-q101" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D7-q101",
+        "D7-q102",
+        "D7-q103",
+        "D7-q104",
+        "D7-q105",
+        "D7-q106",
+        "D7-q107",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -153,8 +164,6 @@ export const lesson = {
         "Express must-happen behavior as a hook or a permission rule, which the harness executes deterministically.",
     },
   ],
-
-  practiceQuestionIds: ["D7-q101", "D7-q104"],
 
   sources: [
     {

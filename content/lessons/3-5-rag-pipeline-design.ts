@@ -102,7 +102,18 @@ export const lesson = {
       md: "When a RAG answer is wrong, *use a larger model* and *increase the context window* will both be offered as options. Neither addresses retrieval feeding the model bad chunks — a bigger model reading the wrong document still answers from the wrong document. The exam consistently keys the retrieval-layer option.",
     },
 
-    { kind: "practice", questionId: "D3-q501" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q501",
+        "D3-q502",
+        "D3-q503",
+        "D3-q504",
+        "D3-q505",
+        "D3-q506",
+        "D3-q507",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -170,8 +181,6 @@ export const lesson = {
         "Treat an embedding model change as a full re-index of the corpus.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q501"],
 
   sources: [
     {

@@ -4,6 +4,7 @@ import { useHydrated } from "@/lib/storage/store";
 import { useDomainProgress } from "@/lib/storage/hooks";
 import { ProgressRing } from "@/components/progress/ProgressRing";
 import type { DomainNumber } from "@/content/schema";
+import { useDict } from "@/lib/i18n/client";
 
 /**
  * Client wrapper: reads the store and hands ProgressRing a plain number, so the
@@ -18,6 +19,7 @@ export function DomainRing({
 }) {
   const hydrated = useHydrated();
   const { done, total, pct } = useDomainProgress(domainId);
+  const t = useDict().progressUi;
 
   if (!hydrated) {
     return (
@@ -30,8 +32,8 @@ export function DomainRing({
   }
 
   return (
-    <span className="relative inline-flex shrink-0" title={`${done} of ${total} lessons`}>
-      <ProgressRing value={pct} size={size} label={`${done} of ${total} lessons complete`} />
+    <span className="relative inline-flex shrink-0" title={t.lessonsOf(done, total)}>
+      <ProgressRing value={pct} size={size} label={t.lessonsComplete(done, total)} />
       <span className="tnum absolute inset-0 flex items-center justify-center text-[10px] text-fg-muted">
         {done}
       </span>

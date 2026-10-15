@@ -103,7 +103,17 @@ export const lesson = {
       md: "*Expose it through MCP* reads as the modern, standards-aligned answer and is therefore over-offered. On items describing a single application with one fixed integration and no other consumers, the keyed answer is usually the direct call. Ask what the protocol layer is buying before you pay for it.",
     },
 
-    { kind: "practice", questionId: "D3-q701" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D3-q701",
+        "D3-q702",
+        "D3-q703",
+        "D3-q704",
+        "D3-q705",
+        "D3-q706",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -159,8 +169,6 @@ export const lesson = {
         "Treat MCP as a way to describe and expose existing capabilities to model clients, not as a migration of the underlying service.",
     },
   ],
-
-  practiceQuestionIds: ["D3-q701", "D3-q703"],
 
   sources: [
     {

@@ -197,4 +197,82 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q406",
+    domain: 4,
+    objective: "4.4",
+    stem: "An assistant's quality dropped after a release that changed the system prompt, upgraded the model version and rebuilt the retrieval index in one deployment. The team proposes reverting all three and reintroducing them together once the prompt has been improved. What should the architect require instead?",
+    choices: [
+      {
+        id: "A",
+        text: "A larger evaluation set, so the next release has more chances to catch the regression before it ships.",
+        rationale:
+          "Better coverage reduces the odds of a repeat and still leaves the current regression unattributed to any of the three changes.",
+      },
+      {
+        id: "B",
+        text: "Re-running the failing cases against each layer reverted in turn, holding the other two fixed, to identify which change is responsible.",
+      },
+      {
+        id: "C",
+        text: "Reverting only the model version, since a version upgrade is the most likely cause of a broad quality shift.",
+        rationale:
+          "Picking the most likely suspect first is a guess, and if quality recovers it is still unclear whether the other two changes contribute.",
+      },
+      {
+        id: "D",
+        text: "Adding an instruction to the prompt telling the model to be more careful and to cite its sources.",
+        rationale:
+          "Stacking instructions treats an unknown cause with a prompt edit, which changes a third variable while the first two remain confounded.",
+      },
+    ],
+    explanation:
+      "The discriminating test is always to change one layer and hold the rest fixed, because every failure class in this objective looks similar from the outside. A deployment that moved prompt, model and index at once has no attribution until they are separated, and reverting the bundle only restores the old behavior without explaining it.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["diagnosis", "discriminating-test"],
+    type: "single",
+    correct: "B",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q407",
+    domain: 4,
+    objective: "4.4",
+    stem: "A medical-information assistant begins declining roughly one question in eight, including plainly reasonable ones such as the recommended storage temperature for a vaccine. The refusals started after a safety review added several paragraphs of prohibitions to the system prompt. Where does the fault lie and what is the fix?",
+    choices: [
+      {
+        id: "A",
+        text: "A model mismatch: the tier is not capable enough to distinguish safe from unsafe medical questions.",
+        rationale:
+          "A mismatch would show as degradation concentrated on hard cases, whereas these refusals fall on the simplest questions in scope.",
+      },
+      {
+        id: "B",
+        text: "Hallucination control working as intended, so the threshold should be accepted as the cost of safety.",
+        rationale:
+          "Refusing a storage temperature protects nobody and destroys the assistant's usefulness, so treating it as a necessary cost misreads the trade.",
+      },
+      {
+        id: "C",
+        text: "A retrieval failure: the assistant refuses because the relevant passage was not retrieved.",
+        rationale:
+          "A retrieval gap produces vague or ungrounded answers more often than refusals, and the refusals began with a prompt change rather than an index change.",
+      },
+      {
+        id: "D",
+        text: "An over-broad refusal path in the prompt: the prohibitions need scoping, with positive instruction for what is in scope and an escape hatch for what is not.",
+      },
+    ],
+    explanation:
+      "False refusals are a failure class with their own signature: they correlate with a prompt change rather than with input difficulty, and they cluster on topics adjacent to the prohibitions. Piling on prohibitions without stating what the assistant should do leaves refusing as the safest-looking action available to it.",
+    difficulty: 2,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["diagnosis", "refusal-path", "false-refusal"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

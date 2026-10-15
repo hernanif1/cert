@@ -22,7 +22,8 @@ const check = (n, p, d = "") => {
   console.log(`${p ? "  ok  " : "FAIL  "} ${n}${d ? ` — ${d}` : ""}`);
 };
 
-/** Select enough choices for whichever item is showing, then check it. */
+/** Select enough choices for whichever item is showing, then check it.
+ *  Checking only reveals; a rating (Enter = Medium) records and advances. */
 async function answerCurrent(page) {
   const text = await page.locator("main").innerText();
   const needed = /select three/i.test(text) ? 3 : /select two/i.test(text) ? 2 : 1;
@@ -47,7 +48,7 @@ const setup = await page.locator("main").innerText();
 check("drill setup screen renders", /drill mode/i.test(setup));
 check("setup shows queue counts", /due today/i.test(setup) && /in pool/i.test(setup));
 check("all seven modes are offered",
-  ["Due", "Mixed", "New", "Weak areas", "Leeches", "Bookmarked", "Cram"]
+  ["Due", "Mixed", "New", "Weak areas", "Leeches", "Flagged", "Cram"]
     .every((m) => setup.includes(m)));
 
 // A fresh deck has nothing due, so start in Mixed to pull in new cards.
@@ -74,8 +75,8 @@ check(
   /\b2\/\d+\b/.test(await page.locator("main").innerText()),
 );
 
-// Bookmark, then confirm the bookmarked filter finds it.
-await page.keyboard.press("b");
+// Flag, then confirm the Flagged filter finds it (the flag is the bookmark).
+await page.keyboard.press("f");
 await page.waitForTimeout(300);
 // "?" opens the shortcut overlay; Escape closes it before ending the session.
 await page.keyboard.press("?");
@@ -94,10 +95,10 @@ check("Escape then ends the session", /session complete/i.test(await page.locato
 
 await page.getByRole("button", { name: /change filters/i }).click();
 await page.waitForTimeout(300);
-await page.getByRole("button", { name: "Bookmarked", exact: true }).click();
+await page.getByRole("button", { name: "Flagged", exact: true }).click();
 await page.getByRole("button", { name: /start session/i }).click();
 await page.waitForTimeout(400);
-check("bookmarked mode finds the bookmarked card",
+check("flagged mode finds the flagged card",
   /\b1\/1\b/.test(await page.locator("main").innerText()));
 
 // Cram must not write schedule state. Seed a card that is demonstrably
@@ -141,6 +142,8 @@ check("cram warns that nothing is recorded",
   /cram/i.test(await page.locator("main").innerText()));
 
 await answerCurrent(page);
+await page.keyboard.press("Enter"); // rate Medium: records the rep
+await page.waitForTimeout(400);
 const afterCram = JSON.parse(
   await page.evaluate((k) => localStorage.getItem(k), KEY),
 ).drill.cards;

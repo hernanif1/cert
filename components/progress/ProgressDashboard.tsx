@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { DOMAINS } from "@/content/domains";
 import { EXAM } from "@/content/exam-facts";
 import { drillPool, drillPoolByDomain } from "@/content/questions";
 import { useAppState, useHydrated } from "@/lib/storage/store";
@@ -11,7 +9,10 @@ import { ProgressRing } from "@/components/progress/ProgressRing";
 import { ProgressBar } from "@/components/progress/ProgressBar";
 import { StatTile } from "@/components/progress/StatTile";
 import { DataControls } from "@/components/progress/DataControls";
-import { weightPercent } from "@/lib/curriculum";
+import { domainsFor, weightPercent } from "@/lib/curriculum";
+import { useDict, useLocale } from "@/lib/i18n/client";
+import { LocaleLink as Link } from "@/components/i18n/LocaleLink";
+import { Icon } from "@/components/ui/Icon";
 
 const MASTERY_BOX = 4;
 
@@ -24,6 +25,9 @@ export function ProgressDashboard() {
   const state = useAppState();
   const overall = useOverallProgress();
   const readiness = computeReadiness(state);
+  const locale = useLocale();
+  const dict = useDict();
+  const t = dict.tools.progress;
 
   const cards = Object.values(state.drill.cards);
   const pool = drillPool();
@@ -45,25 +49,27 @@ export function ProgressDashboard() {
   );
 
   const components = [
-    { label: "Lessons", c: readiness.lessons },
-    { label: "Drill", c: readiness.drill },
-    { label: "Mock", c: readiness.mock },
+    { label: t.lessons, c: readiness.lessons },
+    { label: t.drill, c: readiness.drill },
+    { label: t.mock, c: readiness.mock },
   ];
 
   return (
     <main>
-      <p className="text-sm font-medium text-accent">Study Tools</p>
-      <h1 className="mt-2 font-display text-4xl">Progress Dashboard</h1>
+      <p className="text-sm font-medium text-accent">{dict.tools.eyebrowTools}</p>
+      <h1 className="mt-3 font-display text-[2.25rem] leading-[1.12] tracking-[-0.022em] sm:text-[2.75rem]">
+        {t.title}
+      </h1>
 
       {/* Readiness */}
-      <section className="mt-8 rounded-card border border-border bg-surface p-6">
+      <section className="mt-8 rounded-2xl border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center gap-6">
           <div className="relative">
             <ProgressRing
               value={hydrated ? readiness.score : 0}
               size={104}
               stroke={7}
-              label={`Exam readiness ${readiness.score} of 100`}
+              label={t.readinessAria(readiness.score)}
             />
             <span className="tnum absolute inset-0 flex items-center justify-center font-display text-3xl">
               {hydrated ? readiness.score : "—"}
@@ -72,17 +78,17 @@ export function ProgressDashboard() {
 
           <div className="min-w-0 flex-1">
             <p className="text-[11px] uppercase tracking-wide text-fg-muted">
-              Exam readiness
+              {t.readiness}
             </p>
             <p className="font-display text-2xl">
-              {hydrated ? readiness.label : <Skeleton className="h-7 w-48 align-middle" />}
+              {hydrated ? t.labels[readiness.label] : <Skeleton className="h-7 w-48 align-middle" />}
             </p>
             <p className="tnum mt-1 text-sm text-fg-muted">
               {hydrated ? (
                 <>
-                  Lessons {readiness.lessons.earned}/{readiness.lessons.max} ·
-                  Drill {readiness.drill.earned}/{readiness.drill.max} · Mock{" "}
-                  {readiness.mock.earned}/{readiness.mock.max}
+                  {t.lessons} {readiness.lessons.earned}/{readiness.lessons.max} ·{" "}
+                  {t.drill} {readiness.drill.earned}/{readiness.drill.max} ·{" "}
+                  {t.mock} {readiness.mock.earned}/{readiness.mock.max}
                 </>
               ) : (
                 <Skeleton className="h-4 w-64 align-middle" />
@@ -100,52 +106,53 @@ export function ProgressDashboard() {
                   {hydrated ? `${c.earned} / ${c.max}` : "—"}
                 </span>
               </div>
-              <ProgressBar value={hydrated ? c.pct : 0} label={`${label} component`} />
+              <ProgressBar value={hydrated ? c.pct : 0} label={t.component(label)} />
             </div>
           ))}
         </div>
 
-        {hydrated && readiness.gateReason && (
+        {hydrated && readiness.gate && (
           <p className="mt-5 rounded-md border-l-2 border-warning/50 bg-warning/[0.07] px-4 py-3 text-sm leading-relaxed">
-            {readiness.gateReason}
+            {t.gate(readiness.gate)}
           </p>
         )}
 
         {hydrated && readiness.mockLocked && (
           <p className="mt-5 rounded-md border-l-2 border-accent/40 bg-accent-soft px-4 py-3 text-sm leading-relaxed">
-            Take a mock exam to unlock {readiness.mock.max} points.{" "}
-            <Link href="/mock-exam" className="font-medium text-accent underline underline-offset-2">
-              Start one →
+            {t.unlock(readiness.mock.max)}{" "}
+            <Link href="/mock-exam" className="link inline-flex items-center gap-1 font-medium">
+              {t.startOne}
+              <Icon name="arrow-right" size={13} />
             </Link>
           </p>
         )}
       </section>
 
       {/* Stats */}
-      <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-border bg-border sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
         <StatTile
-          label="Lessons"
+          label={t.lessons}
           value={hydrated ? `${overall.done}/${overall.total}` : "—"}
-          hint={hydrated ? `${overall.pct}% complete` : undefined}
+          hint={hydrated ? t.pctComplete(overall.pct) : undefined}
           busy={!hydrated}
         />
         <StatTile
-          label="Mock attempts"
+          label={t.mockAttempts}
           value={hydrated ? state.examHistory.length : "—"}
-          hint={best !== null ? `best ${best}` : `pass at ${EXAM.passScaled}`}
+          hint={best !== null ? t.best(best) : t.passAt(EXAM.passScaled)}
           busy={!hydrated}
         />
         <StatTile
-          label="Drill seen"
+          label={t.drillSeen}
           value={hydrated ? `${seen}/${pool.length}` : "—"}
           busy={!hydrated}
         />
         <StatTile
-          label="Day streak"
+          label={t.dayStreak}
           value={hydrated ? state.drill.streak.current : "—"}
           hint={
             hydrated && state.drill.streak.longest > 0
-              ? `longest ${state.drill.streak.longest}`
+              ? t.longest(state.drill.streak.longest)
               : undefined
           }
           busy={!hydrated}
@@ -153,46 +160,47 @@ export function ProgressDashboard() {
       </div>
 
       {/* Drill summary */}
-      <section className="mt-6 rounded-card border border-border bg-surface p-5">
+      <section className="mt-6 rounded-2xl border border-border bg-surface p-5">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-lg">Drill</h2>
+          <h2 className="font-display text-lg">{t.drill}</h2>
           <Link
             href="/learn/drill"
-            className="text-sm text-accent underline underline-offset-2"
+            className="link inline-flex items-center gap-1 text-sm"
           >
-            Open drill mode →
+            {t.openDrill}
+            <Icon name="arrow-right" size={13} />
           </Link>
         </div>
         <dl className="tnum mt-3 flex flex-wrap gap-x-10 gap-y-3 text-sm">
           <div>
-            <dt className="text-xs uppercase tracking-wide text-fg-muted">Seen</dt>
+            <dt className="text-xs uppercase tracking-wide text-fg-muted">{t.seen}</dt>
             <dd className="font-display text-xl">{hydrated ? seen : "—"}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-wide text-fg-muted">Mastered</dt>
+            <dt className="text-xs uppercase tracking-wide text-fg-muted">{t.mastered}</dt>
             <dd className="font-display text-xl">{hydrated ? mastered : "—"}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-wide text-fg-muted">Due today</dt>
+            <dt className="text-xs uppercase tracking-wide text-fg-muted">{t.dueToday}</dt>
             <dd className="font-display text-xl">{hydrated ? dueToday : "—"}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-wide text-fg-muted">Leeches</dt>
+            <dt className="text-xs uppercase tracking-wide text-fg-muted">{t.leeches}</dt>
             <dd className="font-display text-xl">{hydrated ? leeches : "—"}</dd>
           </div>
         </dl>
         {pool.length === 0 && (
           <p className="mt-3 text-xs text-fg-muted">
-            The question bank is still being authored.
+            {t.bankPending}
           </p>
         )}
       </section>
 
       {/* Per-domain */}
       <section className="mt-6">
-        <h2 className="font-display text-lg">By domain</h2>
+        <h2 className="font-display text-lg">{t.byDomain}</h2>
         <ul className="mt-3 divide-y divide-border border-y border-border">
-          {DOMAINS.map((d) => {
+          {domainsFor(locale).map((d) => {
             const slugs = d.objectives.map((o) => o.slug);
             const done = slugs.filter((s) => state.lessons[s]?.completedAt).length;
             const pct = Math.round((done / slugs.length) * 100);
@@ -203,28 +211,24 @@ export function ProgressDashboard() {
             }).length;
 
             return (
-              <li key={d.slug} className="flex items-center gap-4 py-3">
+              <li key={d.slug} data-domain={d.id} className="flex items-center gap-4 py-3">
                 <ProgressRing
                   value={hydrated ? pct : 0}
                   size={34}
-                  label={`${d.title} ${pct}% of lessons complete`}
+                  label={t.domainAria(d.title, pct)}
                 />
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/learn/${d.slug}`}
-                    className="text-sm font-medium transition-colors hover:text-accent"
+                    className="text-sm font-medium transition-colors hover:text-domain"
                   >
-                    {d.code} {d.title}
+                    <span className="tnum mr-1.5 text-domain">{d.code}</span>
+                    {d.title}
                   </Link>
                   <p className="tnum mt-0.5 text-xs text-fg-muted">
-                    {hydrated ? `${done}/${slugs.length}` : `—/${slugs.length}`}{" "}
-                    lessons · {weightPercent(d.weight)} of the exam
-                    {dPool.length > 0 && (
-                      <>
-                        {" "}· {hydrated ? dMastered : "—"}/{dPool.length} drill
-                        mastered
-                      </>
-                    )}
+                    {t.domainLine(hydrated ? String(done) : "—", slugs.length, weightPercent(d.weight))}
+                    {dPool.length > 0 &&
+                      ` · ${t.drillMastered(hydrated ? String(dMastered) : "—", dPool.length)}`}
                   </p>
                 </div>
               </li>
@@ -236,11 +240,7 @@ export function ProgressDashboard() {
       <DataControls />
 
       <p className="mt-8 max-w-2xl text-xs leading-relaxed text-fg-muted">
-        Readiness weights lessons at {readiness.lessons.max}, drill at{" "}
-        {readiness.drill.max} and mock performance at {readiness.mock.max}. A
-        lesson counts once it is marked complete and you have answered at least
-        one question on its objective — clicking through {overall.total} lessons
-        should not, on its own, say you are ready.
+        {t.footnote(readiness.lessons.max, readiness.drill.max, readiness.mock.max, overall.total)}
       </p>
     </main>
   );

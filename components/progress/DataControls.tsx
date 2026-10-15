@@ -9,12 +9,14 @@ import {
   resetProgress,
   type ImportPreview,
 } from "@/lib/storage/transfer";
+import { useDict } from "@/lib/i18n/client";
 
 export function DataControls() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const t = useDict().tools.data;
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -24,32 +26,31 @@ export function DataControls() {
     try {
       setPreview(parseImport(await file.text()));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not read that file.");
+      setError(err instanceof Error ? err.message : t.readError);
     }
   }
 
   return (
     <section className="mt-12 border-t border-border pt-6">
-      <h2 className="font-display text-lg">Your data</h2>
+      <h2 className="font-display text-lg">{t.title}</h2>
       <p className="mt-1 max-w-xl text-sm leading-relaxed text-fg-muted">
-        Progress is stored only in this browser, on this device. Export it to
-        move to another machine or keep a backup.
+        {t.intro}
       </p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={exportProgress}
-          className="rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
+          className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
         >
-          Export progress
+          {t.export}
         </button>
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
+          className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent"
         >
-          Import progress
+          {t.import}
         </button>
         <input
           ref={fileRef}
@@ -61,9 +62,9 @@ export function DataControls() {
         <button
           type="button"
           onClick={() => setConfirmReset(true)}
-          className="rounded-md border border-danger/40 px-3 py-1.5 text-xs font-medium text-danger transition-colors hover:bg-danger-soft"
+          className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-medium text-danger transition-colors hover:bg-danger-soft"
         >
-          Reset progress
+          {t.reset}
         </button>
       </div>
 
@@ -74,18 +75,21 @@ export function DataControls() {
       )}
 
       {preview && (
-        <div className="mt-4 max-w-xl rounded-card border border-border bg-surface p-4">
-          <p className="text-sm font-medium">Import this file?</p>
+        <div className="mt-4 max-w-xl rounded-2xl border border-border bg-surface p-4">
+          <p className="text-sm font-medium">{t.importQuestion}</p>
           <dl className="tnum mt-3 grid grid-cols-3 gap-2 text-xs">
-            <dt className="col-span-1 text-fg-muted">Lessons complete</dt>
-            <dd className="col-span-1">file: {preview.lessonsInFile}</dd>
-            <dd className="col-span-1 text-fg-muted">now: {preview.lessonsNow}</dd>
-            <dt className="col-span-1 text-fg-muted">Drill cards</dt>
-            <dd className="col-span-1">file: {preview.cardsInFile}</dd>
-            <dd className="col-span-1 text-fg-muted">now: {preview.cardsNow}</dd>
-            <dt className="col-span-1 text-fg-muted">Mock attempts</dt>
-            <dd className="col-span-1">file: {preview.attemptsInFile}</dd>
-            <dd className="col-span-1 text-fg-muted">now: {preview.attemptsNow}</dd>
+            <dt className="col-span-1 text-fg-muted">{t.lessonsComplete}</dt>
+            <dd className="col-span-1">{t.file(preview.lessonsInFile)}</dd>
+            <dd className="col-span-1 text-fg-muted">{t.now(preview.lessonsNow)}</dd>
+            <dt className="col-span-1 text-fg-muted">{t.checklistTicks}</dt>
+            <dd className="col-span-1">{t.file(preview.checksInFile)}</dd>
+            <dd className="col-span-1 text-fg-muted">{t.now(preview.checksNow)}</dd>
+            <dt className="col-span-1 text-fg-muted">{t.drillCards}</dt>
+            <dd className="col-span-1">{t.file(preview.cardsInFile)}</dd>
+            <dd className="col-span-1 text-fg-muted">{t.now(preview.cardsNow)}</dd>
+            <dt className="col-span-1 text-fg-muted">{t.mockAttempts}</dt>
+            <dd className="col-span-1">{t.file(preview.attemptsInFile)}</dd>
+            <dd className="col-span-1 text-fg-muted">{t.now(preview.attemptsNow)}</dd>
           </dl>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
@@ -94,9 +98,9 @@ export function DataControls() {
                 applyImportMerge(preview.state);
                 setPreview(null);
               }}
-              className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover"
+              className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover"
             >
-              Merge
+              {t.merge}
             </button>
             <button
               type="button"
@@ -104,37 +108,36 @@ export function DataControls() {
                 applyImportReplace(preview.state);
                 setPreview(null);
               }}
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:border-accent"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:border-accent"
             >
-              Replace everything
+              {t.replace}
             </button>
             <button
               type="button"
               onClick={() => setPreview(null)}
-              className="rounded-md px-3 py-1.5 text-xs text-fg-muted hover:text-fg"
+              className="rounded-lg px-3 py-1.5 text-xs text-fg-muted hover:text-fg"
             >
-              Cancel
+              {t.cancel}
             </button>
           </div>
         </div>
       )}
 
       {confirmReset && (
-        <div className="mt-4 max-w-xl rounded-card border border-danger/40 bg-danger-soft p-4">
+        <div className="mt-4 max-w-xl rounded-2xl border border-danger/40 bg-danger-soft p-4">
           <p className="text-sm font-medium">
-            Delete all progress on this device?
+            {t.deleteQuestion}
           </p>
           <p className="mt-1 text-sm text-fg-muted">
-            Lesson completions, drill history and mock attempts. This cannot be
-            undone — take a backup first.
+            {t.deleteBody}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={exportProgress}
-              className="rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:border-accent"
+              className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:border-accent"
             >
-              Export a backup first
+              {t.backupFirst}
             </button>
             <button
               type="button"
@@ -142,16 +145,16 @@ export function DataControls() {
                 resetProgress();
                 setConfirmReset(false);
               }}
-              className="rounded-md bg-danger px-3 py-1.5 text-xs font-medium text-white"
+              className="rounded-lg bg-danger px-3 py-1.5 text-xs font-medium text-white"
             >
-              Delete all progress
+              {t.deleteAll}
             </button>
             <button
               type="button"
               onClick={() => setConfirmReset(false)}
-              className="rounded-md px-3 py-1.5 text-xs text-fg-muted hover:text-fg"
+              className="rounded-lg px-3 py-1.5 text-xs text-fg-muted hover:text-fg"
             >
-              Cancel
+              {t.cancel}
             </button>
           </div>
         </div>

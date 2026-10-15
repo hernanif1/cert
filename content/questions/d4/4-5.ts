@@ -201,4 +201,87 @@ export const questions = [
     type: "single",
     correct: "B",
   },
+  {
+    schemaVersion: 1,
+    id: "D4-q506",
+    domain: 4,
+    objective: "4.5",
+    stem: "An assistant's answers average 700 output tokens and the team wants to cut generation cost. An engineer proposes lowering the maximum output token limit from 4,000 to 1,000, arguing that this caps what each request can cost. What is the accurate assessment?",
+    choices: [
+      {
+        id: "A",
+        text: "The cap changes almost nothing, because generation is billed on tokens actually produced; it would only truncate the minority of answers that legitimately run long.",
+      },
+      {
+        id: "B",
+        text: "Correct, and the saving will be roughly proportional to the reduction in the limit.",
+        rationale:
+          "That assumes billing follows the ceiling rather than the output, so the arithmetic describes a pricing model that is not in use.",
+      },
+      {
+        id: "C",
+        text: "Correct for cost, but it will raise latency because the model plans its response against the available budget.",
+        rationale:
+          "The premise is the problem rather than the side effect: there is no saving to trade latency for, since unproduced tokens were never billed.",
+      },
+      {
+        id: "D",
+        text: "The cap helps only if paired with a chain-of-thought instruction, so reasoning fits inside the smaller budget.",
+        rationale:
+          "Adding reasoning increases output tokens, which moves cost in the wrong direction while making truncation more likely.",
+      },
+    ],
+    explanation:
+      "A maximum output limit is a safety valve against runaway generation, not a cost lever, because nothing is charged for tokens the model never emits. Reducing generation cost means making answers genuinely shorter through instruction, format and task design, which is a change to what is produced rather than to what is permitted.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["optimization", "cost", "output-tokens"],
+    type: "single",
+    correct: "A",
+  },
+  {
+    schemaVersion: 1,
+    id: "D4-q507",
+    domain: 4,
+    objective: "4.5",
+    stem: "A document assistant costs more per task than budgeted. Its quality floor is 92% field-level accuracy, and it currently scores 93%. Four levers are proposed. Which TWO can be adopted without risking the floor?",
+    choices: [
+      {
+        id: "A",
+        text: "Caching the 8,000-token instruction prefix that is byte-identical on every request.",
+      },
+      {
+        id: "B",
+        text: "Downgrading every request unconditionally to the next model tier down.",
+        rationale:
+          "An unconditional downgrade moves quality on every request with only one point of headroom, which is the change most likely to breach the floor.",
+      },
+      {
+        id: "C",
+        text: "Batching the overnight portion of the workload, where no user is waiting for a result.",
+      },
+      {
+        id: "D",
+        text: "Trimming the few-shot examples from six to two to shorten the prompt.",
+        rationale:
+          "The examples are there because they lifted accuracy, so removing them spends the one point of headroom on a saving the prefix cache already offers.",
+      },
+      {
+        id: "E",
+        text: "Reducing retrieved chunks from eight to two to cut input tokens.",
+        rationale:
+          "Halving the evidence available to the model is an accuracy change dressed as a token change, and the margin will not absorb it.",
+      },
+    ],
+    explanation:
+      "Every lever has a precondition, and the binding one here is a single point above the floor. Caching and batching change how the same work is paid for without altering what the model sees or produces, while every option that shortens the prompt or lowers the tier buys its saving out of accuracy the system cannot spare.",
+    difficulty: 3,
+    cognitiveLevel: "analysis",
+    pool: "drill",
+    tags: ["optimization", "quality-floor", "levers"],
+    type: "multi",
+    selectCount: 2,
+    correct: ["A", "C"],
+  },
 ] satisfies Question[];

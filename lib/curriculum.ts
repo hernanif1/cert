@@ -1,5 +1,7 @@
 import { DOMAINS } from "@/content/domains";
+import { DOMAINS_PT_BR, OBJECTIVES_PT_BR } from "@/content/i18n/pt-br/domains";
 import type { Domain, DomainNumber, Objective, ObjectiveId } from "@/content/schema";
+import type { Locale } from "@/lib/i18n/config";
 
 /**
  * Derived indexes over the blueprint, built once at module load.
@@ -25,16 +27,21 @@ export interface LessonRef extends Objective {
  * array index instead of a nested walk, so the last lesson of domain 1 links
  * straight into the first of domain 2 for a linear study path.
  */
-export const LESSON_ORDER: LessonRef[] = DOMAINS.flatMap((d) =>
-  d.objectives.map((o) => ({
-    ...o,
-    domainId: d.id,
-    domainSlug: d.slug,
-    domainTitle: d.title,
-    domainCode: d.code,
-    href: `/learn/${d.slug}/${o.slug}`,
-  })),
-);
+function flatten(domains: Domain[]): LessonRef[] {
+  return domains.flatMap((d) =>
+    d.objectives.map((o) => ({
+      ...o,
+      domainId: d.id,
+      domainSlug: d.slug,
+      domainTitle: d.title,
+      domainCode: d.code,
+      // Locale-free on purpose: LocaleLink applies the prefix at render time.
+      href: `/learn/${d.slug}/${o.slug}`,
+    })),
+  );
+}
+
+export const LESSON_ORDER: LessonRef[] = flatten(DOMAINS);
 
 export const TOTAL_LESSONS = LESSON_ORDER.length;
 
@@ -95,4 +102,57 @@ export function domainNumberLabel(id: DomainNumber): string {
 
 export function weightPercent(weight: number): string {
   return `${Math.round(weight * 100)}%`;
+}
+
+/* ─────────────────────────────── Locales ───────────────────────────────
+   Structure (ids, slugs, weights, order) is locale-independent and always
+   comes from content/domains.ts; a locale only swaps the human-facing text.
+   Slugs stay English in every locale, so progress keyed by slug is shared. */
+
+const DOMAINS_BY_LOCALE: Record<Locale, Domain[]> = {
+  en: DOMAINS,
+  "pt-br": DOMAINS.map((d) => ({
+    ...d,
+    ...DOMAINS_PT_BR[d.id],
+    objectives: d.objectives.map((o) => ({ ...o, ...OBJECTIVES_PT_BR[o.id] })),
+  })),
+};
+
+const ORDER_BY_LOCALE: Record<Locale, LessonRef[]> = {
+  en: LESSON_ORDER,
+  "pt-br": flatten(DOMAINS_BY_LOCALE["pt-br"]),
+};
+
+export function domainsFor(locale: Locale): Domain[] {
+  return DOMAINS_BY_LOCALE[locale];
+}
+
+export function lessonOrderFor(locale: Locale): LessonRef[] {
+  return ORDER_BY_LOCALE[locale];
+}
+
+export function getDomainFor(slug: string, locale: Locale): Domain | undefined {
+  return DOMAINS_BY_LOCALE[locale].find((d) => d.slug === slug);
+}
+
+export function getLessonFor(slug: string, locale: Locale): LessonRef | undefined {
+  const i = LESSON_INDEX.get(slug);
+  return i === undefined ? undefined : ORDER_BY_LOCALE[locale][i];
+}
+
+export function getLessonByObjectiveFor(
+  id: ObjectiveId,
+  locale: Locale,
+): LessonRef | undefined {
+  return ORDER_BY_LOCALE[locale].find((l) => l.id === id);
+}
+
+export function neighboursFor(
+  slug: string,
+  locale: Locale,
+): { prev: LessonRef | null; next: LessonRef | null } {
+  const i = LESSON_INDEX.get(slug);
+  if (i === undefined) return { prev: null, next: null };
+  const order = ORDER_BY_LOCALE[locale];
+  return { prev: order[i - 1] ?? null, next: order[i + 1] ?? null };
 }

@@ -92,7 +92,19 @@ export const lesson = {
       md: "*Add more specialized agents* and *let the agents coordinate among themselves* both read as sophistication and both usually key wrong. Peer-to-peer coordination turns a tree into a graph with no bound on interactions, and more agents on a coupled problem multiplies duplicated context rather than dividing the work.",
     },
 
-    { kind: "practice", questionId: "D1-q401" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D1-q401",
+        "D1-q402",
+        "D1-q403",
+        "D1-q404",
+        "D1-q405",
+        "D1-q406",
+        "D1-q407",
+        "D1-q408",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -153,8 +165,6 @@ export const lesson = {
         "Scope each subagent's tools and credentials to what its stated objective requires and nothing more.",
     },
   ],
-
-  practiceQuestionIds: ["D1-q401"],
 
   sources: [
     {

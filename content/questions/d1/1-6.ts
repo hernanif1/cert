@@ -201,4 +201,82 @@ export const questions = [
     type: "single",
     correct: "C",
   },
+  {
+    schemaVersion: 1,
+    id: "D1-q606",
+    domain: 1,
+    objective: "1.6",
+    stem: "Two business units ask for the same capability: summarize inbound support tickets. One is funded to cut cost per ticket; the other is funded to hold a response-time commitment for a premium tier. An architect proposes one design to serve both. What is wrong with that proposal?",
+    choices: [
+      {
+        id: "A",
+        text: "Nothing, as long as the design meets the stricter of the two requirements, which is the response-time commitment.",
+        rationale:
+          "Meeting the tighter constraint everywhere buys latency headroom for tickets whose sponsor is paying specifically to avoid that expense.",
+      },
+      {
+        id: "B",
+        text: "The two units should be asked to agree on a single pillar so one metric can be reported.",
+        rationale:
+          "Forcing one metric conceals a real difference in what each sponsor is buying, and afterwards neither unit's number means what it says.",
+      },
+      {
+        id: "C",
+        text: "The pillar, not the functional requirement, fixes the model tier, the caching and the retrieval budget, so one requirement yields two architectures here.",
+      },
+      {
+        id: "D",
+        text: "Summarization is too simple a task to warrant separate designs for two units.",
+        rationale:
+          "How complex the task is does not determine how many designs are needed; the cost and latency envelopes drawn around it do.",
+      },
+    ],
+    explanation:
+      "One sentence of functional requirement supports very different systems depending on which value pillar funds it: cost pressure pushes toward a smaller tier and aggressive caching, a service commitment pushes toward a fixed retrieval budget and headroom in the tail. Naming the pillar is what makes those choices derivable rather than arbitrary.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["business-value", "pillars", "architecture"],
+    type: "single",
+    correct: "C",
+  },
+  {
+    schemaVersion: 1,
+    id: "D1-q607",
+    domain: 1,
+    objective: "1.6",
+    stem: "A team reports that its assistant averages 900 milliseconds to first token and concludes that the contractual commitment, that 95% of responses begin within 1.5 seconds, is comfortably met. The operations lead rejects the conclusion. Why?",
+    choices: [
+      {
+        id: "A",
+        text: "The average was measured in staging rather than against production traffic.",
+        rationale:
+          "Measuring the wrong environment would be a separate fault and nothing in the report suggests it; the statistic itself is what draws the objection.",
+      },
+      {
+        id: "B",
+        text: "Time to first token is the wrong metric for a commitment written about responses.",
+        rationale:
+          "First token is the standard reading of when a streamed response begins, and the commitment is phrased in exactly those terms.",
+      },
+      {
+        id: "C",
+        text: "A 600-millisecond margin is too small to absorb normal variation in model latency.",
+        rationale:
+          "That margin looks reassuring only because it is computed from the mean, which is the step the objection is actually about.",
+      },
+      {
+        id: "D",
+        text: "A mean says nothing about the 95th percentile: the commitment is about the tail, and the tail has not been measured.",
+      },
+    ],
+    explanation:
+      "Service levels are written as percentiles because users experience the slow requests rather than the average one. A distribution with a 900-millisecond mean can breach a 1.5-second 95th percentile easily, so the only measurement that answers the commitment is the percentile named in it.",
+    difficulty: 2,
+    cognitiveLevel: "application",
+    pool: "drill",
+    tags: ["business-value", "sla", "percentiles"],
+    type: "single",
+    correct: "D",
+  },
 ] satisfies Question[];

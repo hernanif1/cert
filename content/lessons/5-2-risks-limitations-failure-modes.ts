@@ -116,7 +116,19 @@ export const lesson = {
       md: "Distrust the incident review that concludes *the model hallucinated*. Ask which class it was: was the context wrong, was a tool result silently empty, did an injected instruction change the plan, or did the corpus change last Tuesday? Each points at a different fix, and only one of them is about the model.",
     },
 
-    { kind: "practice", questionId: "D5-q201" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D5-q201",
+        "D5-q202",
+        "D5-q203",
+        "D5-q204",
+        "D5-q205",
+        "D5-q206",
+        "D5-q207",
+        "D5-q208",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -184,8 +196,6 @@ export const lesson = {
         "Monitor quality signals — groundedness checks, schema validity, user corrections, abandonment — alongside error rates.",
     },
   ],
-
-  practiceQuestionIds: ["D5-q201", "D5-q202"],
 
   sources: [
     {

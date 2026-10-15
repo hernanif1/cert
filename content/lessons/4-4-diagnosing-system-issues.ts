@@ -80,7 +80,18 @@ export const lesson = {
       md: "Watch for options that stack instructions onto the prompt — *tell it to be accurate*, *tell it to double-check*. They are attractive because they are cheap, and they are keyed wrong whenever the stem shows the model lacked the information to answer at all. No wording can recover a fact that never reached the context window.",
     },
 
-    { kind: "practice", questionId: "D4-q401" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D4-q401",
+        "D4-q402",
+        "D4-q403",
+        "D4-q404",
+        "D4-q405",
+        "D4-q406",
+        "D4-q407",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -148,8 +159,6 @@ export const lesson = {
         "Verify against the source text with a separate check rather than asking the generator to grade itself.",
     },
   ],
-
-  practiceQuestionIds: ["D4-q401", "D4-q403"],
 
   sources: [
     {

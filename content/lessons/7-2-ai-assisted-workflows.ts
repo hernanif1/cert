@@ -87,7 +87,18 @@ export const lesson = {
       md: "Any option that proposes measuring AI-assisted development by volume — lines generated, suggestions accepted, percentage of the codebase — is a distractor. Volume is not an outcome. The keyed option ties back to delivery performance or defect rates.",
     },
 
-    { kind: "practice", questionId: "D7-q205" },
+    {
+      kind: "practice",
+      questionIds: [
+        "D7-q201",
+        "D7-q202",
+        "D7-q203",
+        "D7-q204",
+        "D7-q205",
+        "D7-q206",
+        "D7-q207",
+      ],
+    },
   ],
 
   keyTerms: [
@@ -143,8 +154,6 @@ export const lesson = {
         "Review the diff. Treat the explanation as a guide to where to look, never as evidence of what the change does.",
     },
   ],
-
-  practiceQuestionIds: ["D7-q205", "D7-q201"],
 
   sources: [
     {
