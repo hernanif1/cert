@@ -75,10 +75,10 @@ export function QuestionCard({
               Question {index + 1} of {total}
             </p>
           )}
-          <p className="mt-1 leading-relaxed">{question.stem}</p>
+          <p className="mt-1 text-reading">{question.stem}</p>
           {/* Generated from the answer key, so it can never desync from it. */}
           {multi && (
-            <p className="mt-2 text-sm font-medium">
+            <p className="mt-2 text-aux font-medium">
               Select {NUMBER_WORD[needed] ?? needed}.
             </p>
           )}
@@ -129,7 +129,7 @@ export function QuestionCard({
                 disabled={disabled || revealed}
                 onClick={() => toggle(choice.id)}
                 className={cn(
-                  "flex w-full gap-3 rounded-md border p-3 text-left text-sm transition-colors",
+                  "flex w-full gap-3 rounded-md border p-3 text-left text-aux transition-colors",
                   state === "idle" &&
                     (isSelected
                       ? "border-accent bg-accent-soft"
@@ -168,12 +168,12 @@ export function QuestionCard({
                       actually picked, so the reveal explains their mistake
                       rather than dumping every rationale at once. */}
                   {revealed && state === "incorrect-selected" && choice.rationale && (
-                    <span className="mt-1.5 block text-xs leading-relaxed text-fg-muted">
+                    <span className="mt-1.5 block text-[0.8125rem] leading-relaxed text-fg-muted">
                       {choice.rationale}
                     </span>
                   )}
                   {revealed && state === "correct-missed" && (
-                    <span className="mt-1.5 block text-xs font-medium text-success">
+                    <span className="mt-1.5 block text-[0.8125rem] font-medium text-success">
                       You missed this one.
                     </span>
                   )}
@@ -189,7 +189,7 @@ export function QuestionCard({
           <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
             {isAnswerCorrect(question, selected) ? "Correct" : "Not quite"}
           </p>
-          <p className="mt-1.5 text-sm leading-relaxed">{question.explanation}</p>
+          <p className="mt-2 text-aux">{question.explanation}</p>
         </div>
       )}
 
